@@ -1,0 +1,96 @@
+/******************************************\
+                Customize block
+\******************************************/
+
+$trantitionTime: 1s;
+$videoBackgroundColor: #000;
+$background-color: #000;
+$textFont: Arial, sans-serif;
+
+/********************************************/
+
+
+body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: $textFont;
+}
+
+#slideshow-box {
+    height: 100vh;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    background-color: #000;
+
+    video {
+        background-color: $videoBackgroundColor;
+
+        &::cue {
+            background-color: #000000b0;
+            color: #fff;
+            border-radius: 10px;
+            font-size: 30px !important;
+            padding: 5px;
+            font-family: $textFont;
+        }
+    }
+
+    img {
+        object-fit: cover;
+    }
+
+    .text {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+        background-color: $background-color;
+
+        h1 {
+            color: #fff;
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    .visitation-cooldown {
+        background-color: #000;
+        h1 {
+            padding: 0;
+            margin: 10px 15px;
+            color: #fff;
+        }
+    }
+
+    .side {
+        transition: opacity $trantitionTime;
+        width: 100%;
+        height: 100vh;
+        position: absolute;
+        left: 0;
+        top: 0;
+        box-sizing: border-box;
+        opacity: 0;
+
+        &.remove {
+            opacity: 0 !important;
+        }
+
+        &.active {
+            opacity: 1;
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

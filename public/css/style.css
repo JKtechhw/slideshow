@@ -1,0 +1,108 @@
+/******************************************\
+                Customize block
+\******************************************/
+/********************************************/
+body {
+  padding: 0;
+  margin: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+#slideshow-box {
+  height: 100vh;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: #000;
+}
+
+#slideshow-box video {
+  background-color: #000;
+}
+
+#slideshow-box video::cue {
+  background-color: #000000b0;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 30px !important;
+  padding: 5px;
+  font-family: Arial, sans-serif;
+}
+
+#slideshow-box img {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+#slideshow-box .text {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 0;
+  margin: 0;
+  background-color: #000;
+}
+
+#slideshow-box .text h1 {
+  color: #fff;
+  width: 100%;
+  text-align: center;
+}
+
+#slideshow-box .visitation-cooldown {
+  background-color: #000;
+}
+
+#slideshow-box .visitation-cooldown h1 {
+  padding: 0;
+  margin: 10px 15px;
+  color: #fff;
+}
+
+#slideshow-box .side {
+  -webkit-transition: opacity 1s;
+  transition: opacity 1s;
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  left: 0;
+  top: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  opacity: 0;
+}
+
+#slideshow-box .side.remove {
+  opacity: 0 !important;
+}
+
+#slideshow-box .side.active {
+  opacity: 1;
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/*# sourceMappingURL=style.css.map */
