@@ -1,6 +1,7 @@
 const express = require("express");
 const { MongoClient } = require("mongodb");
 const path = require("path");
+const sha1 = require("sha1");
 const app = express();
 const port = 3000;
 require("dotenv").config();
@@ -11,7 +12,7 @@ app.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html");
 });
 
-app.get("/sites", (req, res) => {
+app.get("/api/sites", (req, res) => {
     MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
         if(err) {
             console.error(err);
@@ -23,8 +24,10 @@ app.get("/sites", (req, res) => {
                 console.error(err);
                 return;
             }
-    
-            res.send("{\"sites\": " + JSON.stringify(resultSites) + "}");
+
+            let hash = sha1(JSON.stringify(resultSites)); 
+            console.log(hash);
+            res.send(`{"hash": "${hash}", "sites": ${JSON.stringify(resultSites)}}`);
         });
     });
 });

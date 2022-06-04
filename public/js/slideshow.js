@@ -7,6 +7,8 @@ class slideshow {
         this.api = api;
         this.dir = contentDir;
         this.transitionTime = 1000;
+        this.videoEndedEvent = this.changeSite.bind(this);
+        this.hash;
 
         //If target element exist fetch data from api
         if(this.target) {
@@ -21,16 +23,27 @@ class slideshow {
     async fetchFromApi() {
         //Fetch data from api and save to json
         await fetch(this.api)
-        .then(response => response.json())
+        .then(response => response.json()) //Convert to JSON
         .then(data => {
-            if(data.sites.length == 0) {
+            if(data.sites && data.sites.length != 0) {
+                this.sites = data.sites; //Save to var
+                if(this.hash == data.hash) {
+                    this.recoverSites();
+                }
+    
+                else {
+                    this.buildSlideshowBox();
+                }
+    
+                this.hash = data.hash;
+            }
+
+            else {
                 console.error("Response is empty, waiting 10 seconds");
 
-                setTimeout(this.fetchFromApi(), 10000)
+                setTimeout(this.fetchFromApi.bind(this), 10000)
                 return;
             }
-            this.sites = data.sites;
-            this.buildSlideshowBox();
         })
         .catch( (err) => { 
             console.error("Can't fatch data from api or api return wrong format"); 
@@ -40,34 +53,53 @@ class slideshow {
     }
 
     async buildSlideshowBox() {
+        console.log("Api changed or building new state");
         //Create all sites from json
         this.target.innerHTML = "";
         this.sites.forEach(element => {
-            this.addSlide(element);
+            this.addSite(element);
         });
 
         //Set last child as active with animation effect
         this.target.querySelector(".side:last-child").style.animation = "fadeIn .3s linear";
         this.target.querySelector(".side:last-child").classList.add("active");
         //Set timeout on first screen
-        setTimeout(this.changeSlide.bind(this), this.sites[0].timeout);
+        setTimeout(this.changeSite.bind(this),this.sites[0].timeout);
     }
 
-    addSlide(element) {
+    async recoverSites() {
+        console.log("Recovering old state, api doesn't changed");
+        let sites = this.target.querySelectorAll(".side");
+        //reset status for sites
+        sites.forEach(element => {
+            element.classList.remove("remove");
+            element.classList.remove("active");
+            //Remove event for video
+            if(element.dataset.type == "video") {
+                element.removeEventListener("ended", this.videoEndedEvent);
+            }
+        });
+        
+        this.target.querySelector(".side:last-child").classList.add("active");
+        setTimeout(this.changeSite.bind(this), this.sites[0].timeout);
+    }
+
+    addSite(element) {
         let side;
         if(element.type == "image") {
             side = document.createElement("img");
+            side.dataset.timeout = element.timeout;
             side.src = this.dir + element.filename;
         }
 
         else if (element.type == "video") {
             side = document.createElement("video");
+            //Source for video 
             let videoSrc = document.createElement("source");
             videoSrc.src = this.dir + element.filename;
-            if(element.muted) {
-                side.muted = true;
-            }
+            videoSrc.type = element.video_type;
 
+            //Track for subtitles
             if(element.subtitles) {
                 let subtitlesTrack = document.createElement("track");
                 subtitlesTrack.src = this.dir + element.subtitles;
@@ -75,12 +107,20 @@ class slideshow {
                 side.insertAdjacentElement("beforeend", subtitlesTrack);
             }
 
+            //Mute video
+            if(element.muted) {
+                side.muted = true;
+            }
+
             side.appendChild(videoSrc);
         }
 
         else if (element.type == "text") {
+            //Create box for text
             side = document.createElement("div");
             side.classList.add("text");
+            side.dataset.timeout = element.timeout;
+            //Create H1 for text
             let sideH = document.createElement("h1");
             sideH.innerText = element.text
             sideH.style.color = element.color;
@@ -91,6 +131,7 @@ class slideshow {
         else if (element.type == "visitationtime") {
             this.visitationTimes = element.times;
             side = document.createElement("div");
+            side.dataset.timeout = element.timeout;
             side.classList.add("visitation-cooldown");
         }
 
@@ -99,12 +140,11 @@ class slideshow {
         }
 
         side.dataset.type = element.type;
-        side.dataset.timeout = element.timeout;
         side.classList.add("side");
         this.target.insertAdjacentElement("afterbegin", side);
     }
 
-    changeSlide() {
+    changeSite() {
         //All not removed sites
         let childs = this.target.querySelectorAll(".side:not(.remove)");
         //Site for remove
@@ -112,11 +152,12 @@ class slideshow {
         //New active site
         let newSite = childs[childs.length - 2];
         //FadeOut 
-        childToRemove.classList.add("remove");
+        if(childToRemove) {
+            childToRemove.classList.remove("active");
+            childToRemove.classList.add("remove");
+        }
 
         setTimeout(() => {
-            //Remove old active child
-            childToRemove.remove();
             //For fadeIn efect
             if(newSite) {
                 newSite.classList.add("active");
@@ -129,16 +170,23 @@ class slideshow {
                 setTimeout(() => {
                     newSite.play();
                 }, 100);
-                newSite.addEventListener("ended", this.changeSlide.bind(this));
+
+                newSite.addEventListener("ended", this.videoEndedEvent);
             }
 
             else if (newSite.dataset.type == "visitationtime") {
-                this.cooldown(document.querySelector(".visitation-cooldown"), this.visitationTimes);
-                setTimeout(this.changeSlide.bind(this), newSite.dataset.timeout);
+                let interval = this.cooldown(document.querySelector(".visitation-cooldown"), this.visitationTimes);
+                setTimeout(() => {
+                    //Stop when not active
+                    if (interval) {
+                        clearInterval(interval);
+                    }
+                    this.changeSite();
+                }, newSite.dataset.timeout);
             }
 
             else {
-                setTimeout(this.changeSlide.bind(this), newSite.dataset.timeout);
+                setTimeout(this.changeSite.bind(this), newSite.dataset.timeout);
             }
         }
 
@@ -167,6 +215,7 @@ class slideshow {
             interval = setInterval(() => {
                 const currentDate = new Date();
                 const visitation = new Date(`${Number(currentDate.getMonth() + 1)}.${currentDate.getDate()}.${currentDate.getFullYear()} ${nextVisitation}:00`);
+                
                 //Get time diff and convert ti hh:mm:ss
                 let diff = (visitation - currentDate) / 1000;
                 const sec = parseInt(diff, 10);
@@ -178,12 +227,14 @@ class slideshow {
                 if(seconds == 0 && minutes == 0 && hours == 0) {
                     clearInterval(interval);
                 }
-        
+                //Fix single digit number format 
                 if (hours < 10) {hours = "0" + hours;}
                 if (minutes < 10) {minutes = "0" + minutes;}
                 if (seconds < 10) {seconds = "0" + seconds;}
                 target.innerHTML = `<h1>Následující komentovaná prohlídka bude v ${nextVisitation}</h1><h1 class="cooldown">${hours}:${minutes}:${seconds}</h1>`;
             }, 1000);
+
+            return interval;
         }
 
         else {
