@@ -6,7 +6,6 @@ class slideshow {
         this.target = document.querySelector(target);
         this.api = api;
         this.dir = contentDir;
-        this.transitionTime = 1000;
         this.videoEndedEvent = this.changeSite.bind(this);
         this.hash;
 
@@ -26,12 +25,22 @@ class slideshow {
         .then(response => response.json()) //Convert to JSON
         .then(data => {
             if(data.sites && data.sites.length != 0) {
-                this.sites = data.sites; //Save to var
+                this.sites = data.sites;
+
                 if(this.hash == data.hash) {
                     this.recoverSites();
                 }
     
                 else {
+                    //Apply default style
+                    let css = `body { font-family: ${data.font_family}; } .side { transition: opacity ${data.transition_time}ms; }`;
+                    let style = document.createElement("style");
+                    style.type = "text/css";
+                    document.head.appendChild(style);
+                    style.appendChild(document.createTextNode(css));
+
+                    this.visitationTimes = data.visitation_times;
+
                     this.buildSlideshowBox();
                 }
     
@@ -88,6 +97,9 @@ class slideshow {
         let side;
         if(element.type == "image") {
             side = document.createElement("img");
+            if(element.background_color) {
+                side.style.backgroundColor = element.background_color;
+            }
             side.dataset.timeout = element.timeout;
             side.src = this.dir + element.filename;
         }
@@ -128,11 +140,56 @@ class slideshow {
             side.appendChild(sideH);
         }
 
-        else if (element.type == "visitationtime") {
-            this.visitationTimes = element.times;
+        else if (element.type == "visitationtime") {    
+            //div
             side = document.createElement("div");
+            side.className = "visitation-cooldown";
+            side.style.backgroundColor = element.background_color;
+            side.style.color = element.color;
             side.dataset.timeout = element.timeout;
-            side.classList.add("visitation-cooldown");
+    
+            //title
+            let title = document.createElement("h1");
+            title.className = "cooldown-title";
+            title.innerHTML = "KOMENTOVANÉ PROHLÍDKY KOSTELA";
+    
+            //description
+            let description = document.createElement("p");
+            description.className = "cooldown-desc";
+            description.innerHTML = "V rámci každé komentované prohlídky se rozezní varhany, navštívíte unikátní církevní muzeum, seznámíte se s ornáty a významem jejich barev v závislosti na liturgickém období.";
+    
+            //label1
+            let label1 = document.createElement("p");
+            label1.className = "cooldown-label1";
+            label1.innerHTML = "Časy prohlídek:"
+    
+            //times
+            let times = document.createElement("p");
+            times.className = "cooldown-times";
+            times.innerHTML = this.visitationTimes.join(" ");
+    
+            //label2
+            let label2 = document.createElement("p");
+            label2.className = "cooldown-label2";
+            label2.innerHTML = "Nejbližší prohlídka začíná za:"
+    
+            //clock
+            let clock = document.createElement("p");
+            clock.className = "cooldown-clock";
+            clock.innerHTML = ""
+    
+            let backgroundImage = document.createElement("img");
+            backgroundImage.src = this.dir + element.filename;
+    
+            side.appendChild(backgroundImage);
+            side.appendChild(title);
+            side.appendChild(description);
+            side.appendChild(label1);
+            side.appendChild(times);
+            side.appendChild(label2);
+            side.appendChild(clock);
+    
+            document.getElementById("slideshow-box").appendChild(side);
         }
 
         else {
@@ -175,7 +232,7 @@ class slideshow {
             }
 
             else if (newSite.dataset.type == "visitationtime") {
-                let interval = this.cooldown(document.querySelector(".visitation-cooldown"), this.visitationTimes);
+                let interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes);
                 setTimeout(() => {
                     //Stop when not active
                     if (interval) {
@@ -214,7 +271,7 @@ class slideshow {
             let interval;
             interval = setInterval(() => {
                 const currentDate = new Date();
-                const visitation = new Date(`${Number(currentDate.getMonth() + 1)}.${currentDate.getDate()}.${currentDate.getFullYear()} ${nextVisitation}:00`);
+                const visitation = new Date(Date.parse(`${Number(currentDate.getMonth() + 1)}.${currentDate.getDate()}.${currentDate.getFullYear()} ${nextVisitation}:00`));
                 
                 //Get time diff and convert ti hh:mm:ss
                 let diff = (visitation - currentDate) / 1000;
@@ -231,14 +288,14 @@ class slideshow {
                 if (hours < 10) {hours = "0" + hours;}
                 if (minutes < 10) {minutes = "0" + minutes;}
                 if (seconds < 10) {seconds = "0" + seconds;}
-                target.innerHTML = `<h1>Následující komentovaná prohlídka bude v ${nextVisitation}</h1><h1 class="cooldown">${hours}:${minutes}:${seconds}</h1>`;
+                target.innerHTML = `${hours}:${minutes}:${seconds}`;
             }, 1000);
 
             return interval;
         }
 
         else {
-            target.innerHTML = `<h1>Dnes již není naplánovaná žádná prohlídka</h1>`;
+            target.innerHTML = 'Dnes již není naplánovaná žádná prohlídka';
         }
     }
 }

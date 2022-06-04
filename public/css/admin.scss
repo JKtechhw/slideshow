@@ -1,0 +1,419 @@
+@import url('/fonts/monserrat/monserrat.css');
+@import url("/fonts/DINpro/stylesheet.css");
+
+$backgroundColor: #f3f4f8; 
+$themeColor: #2468d7;
+$greyColor: #999999;
+$lightGreyColor: #ececec;
+
+$whiteBoxShadow: 5px 5px 12px 5px rgba(0,0,0,0.1);
+$whiteBoxShadowTop: 5px -5px 12px 5px rgba(0,0,0,0.1);
+
+$themeFont: 'Montserrat', sans-serif;
+
+body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    background-color: $backgroundColor;
+    font-family: $themeFont;
+    padding-top: 60px;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.description {
+    color: $greyColor;
+    font-weight: 300;
+}
+
+.github {
+    &::after {
+        content: url("/images/github.svg");
+    }
+}
+
+.center {
+    text-align: center;
+}
+
+.white-box {
+    max-width: 1200px;
+    margin: 30px auto;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: $whiteBoxShadow;
+    box-sizing: border-box;
+    h3 {
+        margin-left: 10px;
+        position: relative;
+
+        &::after {
+            left: 0;
+            bottom: -10px;
+            height: 4px;
+            width: 40px;
+            position: absolute;
+            content: "";
+            background-color: $themeColor;
+        }
+    }
+
+    .blue-btn, .gray-btn {
+        border-radius: 5px;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        font-family: $themeFont;
+    }
+
+    .blue-btn {
+        background-color: $themeColor;
+        color: #fff;
+        transition: filter 0.2s;
+
+        &:hover {
+            filter: brightness(0.9);
+        }
+    }
+
+    .gray-btn {
+        border: 1px solid $greyColor;
+        color: #000;
+    }
+}
+
+.part-white-box {
+    display: flex;
+    max-width: 1200px;
+    margin: auto;
+
+    .part-box {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        background-color: #fff;
+        box-shadow: $whiteBoxShadow;
+        margin: 10px;
+        border-radius: 10px;
+        padding: 10px 15px;
+
+        &:first-child {
+            margin-left: 0;
+        }
+
+        &:last-child {
+            margin-right: 0;
+        }
+        ul {
+            width: 100%;
+        }
+
+        h1 {
+            color: $themeColor;
+        }
+
+        h3 {
+            margin-left: 10px;
+            position: relative;
+            width: 100%;
+            text-align: left;
+            box-sizing: border-box;
+    
+            &::after {
+                left: 0;
+                bottom: -10px;
+                height: 4px;
+                width: 40px;
+                position: absolute;
+                content: "";
+                background-color: $themeColor;
+            }
+        }
+    }
+}
+
+nav {
+    width: 100%;
+    background-color: #fff;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: $whiteBoxShadow;
+    position: fixed;
+
+    h3 {
+        margin-left: 10px;
+        position: relative;
+        margin: 0;
+
+        &::after {
+            left: 0;
+            bottom: -10px;
+            height: 4px;
+            width: 40px;
+            position: absolute;
+            content: "";
+            background-color: $themeColor;
+        }
+    }
+}
+
+#global-settings {
+    display: flex;
+
+    .option {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+
+        h4 {
+            text-align: center;
+        }
+
+        input[type="color"] {
+            border: none;
+            background-color: transparent;
+        }
+
+        input[type="number"] {
+            max-width: 100%;
+            width: 50px;
+            text-align: center;
+            padding: 5px;
+            border-radius: 3px;
+            -moz-appearance: textfield;
+            border: 1px solid $greyColor;
+
+            &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+
+        select {
+            max-width: 100%;
+        }
+    }
+}
+
+#controls-buttons {
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+#slides-table {
+    overflow-y: auto;
+    #table-slides {
+        width: 100%;
+        
+        div {
+            display: grid;
+            grid-template-columns: 0.2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr;
+            
+            &:first-child {
+                border-bottom: 1px solid gray;
+
+                p {
+                    white-space: nowrap;
+                    text-align: center;
+                }
+            }
+
+            &:not(:first-child) {
+                &:nth-child(odd) {
+                    background-color: $lightGreyColor;
+                }
+                
+                p {
+                    text-align: center;
+                    white-space: nowrap;
+                    max-width: 100%;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+        
+                    &:first-child {
+                        cursor: move;
+                        &::after {
+                            content: url("/images/drag.svg");
+                        }
+                    }
+                }
+            }
+    
+            input[type="color"] {
+                border: none;
+                background-color: transparent;
+            }
+    
+            button {
+                &.preview {
+                    &::after {
+                        content: url("/images/eye.svg");
+                    }
+                }
+    
+                &.remove {
+                    &::after {
+                        content: url("/images/trash.svg");
+                    }
+                }
+                background-color: transparent;
+                border: none;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.iframe-box {
+    width: 100%;
+    padding-top: 56.25%;
+    position: relative;
+
+    iframe {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+}
+
+#prewiew-box {
+    position: relative;
+    #refresh-iframe-btn {
+        position: absolute;
+        top: 30px;
+        right: 20px;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        &::after {
+            display: inline-block;
+            content: url("/images/arrow-spin.svg");
+            transition: transform 0.2s;
+        }
+
+        &:hover {
+            &::after {
+                transform: rotate(25deg);
+            }
+        }
+    }
+}
+
+footer {
+    width: 100%;
+    background-color: #fff;
+    padding: 20px 10px 5px 10px;
+    box-sizing: border-box;
+    margin-top: 25px;
+    box-shadow: $whiteBoxShadowTop;
+
+    h3 {
+        margin-left: 10px;
+        position: relative;
+        margin: 0;
+        margin-bottom: 30px;
+
+        &::after {
+            left: 0;
+            bottom: -10px;
+            height: 4px;
+            width: 40px;
+            position: absolute;
+            content: "";
+            background-color: $themeColor;
+        }
+    }
+
+    #footer-content {
+        a {
+            color: $themeColor;
+        }
+
+        p {
+            margin: 10px 40px;
+        }
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .white-box {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .part-white-box {
+        .part-box {
+            &:first-child, &:last-child {
+                margin: 10px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .part-white-box {
+        display: block;
+    }
+}
+
+//fonts
+.arial {
+    font-family: Arial, sans-serif;
+}
+
+.verdana {
+    font-family: Verdana, sans-serif;
+}
+
+.helvetica {
+    font-family: Helvetica, sans-serif;
+}
+
+.tahoma {
+    font-family: Tahoma, sans-serif;
+}
+
+.terebuchet {
+    font-family: 'Trebuchet MS', sans-serif;
+}
+
+.times-new-roman {
+    font-family: 'Times New Roman', serif;
+}
+
+.georgia {
+    font-family: Georgia, serif;
+}
+
+.garamond {
+    font-family: Garamond, serif;
+}
+
+.courier-new {
+    font-family: 'Courier New', monospace;
+}
+
+.brush-script {
+    font-family: 'Brush Script MT', cursive;
+}
+
+.monserrat {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.dinpro {
+    font-family: "DINpro", sans-serif;
+}

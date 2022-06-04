@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>admin - Slideshow</title>
+    <link rel="stylesheet" type="text/css" href="/css/admin.css">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+</head>
+<body>
+    <nav>
+        <h3>Slideshow <span class="description">Dashboard</span></h3>
+    </nav>
+
+    <div class="white-box">
+        <h3>Globální nastavení stylu</h3>
+        <div id="global-settings">
+            <div id="global-background-color" class="option">
+                <h4>Barva pozadí</h4>
+                <input type=color value="#000000">
+            </div>
+    
+            <div id="global-text-color" class="option">
+                <h4>Barva textu</h4>
+                <input type=color value="#ffffff">
+            </div>
+    
+            <div id="global-font" class="option">
+                <h4>Font family</h4>
+                <select>
+                    <optgroup label="Css">
+                        <option class="arial">Arial</option>
+                        <option class="verdana">Verdana</option>
+                        <option class="helvetiva">Helvetica</option>
+                        <option class="tahoma">Tahoma</option>
+                        <option class="trebuchet">Trebuchet MS</option>
+                        <option class="times-new-roman">Times New Roman</option>
+                        <option class="georgia">Georgia</option>
+                        <option class="garamond">Garamond</option>
+                        <option class="courier-new">Courier New</option>
+                        <option class="brush-script">Brush Script MT</option>
+                    </optgroup>
+                    <optgroup label="Externí">
+                        <option class="monserrat">Monserrat</option>
+                        <option class="dinpro">DINpro</option>
+                    </optgroup>
+                    
+                </select>
+            </div>
+    
+            <div id="global-font" class="option">
+                <h4>Doba přechodu (ms)</h4>
+                <input type="number" value="1000">
+            </div>
+        </div>
+        <button type="button" class="blue-btn">Upravit</button>
+    </div>
+
+    <div class="part-white-box">
+        <div class="part-box">
+            <h1>1</h1>
+            <p class="uppercase">Zařízení</p>
+        </div>
+
+        <div class="part-box">
+            <h1>10</h1>
+            <p class="uppercase">Dotazů</p>
+        </div>
+
+        <div class="part-box">
+            <h1>6</h1>
+            <p class="uppercase">Slidů</p>
+        </div>
+    </div>
+
+    <div class="white-box">
+        <h3>Slidy</h3>
+        <div id="controls-buttons">
+            <button id="add-slide" class="blue-btn">Přidat slide</button>
+            <button id="remove-slide" class="gray-btn">Smazat všechny slidy</button>
+        </div>
+
+        <div id="slides-table">
+            <div id="table-slides">
+                <div>
+                    <p></p>
+                    <p>Typ</p>
+                    <p>Timeout (ms)</p>
+                    <p>Barva pozadí</p>
+                    <p>Barva textu</p>
+                    <p>Soubor</p>
+                    <p>Text</p>
+                    <p>Titulky</p>
+                    <p>Ztlumené</p>
+                    <p>Náhled</p>
+                    <p>Skryté</p>
+                    <p>Smazat</p>
+                </div>
+                <div>
+                    <p></p>
+                    <p>image</p>
+                    <p>10000</p>
+                    <p>-</p>
+                    <p>-</p>
+                    <p>1.jpg</p>
+                    <p>-</p>
+                    <p>-</p>
+                    <p>-</p>
+                    <button class="preview"></button>
+                    <p><input type="checkbox"></p>
+                    <button class="remove"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="part-white-box">
+        <div class="part-box">
+            <h3>Prohlídky</h3>
+            <ul>
+                <li>18:00</li>
+                <li>19:00</li>
+                <li>20:00</li>
+                <li>21:00</li>
+            </ul>
+        </div>
+
+        <div class="part-box" id="prewiew-box">
+            <h3>Náhled <span class="description">&nbsp;&nbsp;16:9</span></h3>
+            <button id="refresh-iframe-btn" title="Obnovit"></button>
+            <div class="iframe-box">
+                <!-- <iframe src="/"></iframe> -->
+            </div>
+        </div>
+    </div>
+    <footer>
+        <h3>Slideshow</h3>
+        <div id="footer-content">
+            <p>URl pro klienty: <a href="http://localhost:3000">http://localhost:3000</a></p>
+            <p>Vytvořeno pro noc kostelů 2022</p>
+            <p class="center"><a href="https://github.com/JKtechhw/slideshow" class="github" target="_blank"></a></p>
+        </div>
+    </footer>
+</body>
+</html>

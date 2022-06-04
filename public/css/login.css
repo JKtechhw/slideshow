@@ -1,0 +1,86 @@
+@import url("/fonts/monserrat/monserrat.css");
+body {
+  padding: 0;
+  margin: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100vh;
+  background-color: #999999;
+}
+
+#login-box {
+  background-color: #fff;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  border-radius: 5px;
+  width: 300px;
+  padding-top: 20px;
+  -webkit-box-shadow: 5px 5px 12px 5px rgba(0, 0, 0, 0.1);
+          box-shadow: 5px 5px 12px 5px rgba(0, 0, 0, 0.1);
+}
+
+#login-box img {
+  margin: auto;
+  display: block;
+  width: 120px;
+  -webkit-filter: brightness(0);
+          filter: brightness(0);
+  opacity: 0.9;
+}
+
+#login-box #background-input {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 20px 10px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+#login-box #background-input span {
+  content: "";
+  background-color: #2468d7;
+  background-image: url("/images/lock.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 46px;
+  height: 37px;
+}
+
+#login-box #background-input input {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  border: 2px solid #999999;
+  outline: none;
+  -webkit-transition: border-bottom 0.2s;
+  transition: border-bottom 0.2s;
+  padding: 7px 12px;
+  font-size: 16px;
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  border-left: none;
+}
+
+#login-box button {
+  margin-top: 10px;
+  width: 100%;
+  border: none;
+  background-color: #2468d7;
+  color: #fff;
+  padding: 10px 0;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+}
+/*# sourceMappingURL=login.css.map */
