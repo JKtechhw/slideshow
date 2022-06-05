@@ -11,8 +11,18 @@ $whiteBoxShadowTop: 5px -5px 12px 5px rgba(0,0,0,0.1);
 
 $themeFont: 'Montserrat', sans-serif;
 
-::-moz-scrollbar-button, ::-webkit-scrollbar-button {
-    width: 0px;
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: $backgroundColor; 
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background: #aaa; 
 }
 
 body {
@@ -74,6 +84,7 @@ body {
     padding: 10px;
     box-shadow: $whiteBoxShadow;
     box-sizing: border-box;
+
     h3 {
         margin-left: 10px;
         position: relative;
@@ -246,20 +257,47 @@ nav {
 }
 
 #slides-table {
-    overflow-y: auto;
-    #table-slides {
+    overflow-x: auto;
+    margin: 10px 0;
+    table {
         width: 100%;
-        
-        div {
-            display: grid;
-            grid-template-columns: 0.2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr;
-            
-            &:first-child {
-                border-bottom: 1px solid gray;
+        margin: 10px 0;
+        border-collapse: collapse;
 
-                p {
-                    white-space: nowrap;
-                    text-align: center;
+        tr {
+            &:first-child {
+                border-bottom: 1px solid $grayColor;
+                white-space: nowrap;
+
+                th {
+                    padding: 10px 5px;
+                }
+            }
+
+            td {
+                &:first-child {
+                    cursor: move;
+                    &::after {
+                        content: url("/images/drag.svg");
+                    }
+                }
+
+                button {
+                    background-color: transparent;
+                    border: none;
+                    cursor: pointer;
+                }
+
+                .preview {
+                    &::after {
+                        content: url("/images/eye.svg");
+                    }
+                }
+
+                .remove {
+                    &::after {
+                        content: url("/images/trash.svg");
+                    }
                 }
             }
 
@@ -267,44 +305,13 @@ nav {
                 &:nth-child(odd) {
                     background-color: $lightGrayColor;
                 }
-                
-                p {
-                    text-align: center;
-                    white-space: nowrap;
-                    max-width: 100%;
-                    text-overflow: ellipsis;
-                    overflow: hidden;
-        
-                    &:first-child {
-                        cursor: move;
-                        &::after {
-                            content: url("/images/drag.svg");
-                        }
-                    }
-                }
             }
-    
-            input[type="color"] {
-                border: none;
-                background-color: transparent;
-            }
-    
-            button {
-                &.preview {
-                    &::after {
-                        content: url("/images/eye.svg");
-                    }
-                }
-    
-                &.remove {
-                    &::after {
-                        content: url("/images/trash.svg");
-                    }
-                }
-                background-color: transparent;
-                border: none;
-                cursor: pointer;
-            }
+        }
+
+        td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 8px 0;
         }
     }
 }

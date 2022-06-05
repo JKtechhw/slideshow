@@ -11,7 +11,7 @@
 <body>
     <nav>
         <h3>Slideshow <span class="description">Dashboard</span></h3>
-        <form method="post" action="/admin/logout"><button type="submit" id="logout"></button></form>
+        <form method="post" action="/admin/logout"><button type="submit" id="logout" title="Odhlásit"></button></form>
     </nav>
 
     <div class="white-box">
@@ -30,23 +30,17 @@
             <div id="global-font" class="option">
                 <h4>Font family</h4>
                 <select>
-                    <optgroup label="Css">
-                        <option class="arial">Arial</option>
-                        <option class="verdana">Verdana</option>
-                        <option class="helvetiva">Helvetica</option>
-                        <option class="tahoma">Tahoma</option>
-                        <option class="trebuchet">Trebuchet MS</option>
-                        <option class="times-new-roman">Times New Roman</option>
-                        <option class="georgia">Georgia</option>
-                        <option class="garamond">Garamond</option>
-                        <option class="courier-new">Courier New</option>
-                        <option class="brush-script">Brush Script MT</option>
-                    </optgroup>
-                    <optgroup label="Externí">
-                        <option class="monserrat">Monserrat</option>
-                        <option class="dinpro">DINpro</option>
-                    </optgroup>
-                    
+                    <option class="arial">Arial</option>
+                    <option class="verdana">Verdana</option>
+                    <option class="helvetiva">Helvetica</option>
+                    <option class="tahoma">Tahoma</option>
+                    <option class="trebuchet">Trebuchet MS</option>
+                    <option class="times-new-roman">Times New Roman</option>
+                    <option class="georgia">Georgia</option>
+                    <option class="garamond">Garamond</option>
+                    <option class="courier-new">Courier New</option>
+                    <option class="brush-script">Brush Script MT</option>
+                    <option class="monserrat">Monserrat</option>            
                 </select>
             </div>
     
@@ -83,36 +77,36 @@
         </div>
 
         <div id="slides-table">
-            <div id="table-slides">
-                <div>
-                    <p></p>
-                    <p>Typ</p>
-                    <p>Timeout (ms)</p>
-                    <p>Barva pozadí</p>
-                    <p>Barva textu</p>
-                    <p>Soubor</p>
-                    <p>Text</p>
-                    <p>Titulky</p>
-                    <p>Ztlumené</p>
-                    <p>Náhled</p>
-                    <p>Skryté</p>
-                    <p>Smazat</p>
-                </div>
-                <div>
-                    <p></p>
-                    <p>image</p>
-                    <p>10000</p>
-                    <p>-</p>
-                    <p>-</p>
-                    <p>1.jpg</p>
-                    <p>-</p>
-                    <p>-</p>
-                    <p>-</p>
-                    <button class="preview"></button>
-                    <p><input type="checkbox"></p>
-                    <button class="remove"></button>
-                </div>
-            </div>
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>Typ</th>
+                    <th>Timeout (ms)</th>
+                    <th>Barva pozadí</th>
+                    <th>Barva textu</th>
+                    <th>Font family</th>
+                    <th>Soubor</th>
+                    <th>Text</th>
+                    <th>Titulky</th>
+                    <th>Náhled</th>
+                    <th>Skryté</th>
+                    <th>Smazat</th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>image</td>
+                    <td>10000</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>1.jpg</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td class="preview-btn"><button class="preview"></button></td>
+                    <td class="hidden-checkbox"><input type="checkbox"></td>
+                    <td class="remove-btn"><button class="remove"></button></td>
+                </tr>
+            </table>
         </div>
     </div>
 
@@ -135,18 +129,22 @@
             <h3>Náhled <span class="description">&nbsp;&nbsp;16:9</span></h3>
             <button id="refresh-iframe-btn" title="Obnovit"></button>
             <div class="iframe-box">
-                <iframe src="/"></iframe>
+                <!-- <iframe class="preview-iframe"></iframe> -->
             </div>
         </div>
     </div>
     <footer>
         <h3>Slideshow</h3>
         <div id="footer-content">
-            <p>Slideshow 0.1.1</p>
-            <p>URl pro klienty: <a href="#" class="host-url"></a></p>
+            <p>Slideshow 0.2.1</p>
+            <p>URL pro klienty: <a href="#" class="host-url"></a></p>
             <p>Vytvořeno pro noc kostelů 2022</p>
             <p class="center"><a href="https://github.com/JKtechhw/slideshow" class="github" target="_blank"></a></p>
         </div>
     </footer>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script>
+        const admin = new adminPanel();
+    </script>
 </body>
 </html>

@@ -1,7 +1,17 @@
 @import url("/fonts/monserrat/monserrat.css");
 @import url("/fonts/DINpro/stylesheet.css");
-::-moz-scrollbar-button, ::-webkit-scrollbar-button {
-  width: 0px;
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3f4f8;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: #aaa;
 }
 
 body {
@@ -284,66 +294,55 @@ nav #logout:hover {
 }
 
 #slides-table {
-  overflow-y: auto;
+  overflow-x: auto;
+  margin: 10px 0;
 }
 
-#slides-table #table-slides {
+#slides-table table {
   width: 100%;
+  margin: 10px 0;
+  border-collapse: collapse;
 }
 
-#slides-table #table-slides div {
-  display: -ms-grid;
-  display: grid;
-  -ms-grid-columns: 0.2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr;
-      grid-template-columns: 0.2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr;
-}
-
-#slides-table #table-slides div:first-child {
-  border-bottom: 1px solid gray;
-}
-
-#slides-table #table-slides div:first-child p {
+#slides-table table tr:first-child {
+  border-bottom: 1px solid #999999;
   white-space: nowrap;
-  text-align: center;
 }
 
-#slides-table #table-slides div:not(:first-child):nth-child(odd) {
-  background-color: #ececec;
+#slides-table table tr:first-child th {
+  padding: 10px 5px;
 }
 
-#slides-table #table-slides div:not(:first-child) p {
-  text-align: center;
-  white-space: nowrap;
-  max-width: 100%;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-#slides-table #table-slides div:not(:first-child) p:first-child {
+#slides-table table tr td:first-child {
   cursor: move;
 }
 
-#slides-table #table-slides div:not(:first-child) p:first-child::after {
+#slides-table table tr td:first-child::after {
   content: url("/images/drag.svg");
 }
 
-#slides-table #table-slides div input[type="color"] {
-  border: none;
-  background-color: transparent;
-}
-
-#slides-table #table-slides div button {
+#slides-table table tr td button {
   background-color: transparent;
   border: none;
   cursor: pointer;
 }
 
-#slides-table #table-slides div button.preview::after {
+#slides-table table tr td .preview::after {
   content: url("/images/eye.svg");
 }
 
-#slides-table #table-slides div button.remove::after {
+#slides-table table tr td .remove::after {
   content: url("/images/trash.svg");
+}
+
+#slides-table table tr:not(:first-child):nth-child(odd) {
+  background-color: #ececec;
+}
+
+#slides-table table td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 8px 0;
 }
 
 .iframe-box {

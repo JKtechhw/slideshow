@@ -106,6 +106,7 @@ class slideshow {
 
         else if (element.type == "video") {
             side = document.createElement("video");
+            side.muted = true;
             //Source for video 
             let videoSrc = document.createElement("source");
             videoSrc.src = this.dir + element.filename;
@@ -117,11 +118,6 @@ class slideshow {
                 subtitlesTrack.src = this.dir + element.subtitles;
                 subtitlesTrack.default = true;
                 side.insertAdjacentElement("beforeend", subtitlesTrack);
-            }
-
-            //Mute video
-            if(element.muted) {
-                side.muted = true;
             }
 
             side.appendChild(videoSrc);

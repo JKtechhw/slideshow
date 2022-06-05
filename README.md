@@ -1,7 +1,7 @@
 # Slideshow
 
 ## Dependences
-- NPM - express, nodemon, mongodb
+- NPM
 - NODE.js
 - MONGODB
 
@@ -21,6 +21,8 @@ In cloned repository directory run:
 ```markdown
 npm install
 ```
+Create .env file in cloned repository directory and specify CONNECTION_STRING for MongoDB and SECRET_KEY for sessions
+
 
 ## Demo
 <a href="http://slideshow.jktech.dev">Demo<a>

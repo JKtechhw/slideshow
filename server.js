@@ -61,14 +61,20 @@ app.get("/admin", (req, res) => {
 });
 
 app.post("/admin", (req, res) => {
-    if(req.body.password == "pepa") {
-        req.session.user = "user";
-        res.redirect("/admin");
-    }
+    MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
+        if(err) {
+            console.error(err);
+            return;
+        }
+        let dbo = database.db("slideshow");
+        dbo.collection("config").findOne({name: "password"}, {projection: {_id: 0, name: 0}}, (err, password) => {
+            if(sha1(req.body.password).localeCompare(password.value) == 0) {
+                req.session.user = "user";
+            }
 
-    else {
-        res.redirect("/admin?wrong-password");
-    }
+            res.redirect("/admin");
+        });
+    });
 });
 
 app.post("/admin/logout", (req, res) => {
