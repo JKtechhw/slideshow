@@ -16,20 +16,20 @@
 
     <div class="white-box">
         <h3>Globální nastavení stylu</h3>
-        <div id="global-settings">
+        <form id="global-settings">
             <div id="global-background-color" class="option">
                 <h4>Barva pozadí</h4>
-                <input type=color value="#000000">
+                <input type=color name="background_color" value="#000000">
             </div>
     
             <div id="global-text-color" class="option">
                 <h4>Barva textu</h4>
-                <input type=color value="#ffffff">
+                <input type=color name="text_color" value="#ffffff">
             </div>
     
             <div id="global-font" class="option">
                 <h4>Font family</h4>
-                <select>
+                <select name="font-family">
                     <option class="arial">Arial</option>
                     <option class="verdana">Verdana</option>
                     <option class="helvetiva">Helvetica</option>
@@ -46,10 +46,10 @@
     
             <div id="global-font" class="option">
                 <h4>Doba přechodu (ms)</h4>
-                <input type="number" value="1000">
+                <input type="number" name="transition_time" value="1000" min="0">
             </div>
-        </div>
-        <button type="button" class="blue-btn">Upravit</button>
+        </form>
+        <button type="submit" class="blue-btn" form="global-settings">Upravit</button>
     </div>
 
     <div class="part-white-box">
@@ -64,7 +64,7 @@
         </div>
 
         <div class="part-box">
-            <h1>6</h1>
+            <h1>1</h1>
             <p class="uppercase">Slidů</p>
         </div>
     </div>
@@ -108,16 +108,17 @@
                 </tr>
             </table>
         </div>
+        <button class="blue-btn">Upravit</button>
     </div>
 
     <div class="part-white-box">
         <div class="part-box">
             <h3>Prohlídky</h3>
             <div class="controls-buttons">
-                <button class="blue-btn">Přidat prohlídku</button>
-                <button class="gray-btn">Smazat prohlídky</button>
+                <button class="blue-btn" id="add-visitation-btn">Přidat prohlídku</button>
+                <button class="gray-btn" id="remove-visitations" disabled>Smazat prohlídky</button>
             </div>
-            <ul>
+            <ul id="visitation-list">
                 <li><label><input type="checkbox"> 18:00</label></li>
                 <li><label><input type="checkbox"> 19:00</label></li>
                 <li><label><input type="checkbox"> 20:00</label></li>
@@ -129,10 +130,21 @@
             <h3>Náhled <span class="description">&nbsp;&nbsp;16:9</span></h3>
             <button id="refresh-iframe-btn" title="Obnovit"></button>
             <div class="iframe-box">
-                <!-- <iframe class="preview-iframe"></iframe> -->
+                <iframe class="preview-iframe"></iframe>
             </div>
         </div>
     </div>
+
+    <div id="add-visitation-box">
+        <button class="close-btn"></button>
+        <form>
+            <div id="add-visitation-input-box">
+                <input type="number" name="hours" min="0" max="23" required> : <input type="number" name="minutes" min="0" max="59" required>
+            </div>
+            <button class="blue-btn">Přidat</button>
+        </form>
+    </div>
+
     <footer>
         <h3>Slideshow</h3>
         <div id="footer-content">

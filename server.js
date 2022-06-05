@@ -60,7 +60,7 @@ app.get("/admin", (req, res) => {
     }
 });
 
-app.post("/admin", (req, res) => {
+app.post("/login", (req, res) => {
     MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
         if(err) {
             console.error(err);
@@ -70,6 +70,11 @@ app.post("/admin", (req, res) => {
         dbo.collection("config").findOne({name: "password"}, {projection: {_id: 0, name: 0}}, (err, password) => {
             if(sha1(req.body.password).localeCompare(password.value) == 0) {
                 req.session.user = "user";
+            }
+
+            else {
+                console.warn("Wrong password from " + req.socket.remoteAddress);
+                console.log(sha1(req.body.password));
             }
 
             res.redirect("/admin");
