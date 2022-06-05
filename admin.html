@@ -11,6 +11,7 @@
 <body>
     <nav>
         <h3>Slideshow <span class="description">Dashboard</span></h3>
+        <form method="post" action="/admin/logout"><button type="submit" id="logout"></button></form>
     </nav>
 
     <div class="white-box">
@@ -118,11 +119,15 @@
     <div class="part-white-box">
         <div class="part-box">
             <h3>Prohlídky</h3>
+            <div class="controls-buttons">
+                <button class="blue-btn">Přidat prohlídku</button>
+                <button class="gray-btn">Smazat prohlídky</button>
+            </div>
             <ul>
-                <li>18:00</li>
-                <li>19:00</li>
-                <li>20:00</li>
-                <li>21:00</li>
+                <li><label><input type="checkbox"> 18:00</label></li>
+                <li><label><input type="checkbox"> 19:00</label></li>
+                <li><label><input type="checkbox"> 20:00</label></li>
+                <li><label><input type="checkbox"> 21:00</label></li>
             </ul>
         </div>
 
@@ -130,14 +135,15 @@
             <h3>Náhled <span class="description">&nbsp;&nbsp;16:9</span></h3>
             <button id="refresh-iframe-btn" title="Obnovit"></button>
             <div class="iframe-box">
-                <!-- <iframe src="/"></iframe> -->
+                <iframe src="/"></iframe>
             </div>
         </div>
     </div>
     <footer>
         <h3>Slideshow</h3>
         <div id="footer-content">
-            <p>URl pro klienty: <a href="http://localhost:3000">http://localhost:3000</a></p>
+            <p>Slideshow 0.1.1</p>
+            <p>URl pro klienty: <a href="#" class="host-url"></a></p>
             <p>Vytvořeno pro noc kostelů 2022</p>
             <p class="center"><a href="https://github.com/JKtechhw/slideshow" class="github" target="_blank"></a></p>
         </div>

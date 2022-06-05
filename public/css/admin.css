@@ -1,5 +1,9 @@
 @import url("/fonts/monserrat/monserrat.css");
 @import url("/fonts/DINpro/stylesheet.css");
+::-moz-scrollbar-button, ::-webkit-scrollbar-button {
+  width: 0px;
+}
+
 body {
   padding: 0;
   margin: 0;
@@ -27,6 +31,33 @@ body {
   text-align: center;
 }
 
+.blue-btn, .gray-btn {
+  border-radius: 5px;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+}
+
+.blue-btn {
+  background-color: #2468d7;
+  color: #fff;
+  -webkit-transition: -webkit-filter 0.2s;
+  transition: -webkit-filter 0.2s;
+  transition: filter 0.2s;
+  transition: filter 0.2s, -webkit-filter 0.2s;
+}
+
+.blue-btn:hover {
+  -webkit-filter: brightness(0.9);
+          filter: brightness(0.9);
+}
+
+.gray-btn {
+  border: 1px solid #999999;
+  color: #000;
+}
+
 .white-box {
   max-width: 1200px;
   margin: 30px auto;
@@ -52,33 +83,6 @@ body {
   position: absolute;
   content: "";
   background-color: #2468d7;
-}
-
-.white-box .blue-btn, .white-box .gray-btn {
-  border-radius: 5px;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  font-family: "Montserrat", sans-serif;
-}
-
-.white-box .blue-btn {
-  background-color: #2468d7;
-  color: #fff;
-  -webkit-transition: -webkit-filter 0.2s;
-  transition: -webkit-filter 0.2s;
-  transition: filter 0.2s;
-  transition: filter 0.2s, -webkit-filter 0.2s;
-}
-
-.white-box .blue-btn:hover {
-  -webkit-filter: brightness(0.9);
-          filter: brightness(0.9);
-}
-
-.white-box .gray-btn {
-  border: 1px solid #999999;
-  color: #000;
 }
 
 .part-white-box {
@@ -121,6 +125,14 @@ body {
 
 .part-white-box .part-box ul {
   width: 100%;
+  list-style-type: none;
+}
+
+.part-white-box .part-box ul label {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 .part-white-box .part-box h1 {
@@ -146,6 +158,17 @@ body {
   background-color: #2468d7;
 }
 
+.part-white-box .part-box .controls-buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+}
+
+.part-white-box .part-box .controls-buttons button {
+  margin: 3px;
+}
+
 nav {
   width: 100%;
   background-color: #fff;
@@ -158,6 +181,12 @@ nav {
   -webkit-box-shadow: 5px 5px 12px 5px rgba(0, 0, 0, 0.1);
           box-shadow: 5px 5px 12px 5px rgba(0, 0, 0, 0.1);
   position: fixed;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 nav h3 {
@@ -174,6 +203,27 @@ nav h3::after {
   position: absolute;
   content: "";
   background-color: #2468d7;
+}
+
+nav #logout {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  -webkit-filter: brightness(0);
+          filter: brightness(0);
+  -webkit-transition: -webkit-filter 0.2s;
+  transition: -webkit-filter 0.2s;
+  transition: filter 0.2s;
+  transition: filter 0.2s, -webkit-filter 0.2s;
+}
+
+nav #logout::after {
+  content: url("/images/logout.svg");
+}
+
+nav #logout:hover {
+  -webkit-filter: brightness(1);
+          filter: brightness(1);
 }
 
 #global-settings {
@@ -372,6 +422,7 @@ footer #footer-content a {
 
 footer #footer-content p {
   margin: 10px 40px;
+  text-align: center;
 }
 
 @media screen and (max-width: 1200px) {
@@ -386,6 +437,9 @@ footer #footer-content p {
 
 @media screen and (max-width: 700px) {
   .part-white-box {
+    display: block;
+  }
+  #global-settings {
     display: block;
   }
 }

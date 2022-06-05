@@ -21,7 +21,6 @@ body {
   background-color: #fff;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  border-radius: 5px;
   width: 300px;
   padding-top: 20px;
   -webkit-box-shadow: 5px 5px 12px 5px rgba(0, 0, 0, 0.1);
@@ -82,5 +81,14 @@ body {
   padding: 10px 0;
   cursor: pointer;
   font-family: 'Montserrat', sans-serif;
+  -webkit-transition: 0.2s -webkit-filter;
+  transition: 0.2s -webkit-filter;
+  transition: 0.2s filter;
+  transition: 0.2s filter, 0.2s -webkit-filter;
+}
+
+#login-box button:hover {
+  -webkit-filter: brightness(0.9);
+          filter: brightness(0.9);
 }
 /*# sourceMappingURL=login.css.map */

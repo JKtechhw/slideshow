@@ -33,7 +33,7 @@ class slideshow {
     
                 else {
                     //Apply default style
-                    let css = `body { font-family: ${data.font_family}; } .side { transition: opacity ${data.transition_time}ms; }`;
+                    let css = `body { font-family: ${data.font_family}; background-color: ${data.background_color}} .side { transition: opacity ${data.transition_time}ms; color: ${data.text_color}}`;
                     let style = document.createElement("style");
                     style.type = "text/css";
                     document.head.appendChild(style);

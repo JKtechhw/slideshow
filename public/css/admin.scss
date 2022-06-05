@@ -3,13 +3,17 @@
 
 $backgroundColor: #f3f4f8; 
 $themeColor: #2468d7;
-$greyColor: #999999;
-$lightGreyColor: #ececec;
+$grayColor: #999999;
+$lightGrayColor: #ececec;
 
 $whiteBoxShadow: 5px 5px 12px 5px rgba(0,0,0,0.1);
 $whiteBoxShadowTop: 5px -5px 12px 5px rgba(0,0,0,0.1);
 
 $themeFont: 'Montserrat', sans-serif;
+
+::-moz-scrollbar-button, ::-webkit-scrollbar-button {
+    width: 0px;
+}
 
 body {
     padding: 0;
@@ -25,7 +29,7 @@ body {
 }
 
 .description {
-    color: $greyColor;
+    color: $grayColor;
     font-weight: 300;
 }
 
@@ -37,6 +41,29 @@ body {
 
 .center {
     text-align: center;
+}
+
+.blue-btn, .gray-btn {
+    border-radius: 5px;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: $themeFont;
+}
+
+.blue-btn {
+    background-color: $themeColor;
+    color: #fff;
+    transition: filter 0.2s;
+
+    &:hover {
+        filter: brightness(0.9);
+    }
+}
+
+.gray-btn {
+    border: 1px solid $grayColor;
+    color: #000;
 }
 
 .white-box {
@@ -60,29 +87,6 @@ body {
             content: "";
             background-color: $themeColor;
         }
-    }
-
-    .blue-btn, .gray-btn {
-        border-radius: 5px;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        font-family: $themeFont;
-    }
-
-    .blue-btn {
-        background-color: $themeColor;
-        color: #fff;
-        transition: filter 0.2s;
-
-        &:hover {
-            filter: brightness(0.9);
-        }
-    }
-
-    .gray-btn {
-        border: 1px solid $greyColor;
-        color: #000;
     }
 }
 
@@ -109,8 +113,14 @@ body {
         &:last-child {
             margin-right: 0;
         }
+
         ul {
             width: 100%;
+            list-style-type: none;
+
+            label {
+                user-select: none;
+            }
         }
 
         h1 {
@@ -134,6 +144,14 @@ body {
                 background-color: $themeColor;
             }
         }
+
+        .controls-buttons {
+            display: flex;
+            width: 100%;
+            button {
+                margin: 3px;
+            }
+        }
     }
 }
 
@@ -147,6 +165,8 @@ nav {
     box-sizing: border-box;
     box-shadow: $whiteBoxShadow;
     position: fixed;
+    display: flex;
+    justify-content: space-between;
 
     h3 {
         margin-left: 10px;
@@ -161,6 +181,21 @@ nav {
             position: absolute;
             content: "";
             background-color: $themeColor;
+        }
+    }
+
+    #logout {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        filter: brightness(0);
+        transition: filter 0.2s;
+        &::after {
+            content: url("/images/logout.svg");
+        }
+
+        &:hover {
+            filter: brightness(1);
         }
     }
 }
@@ -191,7 +226,7 @@ nav {
             padding: 5px;
             border-radius: 3px;
             -moz-appearance: textfield;
-            border: 1px solid $greyColor;
+            border: 1px solid $grayColor;
 
             &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
                 -webkit-appearance: none;
@@ -230,7 +265,7 @@ nav {
 
             &:not(:first-child) {
                 &:nth-child(odd) {
-                    background-color: $lightGreyColor;
+                    background-color: $lightGrayColor;
                 }
                 
                 p {
@@ -344,6 +379,7 @@ footer {
 
         p {
             margin: 10px 40px;
+            text-align: center;
         }
     }
 }
@@ -365,6 +401,10 @@ footer {
 
 @media screen and (max-width: 700px) {
     .part-white-box {
+        display: block;
+    }
+
+    #global-settings {
         display: block;
     }
 }

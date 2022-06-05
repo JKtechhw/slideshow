@@ -25,8 +25,8 @@ body {
 }
 
 #slideshow-box img {
-  -o-object-fit: cover;
-     object-fit: cover;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 
 #slideshow-box .text {

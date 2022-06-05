@@ -17,7 +17,6 @@ body {
 #login-box {
     background-color: #fff;
     box-sizing: border-box;
-    border-radius: 5px;
     width: 300px;
     padding-top: 20px;
     box-shadow: $whiteBoxShadow;
@@ -70,5 +69,10 @@ body {
         padding: 10px 0;
         cursor: pointer;
         font-family: 'Montserrat', sans-serif;
+        transition: 0.2s filter;
+
+        &:hover {
+            filter: brightness(0.9);
+        }
     }
 }
