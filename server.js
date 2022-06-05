@@ -70,14 +70,14 @@ app.post("/login", (req, res) => {
         dbo.collection("config").findOne({name: "password"}, {projection: {_id: 0, name: 0}}, (err, password) => {
             if(sha1(req.body.password).localeCompare(password.value) == 0) {
                 req.session.user = "user";
+                res.redirect("/admin");
             }
 
             else {
                 console.warn("Wrong password from " + req.socket.remoteAddress);
                 console.log(sha1(req.body.password));
+                res.redirect("/admin?wrong-password");
             }
-
-            res.redirect("/admin");
         });
     });
 });

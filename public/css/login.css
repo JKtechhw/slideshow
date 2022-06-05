@@ -36,6 +36,13 @@ body {
   opacity: 0.9;
 }
 
+#login-box #login-status {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  width: 100%;
+}
+
 #login-box #background-input {
   display: -webkit-box;
   display: -ms-flexbox;
