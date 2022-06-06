@@ -23,7 +23,11 @@ $themeFont: 'Montserrat', sans-serif;
 
 ::-webkit-scrollbar-thumb {
     border-radius: 5px;
-    background: #aaa; 
+    background: #888;
+
+    &:hover {
+        background: #666;
+    }
 }
 
 body {
@@ -60,6 +64,7 @@ body {
     padding: 5px 10px;
     cursor: pointer;
     font-family: $themeFont;
+    user-select: none;
     
     &[disabled] {
         cursor: not-allowed;
@@ -278,22 +283,43 @@ nav {
 #slides-table {
     overflow-x: auto;
     margin: 10px 0;
+
     table {
         width: 100%;
         margin: 10px 0;
         border-collapse: collapse;
 
-        tr {
-            &:first-child {
+        thead {
+            th {
                 border-bottom: 1px solid $grayColor;
                 white-space: nowrap;
+                padding-bottom: 10px;
+            }
+        }
 
-                th {
-                    padding: 10px 5px;
-                }
+        tr {
+            &:nth-child(even) {
+                background-color: $lightGrayColor;
             }
 
             td {
+                text-align: center;
+                vertical-align: middle;
+                padding: 8px 0;
+
+                p {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 150px;
+                    margin: 0;
+                }
+
+                input[type="color"] {
+                    background-color: transparent;
+                    border: none;
+                }
+
                 &:first-child {
                     cursor: move;
                     &::after {
@@ -319,18 +345,6 @@ nav {
                     }
                 }
             }
-
-            &:not(:first-child) {
-                &:nth-child(odd) {
-                    background-color: $lightGrayColor;
-                }
-            }
-        }
-
-        td {
-            text-align: center;
-            vertical-align: middle;
-            padding: 8px 0;
         }
     }
 }
@@ -538,5 +552,5 @@ footer {
 }
 
 .dinpro {
-    font-family: "DINpro", sans-serif;
+    font-family: 'DINpro', sans-serif;
 }

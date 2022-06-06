@@ -16,10 +16,10 @@
 
     <div class="white-box">
         <h3>Globální nastavení stylu</h3>
-        <form id="global-settings">
+        <form id="global-settings" method="post" action="/admin/global">
             <div id="global-background-color" class="option">
                 <h4>Barva pozadí</h4>
-                <input type=color name="background_color" value="#000000">
+                <input type=color name="background_color">
             </div>
     
             <div id="global-text-color" class="option">
@@ -29,22 +29,10 @@
     
             <div id="global-font" class="option">
                 <h4>Font family</h4>
-                <select name="font-family">
-                    <option class="arial">Arial</option>
-                    <option class="verdana">Verdana</option>
-                    <option class="helvetiva">Helvetica</option>
-                    <option class="tahoma">Tahoma</option>
-                    <option class="trebuchet">Trebuchet MS</option>
-                    <option class="times-new-roman">Times New Roman</option>
-                    <option class="georgia">Georgia</option>
-                    <option class="garamond">Garamond</option>
-                    <option class="courier-new">Courier New</option>
-                    <option class="brush-script">Brush Script MT</option>
-                    <option class="monserrat">Monserrat</option>            
-                </select>
+                <select name="font_family" id="global-font-selection"></select>
             </div>
     
-            <div id="global-font" class="option">
+            <div id="global-transition-time" class="option">
                 <h4>Doba přechodu (ms)</h4>
                 <input type="number" name="transition_time" value="1000" min="0">
             </div>
@@ -78,34 +66,68 @@
 
         <div id="slides-table">
             <table>
-                <tr>
-                    <th>#</th>
-                    <th>Typ</th>
-                    <th>Timeout (ms)</th>
-                    <th>Barva pozadí</th>
-                    <th>Barva textu</th>
-                    <th>Font family</th>
-                    <th>Soubor</th>
-                    <th>Text</th>
-                    <th>Titulky</th>
-                    <th>Náhled</th>
-                    <th>Skryté</th>
-                    <th>Smazat</th>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>image</td>
-                    <td>10000</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>1.jpg</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td class="preview-btn"><button class="preview"></button></td>
-                    <td class="hidden-checkbox"><input type="checkbox"></td>
-                    <td class="remove-btn"><button class="remove"></button></td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Typ</th>
+                        <th>Timeout (ms)</th>
+                        <th>Barva pozadí</th>
+                        <th>Barva textu</th>
+                        <th>Font family</th>
+                        <th>Soubor</th>
+                        <th>Text</th>
+                        <th>Titulky</th>
+                        <th>Náhled</th>
+                        <th>Skryté</th>
+                        <th>Smazat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="drag-slides"></td>
+                        <td>image</td>
+                        <td>10000</td>
+                        <td><input type="color"></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>1.jpg</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td class="preview-btn"><button class="preview"></button></td>
+                        <td class="hidden-checkbox"><input type="checkbox"></td>
+                        <td class="remove-btn"><button class="remove"></button></td>
+                    </tr>
+
+                    <tr>
+                        <td class="drag-slides"></td>
+                        <td>video</td>
+                        <td>-</td>
+                        <td><input type="color"></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>video.mp4</td>
+                        <td>-</td>
+                        <td>subtitles.vtt</td>
+                        <td class="preview-btn"><button class="preview"></button></td>
+                        <td class="hidden-checkbox"><input type="checkbox"></td>
+                        <td class="remove-btn"><button class="remove"></button></td>
+                    </tr>
+
+                    <tr>
+                        <td class="drag-slides"></td>
+                        <td>text</td>
+                        <td>10000</td>
+                        <td><input type="color"></td>
+                        <td><input type="color" value="#ffffff"></td>
+                        <td>-</td>
+                        <td>1.jpg</td>
+                        <td><p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nullam sit amet magna in magna gravida vehicula. Curabitur vitae diam non enim vestibulum interdum.</p></td>
+                        <td>-</td>
+                        <td class="preview-btn"><button class="preview"></button></td>
+                        <td class="hidden-checkbox"><input type="checkbox"></td>
+                        <td class="remove-btn"><button class="remove"></button></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
         <button class="blue-btn">Upravit</button>
@@ -118,19 +140,14 @@
                 <button class="blue-btn" id="add-visitation-btn">Přidat prohlídku</button>
                 <button class="gray-btn" id="remove-visitations" disabled>Smazat prohlídky</button>
             </div>
-            <ul id="visitation-list">
-                <li><label><input type="checkbox"> 18:00</label></li>
-                <li><label><input type="checkbox"> 19:00</label></li>
-                <li><label><input type="checkbox"> 20:00</label></li>
-                <li><label><input type="checkbox"> 21:00</label></li>
-            </ul>
+            <ul id="visitation-list"></ul>
         </div>
 
         <div class="part-box" id="prewiew-box">
             <h3>Náhled <span class="description">&nbsp;&nbsp;16:9</span></h3>
             <button id="refresh-iframe-btn" title="Obnovit"></button>
             <div class="iframe-box">
-                <iframe class="preview-iframe"></iframe>
+                <!-- <iframe class="preview-iframe"></iframe> -->
             </div>
         </div>
     </div>
@@ -145,6 +162,13 @@
         </form>
     </div>
 
+    <div id="add-slide-box">
+        <button class="close-btn"></button>
+        <form>
+
+        </form>
+    </div>
+
     <footer>
         <h3>Slideshow</h3>
         <div id="footer-content">
@@ -155,7 +179,15 @@
         </div>
     </footer>
     <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/Sortable.js"></script>
     <script>
+        let player = document.querySelector("#slides-table table tbody");
+        new Sortable(player,{
+            handle:".drag-slides",
+            forceFallback: true,
+            animation:200,
+            ghostClass: 'slides-table-ghost'
+        });
         const admin = new adminPanel();
     </script>
 </body>

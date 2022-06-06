@@ -1,12 +1,11 @@
-
+require("dotenv").config();
 const express = require("express");
 const session = require('express-session');
 const bodyParser = require("body-parser");
 const { MongoClient } = require("mongodb");
+const client = new MongoClient(process.env.CONNECTION_STRING);
 const sha1 = require("sha1");
 const config = require("config");
-const res = require("express/lib/response");
-require("dotenv").config();
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -41,13 +40,48 @@ app.get("/api/sites", (req, res) => {
                     return;
                 }
                 let response = ` ${JSON.stringify(resultConfig).slice(1, -1)}, "sites": ${JSON.stringify(resultSites)}`;
-
-
                 let hash = sha1(response); 
                 res.send(`{"hash": "${hash}", ${response}}`);
             });
         });
     });
+});
+
+app.get("/api/admin", (req, res) => {
+    if(req.session.user) {
+        MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
+            if(err) {
+                console.error(err);
+                return;
+            }
+            let dbo = database.db("slideshow");
+            dbo.collection("slides").find({}).sort({ "position": 1 }).toArray((err, resultSites) => {
+                if(err) {
+                    console.error(err);
+                    return;
+                }
+    
+                dbo.collection("config").findOne({name: "config"}, {projection: {_id: 0, name: 0}}, (err, resultConfig) => {
+                    if(err) {
+                        console.error(err);
+                        return;
+                    }
+
+                    dbo.collection("config").findOne({name: "fonts"}, {projection: {_id: 0, name: 0}}, (err, resultFonts) => {
+                        if(err) {
+                            console.error(err);
+                            return;
+                        }
+                        res.send(`{${JSON.stringify(resultConfig).slice(1, -1)}, ${JSON.stringify(resultFonts).slice(1, -1)},"sites": ${JSON.stringify(resultSites)}}`);
+                    });
+                });
+            });
+        });
+    }
+
+    else {
+        res.status(401).send("401 Unauthorized");
+    }
 });
 
 app.get("/admin", (req, res) => {
@@ -75,7 +109,6 @@ app.post("/login", (req, res) => {
 
             else {
                 console.warn("Wrong password from " + req.socket.remoteAddress);
-                console.log(sha1(req.body.password));
                 res.redirect("/admin?wrong-password");
             }
         });
@@ -83,8 +116,64 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/admin/logout", (req, res) => {
-    req.session.user = null;
+    req.session = null;
     res.redirect("/admin");
+});
+
+app.post("/admin/global", (req, res) => {
+    if(req.session.user) {
+        MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
+            if(err) {
+                console.error(err);
+                return;
+            }
+
+            let dbo = database.db("slideshow");
+            let newValues = { $set: {transition_time: req.body.transition_time, font_family: req.body.font_family, background_color: req.body.background_color, text_color: req.body.text_color}};
+
+            dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
+                if(err) {
+                    res.send("Aktualizace se nezdařila");
+                    console.log(err);
+                    return;
+                }
+
+                res.send("Aktualizace byla úspěšná");
+            });
+        });
+    }
+
+    else {
+        res.status(401).send("401 Unauthorized");
+    }
+});
+
+app.post("/admin/visitations", (req, res) => {
+    if(req.session.user) {
+        MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
+            if(err) {
+                console.error(err);
+                return;
+            }
+
+            let dbo = database.db("slideshow");
+            let newValues = { $set: {transition_time: req.body.transition_time, font_family: req.body.font_family, background_color: req.body.background_color, text_color: req.body.text_color}};
+
+            dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
+                if(err) {
+                    res.send("Aktualizace se nezdařila");
+                    console.log(err);
+                    return;
+                }
+
+                res.send("Aktualizace byla úspěšná");
+            });
+        });
+    }
+
+    else {
+        res.status(401).send("401 Unauthorized");
+    }
 });
 
 app.get("*", (req, res) => {

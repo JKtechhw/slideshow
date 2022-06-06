@@ -33,14 +33,19 @@ class slideshow {
     
                 else {
                     //Apply default style
-                    let css = `body { font-family: ${data.font_family}; background-color: ${data.background_color}} .side { transition: opacity ${data.transition_time}ms; color: ${data.text_color}}`;
+                    if(document.head.querySelector("style.global-style")) {
+                        document.head.querySelector("style.global-style").remove();
+                    }
+                    //Set default style
+                    let css = `body { font-family: ${data.font_family}; background-color: ${data.background_color};} .side { transition: opacity ${data.transition_time}ms; color: ${data.text_color}; background-color: ${data.background_color};}`;
                     let style = document.createElement("style");
+                    style.classList.add("global-style");
                     style.type = "text/css";
                     document.head.appendChild(style);
                     style.appendChild(document.createTextNode(css));
 
+                    this.transitionTime = data.transition_time;
                     this.visitationTimes = data.visitation_times;
-
                     this.buildSlideshowBox();
                 }
     
@@ -70,7 +75,8 @@ class slideshow {
         });
 
         //Set last child as active with animation effect
-        this.target.querySelector(".side:last-child").style.animation = "fadeIn .3s linear";
+        console.log(`fadeIn ${this.transitionTime}ms linear`)
+        this.target.querySelector(".side:last-child").style.animation = `fadeIn ${this.transitionTime}ms linear`;
         this.target.querySelector(".side:last-child").classList.add("active");
         //Set timeout on first screen
         setTimeout(this.changeSite.bind(this),this.sites[0].timeout);
