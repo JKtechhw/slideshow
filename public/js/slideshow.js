@@ -46,6 +46,12 @@ class slideshow {
 
                     this.transitionTime = data.transition_time;
                     this.visitationTimes = data.visitation_times;
+
+                    this.visitationTimes ? this.visitationTimes = this.visitationTimes : this.visitationTimes = [];
+                    //Sort by time
+                    this.visitationTimes.sort(function (a, b) {
+                        return a.localeCompare(b);
+                    });
                     this.buildSlideshowBox();
                 }
     
@@ -75,7 +81,6 @@ class slideshow {
         });
 
         //Set last child as active with animation effect
-        console.log(`fadeIn ${this.transitionTime}ms linear`)
         this.target.querySelector(".side:last-child").style.animation = `fadeIn ${this.transitionTime}ms linear`;
         this.target.querySelector(".side:last-child").classList.add("active");
         //Set timeout on first screen

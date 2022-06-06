@@ -30,6 +30,7 @@ class adminPanel {
         this.setupPreview();
         this.addEventsToButton();
         this.createVisitations("#visitation-list");
+        this.hideLoadingBox();
     }
 
     setupGlobalForm() {
@@ -63,15 +64,36 @@ class adminPanel {
     createVisitations(target) {
         let targetBox = document.querySelector(target);
         let visitations = this.dataFromApi.visitation_times;
-        for (let i = 0; i < visitations.length; i++) {
-            let time = document.createElement("li");
-            let timeLabel = document.createElement("label");
-            timeLabel.innerText = " " + visitations[i];
-            let timeInput = document.createElement("input");
-            timeInput.type = "checkbox";
-            timeLabel.insertAdjacentElement("afterbegin",timeInput);
-            time.appendChild(timeLabel);
-            targetBox.appendChild(time);
+
+        if(visitations) {
+            visitations.sort(function (a, b) {
+                return a.localeCompare(b);
+            });
+        }
+
+        if(visitations) {
+            for (let i = 0; i < visitations.length; i++) {
+                let time = document.createElement("li");
+                let timeLabel = document.createElement("label");
+                timeLabel.innerText = " " + visitations[i];
+                let timeInput = document.createElement("input");
+                timeInput.type = "checkbox";
+                timeInput.value = visitations[i];
+                timeInput.checked = true;
+                timeInput.name = "visitationtimes[]";
+                timeLabel.insertAdjacentElement("afterbegin",timeInput);
+                time.appendChild(timeLabel);
+                targetBox.appendChild(time);
+            }
+        }
+
+        else {
+            document.querySelector("#remove-visitations").remove();
+            let message = document.createElement("p");
+            message.classList.add("description");
+            message.classList.add("center");
+            message.innerText = "Nejsou nastavené žádné prohlídky";
+            targetBox.appendChild(message);
         }
     }
 
@@ -110,19 +132,28 @@ class adminPanel {
         else {
             document.body.style.overflow = "hidden";
             document.querySelector("#add-visitation-box").classList.add("active");
-            document.querySelector("#add-visitation-box input[name=\"hours\"]").value = date.getHours() + 1;
-            document.querySelector("#add-visitation-box input[name=\"minutes\"]").value = "00";
+            document.querySelector("#add-visitation-box input[name=\"hours\"]").value = date.getHours();
+            document.querySelector("#add-visitation-box input[name=\"minutes\"]").value = date.getMinutes();
         }
     }
 
     getVisitationListChange() {
-        let visitationList = document.querySelectorAll("#visitation-list input[type=\"checkbox\"]:checked");
-        if(visitationList.length == 0) {
+        let visitationListChecked = document.querySelectorAll("#visitation-list input[type=\"checkbox\"]:checked").length;
+        let visitationList = document.querySelectorAll("#visitation-list input[type=\"checkbox\"]").length;
+        console.log(visitationList, visitationListChecked)
+        if(visitationListChecked - visitationList == 0) {
             document.querySelector("#remove-visitations").disabled = true;
         }
 
         else {
             document.querySelector("#remove-visitations").disabled = false;
         }
+    }
+
+    hideLoadingBox() {
+        document.querySelector("#loading-box").classList.add("hidden");
+        setTimeout(() => {
+            document.querySelector("#loading-box").remove();
+        }, 5000);
     }
 }

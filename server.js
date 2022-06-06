@@ -116,7 +116,8 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/admin/logout", (req, res) => {
-    req.session = null;
+    console.warn("Logged out from " + req.socket.remoteAddress);
+    req.session.user = null;
     res.redirect("/admin");
 });
 
@@ -148,7 +149,7 @@ app.post("/admin/global", (req, res) => {
     }
 });
 
-app.post("/admin/visitations", (req, res) => {
+app.post("/admin/remove-visitations", (req, res) => {
     if(req.session.user) {
         MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
             if(err) {
@@ -156,9 +157,18 @@ app.post("/admin/visitations", (req, res) => {
                 return;
             }
 
-            let dbo = database.db("slideshow");
-            let newValues = { $set: {transition_time: req.body.transition_time, font_family: req.body.font_family, background_color: req.body.background_color, text_color: req.body.text_color}};
+            if(!Array.isArray(req.body['visitationtimes[]']) && req.body['visitationtimes[]']) {
+                console.log(req.body['visitationtimes[]'])
+                req.body['visitationtimes[]'] = [ req.body['visitationtimes[]'] ];
+                console.log(req.body['visitationtimes[]'])
+            }
 
+            else {
+                req.body['visitationtimes[]'] ? req.body['visitationtimes[]']: [];
+            }
+
+            let newValues = { $set: { visitation_times: req.body['visitationtimes[]']} };
+            let dbo = database.db("slideshow");
             dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
                 if(err) {
                     res.send("Aktualizace se nezdařila");
@@ -167,6 +177,49 @@ app.post("/admin/visitations", (req, res) => {
                 }
 
                 res.send("Aktualizace byla úspěšná");
+            });
+        });
+    }
+
+    else {
+        res.status(401).send("401 Unauthorized");
+    }
+});
+
+app.post("/admin/add-visitations", (req, res) => {
+    if(req.session.user) {
+        MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
+            if(err) {
+                console.error(err);
+                return;
+            }
+            
+            let dbo = database.db("slideshow");
+            dbo.collection("config").findOne({name: "config"}, (err, getTime) => {
+                if(err) {
+                    console.log(err);
+                    return;
+                }
+
+                getTime.visitation_times ? getTime.visitation_times = getTime.visitation_times : getTime.visitation_times = [];
+
+                if(getTime.visitation_times.includes(req.body.hours + ":" + req.body.minutes)) {
+                    res.send("Prohlídka na tento čas je již nastavena");
+                }
+
+                else {
+                    getTime.visitation_times.push(req.body.hours + ":" + req.body.minutes);
+                    let newValues = { $set: { visitation_times: getTime.visitation_times} };
+                    dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
+                        if(err) {
+                        res.send("Aktualizace se nezdařila");
+                            console.log(err);
+                            return;
+                        }
+
+                        res.send("Aktualizace byla úspěšná");
+                    });
+                }
             });
         });
     }

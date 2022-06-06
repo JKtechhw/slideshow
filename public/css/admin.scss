@@ -149,12 +149,40 @@ body {
             margin-right: 0;
         }
 
-        ul {
+        form {
             width: 100%;
-            list-style-type: none;
+            ul {
+                box-sizing: border-box;
+                width: 100%;
+                list-style-type: none;
+    
+                label {
+                    user-select: none;
+                }
 
-            label {
-                user-select: none;
+                input[type="checkbox"] {
+                    width: 0px;
+                    position: relative;
+
+                    &::before {
+                        position: absolute;
+                        left: -25px;
+                        width: 15px;
+                        height: 100%;
+                        content: "";
+                        border: 1px solid $grayColor;
+                        border-radius: 2px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+
+                input[type="checkbox"]:not(:checked){
+                    &::before {
+                        content: url("/images/check.svg");
+                    }
+                }
             }
         }
 
@@ -481,6 +509,36 @@ footer {
     }
 }
 
+#loading-box {
+    position: fixed;
+    left: 0;
+    background-color: #fff;
+    width: 100%;
+    height: 100vh;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    top: 0;
+    transition: 1s top;
+
+    &.hidden {
+        top: -100%;
+    }
+
+    .spinner {
+        width: 20px;
+        height: 20px;
+        border-radius: 100%;
+        border-bottom: 10px solid $themeColor;
+        border-left: 10px solid $themeColor;
+        border-top: 10px solid $grayColor;
+        border-right: 10px solid $grayColor;
+        animation: spinning infinite linear 2s;
+    }
+}
+
 @media screen and (max-width: 1200px) {
     .white-box {
         margin-left: 10px;
@@ -553,4 +611,14 @@ footer {
 
 .dinpro {
     font-family: 'DINpro', sans-serif;
+}
+
+@keyframes spinning {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }

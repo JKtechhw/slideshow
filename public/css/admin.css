@@ -160,16 +160,50 @@ body {
   margin-right: 0;
 }
 
-.part-white-box .part-box ul {
+.part-white-box .part-box form {
+  width: 100%;
+}
+
+.part-white-box .part-box form ul {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   width: 100%;
   list-style-type: none;
 }
 
-.part-white-box .part-box ul label {
+.part-white-box .part-box form ul label {
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
+}
+
+.part-white-box .part-box form ul input[type="checkbox"] {
+  width: 0px;
+  position: relative;
+}
+
+.part-white-box .part-box form ul input[type="checkbox"]::before {
+  position: absolute;
+  left: -25px;
+  width: 15px;
+  height: 100%;
+  content: "";
+  border: 1px solid #999999;
+  border-radius: 2px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.part-white-box .part-box form ul input[type="checkbox"]:not(:checked)::before {
+  content: url("/images/check.svg");
 }
 
 .part-white-box .part-box h1 {
@@ -531,6 +565,47 @@ footer #footer-content p {
   margin: 10px 0;
 }
 
+#loading-box {
+  position: fixed;
+  left: 0;
+  background-color: #fff;
+  width: 100%;
+  height: 100vh;
+  z-index: 3;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  top: 0;
+  -webkit-transition: 1s top;
+  transition: 1s top;
+}
+
+#loading-box.hidden {
+  top: -100%;
+}
+
+#loading-box .spinner {
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  border-bottom: 10px solid #2468d7;
+  border-left: 10px solid #2468d7;
+  border-top: 10px solid #999999;
+  border-right: 10px solid #999999;
+  -webkit-animation: spinning infinite linear 2s;
+          animation: spinning infinite linear 2s;
+}
+
 @media screen and (max-width: 1200px) {
   .white-box {
     margin-left: 10px;
@@ -595,6 +670,28 @@ footer #footer-content p {
 }
 
 .dinpro {
-  font-family: "DINpro", sans-serif;
+  font-family: 'DINpro', sans-serif;
+}
+
+@-webkit-keyframes spinning {
+  from {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+
+@keyframes spinning {
+  from {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
 }
 /*# sourceMappingURL=admin.css.map */

@@ -138,9 +138,11 @@
             <h3>Prohlídky</h3>
             <div class="controls-buttons">
                 <button class="blue-btn" id="add-visitation-btn">Přidat prohlídku</button>
-                <button class="gray-btn" id="remove-visitations" disabled>Smazat prohlídky</button>
+                <button class="gray-btn" id="remove-visitations" form="visitations-form" disabled>Smazat prohlídky</button>
             </div>
-            <ul id="visitation-list"></ul>
+            <form id="visitations-form" action="/admin/remove-visitations" method="post">
+                <ul id="visitation-list"></ul>
+            </form>
         </div>
 
         <div class="part-box" id="prewiew-box">
@@ -152,27 +154,28 @@
         </div>
     </div>
 
+    <!-- Add visitations box -->
     <div id="add-visitation-box">
         <button class="close-btn"></button>
-        <form>
+        <form action="/admin/add-visitations" method="post" >
             <div id="add-visitation-input-box">
                 <input type="number" name="hours" min="0" max="23" required> : <input type="number" name="minutes" min="0" max="59" required>
             </div>
-            <button class="blue-btn">Přidat</button>
+            <button class="blue-btn" type="submit">Přidat</button>
         </form>
     </div>
 
-    <div id="add-slide-box">
-        <button class="close-btn"></button>
-        <form>
-
-        </form>
+    <div id="loading-box">
+        <span class="spinner"></span>
+        <p>
+            Načítání administrace ...
+        </p>
     </div>
 
     <footer>
         <h3>Slideshow</h3>
         <div id="footer-content">
-            <p>Slideshow 0.2.1</p>
+            <p>Slideshow 0.2.2</p>
             <p>URL pro klienty: <a href="#" class="host-url"></a></p>
             <p>Vytvořeno pro noc kostelů 2022</p>
             <p class="center"><a href="https://github.com/JKtechhw/slideshow" class="github" target="_blank"></a></p>
