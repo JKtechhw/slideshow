@@ -2,8 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const session = require('express-session');
 const bodyParser = require("body-parser");
+const formidable = require('formidable');
+const fs = require('fs');
 const { MongoClient } = require("mongodb");
-const client = new MongoClient(process.env.CONNECTION_STRING);
 const sha1 = require("sha1");
 const config = require("config");
 let requestCount = 0;
@@ -126,31 +127,33 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/admin/logout", (req, res) => {
-    console.warn("Logged out from " + req.socket.remoteAddress);
+    console.log("Logged out from " + req.socket.remoteAddress);
     req.session.user = null;
     res.redirect("/admin");
 });
 
 app.post("/admin/global", (req, res) => {
-    console.log(req.body)
     if(req.session.user) {
-        MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
-            if(err) {
-                console.error(err);
-                return;
-            }
-
-            let dbo = database.db("slideshow");
-            let newValues = { $set: {transition_time: req.body.transition_time, font_family: req.body.font_family, background_color: req.body.background_color, text_color: req.body.text_color}};
-
-            dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
+        let form = new formidable.IncomingForm();
+        form.parse(req, (err, fields, files) => {
+            MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
                 if(err) {
-                    res.send("Aktualizace se nezdařila");
-                    console.log(err);
+                    console.error(err);
                     return;
                 }
-
-                res.send("Aktualizace byla úspěšná");
+    
+                let dbo = database.db("slideshow");
+                let newValues = { $set: {transition_time: fields.transition_time, font_family: fields.font_family, background_color: fields.background_color, text_color: fields.text_color}};
+    
+                dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
+                    if(err) {
+                        res.send("Aktualizace se nezdařila");
+                        console.log(err);
+                        return;
+                    }
+    
+                    res.send("Aktualizace byla úspěšná");
+                });
             });
         });
     }
@@ -162,30 +165,33 @@ app.post("/admin/global", (req, res) => {
 
 app.post("/admin/remove-visitations", (req, res) => {
     if(req.session.user) {
-        MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
-            if(err) {
-                console.error(err);
-                return;
-            }
-
-            if(!Array.isArray(req.body['visitationtimes[]']) && req.body['visitationtimes[]']) {
-                req.body['visitationtimes[]'] = [ req.body['visitationtimes[]'] ];
-            }
-
-            else {
-                req.body['visitationtimes[]'] ? req.body['visitationtimes[]']: [];
-            }
-
-            let newValues = { $set: { visitation_times: req.body['visitationtimes[]']} };
-            let dbo = database.db("slideshow");
-            dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
+        let form = new formidable.IncomingForm({multiples: true});
+        form.parse(req, (err, fields, files) => {
+            MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
                 if(err) {
-                    res.send("Aktualizace se nezdařila");
-                    console.log(err);
+                    console.error(err);
                     return;
                 }
 
-                res.send("Aktualizace byla úspěšná");
+                if(!Array.isArray(fields.visitationtimes) && fields.visitationtimes) {
+                    fields.visitationtimes = [ fields.visitationtimes ];
+                }
+
+                else {
+                    fields.visitationtimes ? fields.visitationtimes : [];
+                }
+
+                let newValues = { $set: { visitation_times: fields.visitationtimes } };
+                let dbo = database.db("slideshow");
+                dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
+                    if(err) {
+                        res.send("Časy se nepodařilo odebrat");
+                        console.log(err);
+                        return;
+                    }
+
+                    res.send("Časy byly úspěšně odebrány");
+                });
             });
         });
     }
@@ -197,38 +203,41 @@ app.post("/admin/remove-visitations", (req, res) => {
 
 app.post("/admin/add-visitations", (req, res) => {
     if(req.session.user) {
-        MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
-            if(err) {
-                console.error(err);
-                return;
-            }
-            
-            let dbo = database.db("slideshow");
-            dbo.collection("config").findOne({name: "config"}, (err, getTime) => {
+        let form = new formidable.IncomingForm();
+        form.parse(req, (err, fields, files) => {
+            MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
                 if(err) {
-                    console.log(err);
+                    console.error(err);
                     return;
                 }
-
-                getTime.visitation_times ? getTime.visitation_times = getTime.visitation_times : getTime.visitation_times = [];
-
-                if(getTime.visitation_times.includes(req.body.hours + ":" + req.body.minutes)) {
-                    res.send("Prohlídka na tento čas je již nastavena");
-                }
-
-                else {
-                    getTime.visitation_times.push(req.body.hours + ":" + req.body.minutes);
-                    let newValues = { $set: { visitation_times: getTime.visitation_times} };
-                    dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
-                        if(err) {
-                        res.send("Aktualizace se nezdařila");
-                            console.log(err);
-                            return;
-                        }
-
-                        res.send("Aktualizace byla úspěšná");
-                    });
-                }
+                
+                let dbo = database.db("slideshow");
+                dbo.collection("config").findOne({name: "config"}, (err, getTime) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+    
+                    getTime.visitation_times ? getTime.visitation_times = getTime.visitation_times : getTime.visitation_times = [];
+    
+                    if(getTime.visitation_times.includes(fields.hours + ":" + fields.minutes)) {
+                        res.send("Prohlídka na tento čas je již nastavena");
+                    }
+    
+                    else {
+                        getTime.visitation_times.push(fields.hours + ":" + fields.minutes);
+                        let newValues = { $set: { visitation_times: getTime.visitation_times} };
+                        dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
+                            if(err) {
+                            res.send("Aktualizace se nezdařila");
+                                console.log(err);
+                                return;
+                            }
+    
+                            res.send("Aktualizace byla úspěšná");
+                        });
+                    }
+                });
             });
         });
     }
@@ -237,6 +246,92 @@ app.post("/admin/add-visitations", (req, res) => {
         res.status(401).send("401 Unauthorized");
     }
 });
+
+app.post("/admin/add-slide", (req, res) => {
+    if(req.session.user) {
+       let form = new formidable.IncomingForm();
+        form.parse(req, (err, fields, files) => {
+            let uploadFilename = null;
+            let uploadSubtitles = null;
+            let hidden = fields.add_slide_hidden ? true : false;
+            if(files.add_slide_file) {
+                let oldPath = files.add_slide_file.filepath;
+                let newPath = __dirname + "/public/content/" + files.add_slide_file.originalFilename;
+                uploadFilename = files.add_slide_file.originalFilename;
+        
+                if(!fs.existsSync(newPath)) {
+                    fs.rename(oldPath, newPath, (err) => {
+                        if (err) {
+                            console.error(err);
+                        };
+                    });
+                }
+        
+                else {
+                    console.error("File exists!");
+                }
+            }
+
+            if(files.add_slide_subtitles) {
+                let oldPath = files.add_slide_subtitles.filepath;
+                let newPath = __dirname + "/public/content/" + files.add_slide_subtitles.originalFilename;
+                uploadSubtitles = files.add_slide_subtitles.originalFilename;
+        
+                if(!fs.existsSync(newPath)) {
+                    fs.rename(oldPath, newPath, (err) => {
+                        if (err) {
+                            console.error(err);
+                        };
+                    });
+                }
+        
+                else {
+                    console.error("File exists!");
+                }
+            }
+
+
+            let newValues = {  
+                "name": fields.add_slide_name,  
+                "type": fields.add_slide_type,
+                "color": fields.add_slide_color,
+                "background_color": fields.add_slide_background_color,
+                "filename": uploadFilename,
+                "subtitles": uploadSubtitles,
+                "timeout": fields.add_slide_timeout,
+                "text": fields.text,
+                "position": 8,
+                "hidden": hidden
+            }
+
+            MongoClient.connect(process.env.CONNECTION_STRING, (err, db) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+
+                let dbo = db.db("slideshow");
+                dbo.collection("slides").insertOne(newValues, (err, dbRes) => {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                    res.send("Slide byl přídán");
+                    db.close();
+                });
+            });
+        });
+    }
+
+    else {
+        res.status(401).send("401 Unauthorized");
+    }
+});
+
+app.post("/admin/remove-slide", (req, res) => {
+
+});
+
 
 app.get("*", (req, res) => {
     res.status(404).send("Error 404");

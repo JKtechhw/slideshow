@@ -84,7 +84,17 @@ class slideshow {
         this.target.querySelector(".side:last-child").style.animation = `fadeIn ${this.transitionTime}ms linear`;
         this.target.querySelector(".side:last-child").classList.add("active");
         //Set timeout on first screen
-        setTimeout(this.changeSite.bind(this),this.sites[0].timeout);
+        let interval;
+        if(this.sites[0].type == "visitationtime") {
+            interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes);
+        }
+
+        setTimeout(() => {
+            if(interval) {
+                clearInterval(interval);
+            }
+            this.changeSite();
+        },this.sites[0].timeout);
     }
 
     async recoverSites() {
@@ -101,7 +111,17 @@ class slideshow {
         });
         
         this.target.querySelector(".side:last-child").classList.add("active");
-        setTimeout(this.changeSite.bind(this), this.sites[0].timeout);
+        let interval;
+        if(this.sites[0].type == "visitationtime") {
+            interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes);
+        }
+
+        setTimeout(() => {
+            if(interval) {
+                clearInterval(interval);
+            }
+            this.changeSite();
+        }, this.sites[0].timeout);
     }
 
     addSite(element) {
@@ -121,7 +141,6 @@ class slideshow {
             //Source for video 
             let videoSrc = document.createElement("source");
             videoSrc.src = this.dir + element.filename;
-            videoSrc.type = element.video_type;
 
             //Track for subtitles
             if(element.subtitles) {

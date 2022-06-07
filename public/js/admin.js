@@ -29,7 +29,7 @@ class adminPanel {
         this.addUrlToHosts();
         this.setupPreview();
         this.addEventsToButton();
-        this.createVisitations("#visitation-list");
+        this.createVisitations("#visitation-list", "#add-visitations-form", this.dataFromApi.visitation_times);
         this.setEventToForms();
         this.buildSlidesTable("#slides-table tbody");
         this.setStatistics();
@@ -167,12 +167,12 @@ class adminPanel {
     }
 
     setEventToForms() {
-        // document.querySelectorAll("form").forEach(element => {
-        //     element.addEventListener("submit", (e) => {
-        //         e.preventDefault();
-        //         this.sendForm(e.currentTarget.id, e.currentTarget.action);
-        //     });
-        // });
+        document.querySelectorAll("form").forEach(element => {
+            element.addEventListener("submit", (e) => {
+                e.preventDefault();
+                this.sendForm(e.currentTarget.id, e.currentTarget.action);
+            });
+        });
     }
 
     createFontDropDown(target, active) {
@@ -190,9 +190,9 @@ class adminPanel {
         });
     }
 
-    createVisitations(target) {
+    createVisitations(target, form, visitations) {
         let targetBox = document.querySelector(target);
-        let visitations = this.dataFromApi.visitation_times;
+        let visitationsForm = document.querySelector(form);
 
         if(visitations) {
             visitations.sort(function (a, b) {
@@ -220,6 +220,10 @@ class adminPanel {
             document.querySelector("#remove-visitations").remove();
             targetBox.parentNode.innerHTML = '<p class="center description">Nejsou nastavené žádné prohlídky</p>';
         }
+
+        visitationsForm.addEventListener("submit", () => {
+            document.querySelector("#add-visitation-box").classList.remove("active");
+        });
     }
 
     addUrlToHosts() {
@@ -245,6 +249,12 @@ class adminPanel {
         document.querySelector("#add-visitation-btn").addEventListener("click", this.toggleAddVisitation.bind(this));
         document.querySelector("#add-visitation-box .close-btn").addEventListener("click", this.toggleAddVisitation.bind(this));
         document.querySelector("#visitation-list").addEventListener("change", this.getVisitationListChange.bind(this));
+        document.querySelector("#add-slide").addEventListener("click", this.toggleAddSlide.bind(this));
+        document.querySelector("#add-slide-box .close-btn").addEventListener("click", this.toggleAddSlide.bind(this));
+    }
+
+    toggleAddSlide() {
+        document.querySelector("#add-slide-box").classList.toggle("active");
     }
 
     toggleAddVisitation() {
@@ -289,11 +299,31 @@ class adminPanel {
         const FD = new FormData(form);
 
         XHR.addEventListener("load", (e) => {
-            alert(e.currentTarget.responseText);
+            this.alertUser(e.currentTarget.responseText, false);
+        });
+
+        XHR.addEventListener("error", (e) => {
+            console.log(error)
+            this.alertUser(e.currentTarget.responseText, true);
         });
 
         XHR.open("POST", url);
-        //XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         XHR.send(FD);
+    }
+
+    alertUser(message, error) {
+        let alertBox = document.createElement("div");
+        alertBox.innerText = message;
+        alertBox.id = "alert-box"
+
+        if(error) {
+            alertBox.classList.add("error");
+        }
+
+        document.body.insertAdjacentElement("afterbegin", alertBox);
+
+        setTimeout(() => {
+            alertBox.remove();
+        }, 7100);
     }
 }

@@ -39,6 +39,10 @@ body {
     padding-top: 60px;
 }
 
+input {
+    font-family: $themeFont;
+}
+
 .uppercase {
     text-transform: uppercase;
 }
@@ -506,7 +510,7 @@ footer {
             margin: 20px 5px;
 
             input[type="number"] {
-                width: 40px;
+                width: 43px;
                 font-size: 22px;
                 outline: none;
                 -moz-appearance: textfield;
@@ -535,6 +539,59 @@ footer {
     }
 }
 
+#add-slide-box {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: $toggleBackground;
+    z-index: 3;
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    &.active {
+        display: flex;
+    }
+
+    form {
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        max-width: 100%;
+        width: 800px;
+
+        label {
+            margin: 5px 0;
+        }
+
+        input {
+            box-sizing: border-box;
+
+            &[type="color"] {
+                border: none;
+                background-color: transparent;
+            }
+
+            &[type="checkbox"] {
+                margin-bottom: 20px;
+            }
+
+            &[type="file"] {
+                &::-webkit-file-upload-button {
+                    visibility: hidden;
+                }
+            }
+        }
+
+        textarea {
+            resize: vertical;
+        }
+    }
+}
+
 #loading-box {
     position: fixed;
     left: 0;
@@ -554,14 +611,38 @@ footer {
     }
 
     .spinner {
-        width: 20px;
-        height: 20px;
         border-radius: 100%;
+        border-top: 10px solid $themeColor;
         border-bottom: 10px solid $themeColor;
-        border-left: 10px solid $themeColor;
-        border-top: 10px solid $grayColor;
+        border-left: 10px solid $grayColor;
         border-right: 10px solid $grayColor;
         animation: spinning infinite linear 2s;
+    }
+}
+
+#alert-box {
+    position: fixed;
+    top: 100px;
+    right: 30px;
+    background-color: $themeColor;
+    color: #fff;
+    border-radius: 5px;
+    padding: 15px 10px;
+    overflow: hidden;
+
+    &.error {
+        background-color: red;
+    }
+
+    &::after {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        background-color: #000;
+        width: 0%;
+        content: "";
+        animation: loading linear forwards 7s;
     }
 }
 
@@ -646,5 +727,15 @@ footer {
 
     to {
         transform: rotate(360deg);
+    }
+}
+
+@keyframes loading {
+    from{
+        width: 0;
+    }
+
+    to {
+        width: 100%;
     }
 }

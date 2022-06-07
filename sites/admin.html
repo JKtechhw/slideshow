@@ -118,6 +118,48 @@
         </form>
     </div>
 
+    <div id="add-slide-box">
+        <button class="close-btn"></button>
+        <form action="/admin/add-slide" method="post" id="add-visitations-form" enctype="multipart/form-data">
+            <label for="add_slide_name">Název: </label>
+            <input type="text" name="add_slide_name" />
+
+            <label for="add_slide_type">Typ: </label>
+            <select name="add_slide_type">
+                <option value="image">Obrázek</option>
+                <option value="video">Video</option>
+                <option value="text">Text</option>
+                <option value="visitationtime">Odpočet prohlídka</option>
+            </select>
+
+            <label for="add_slide_timeout">Timeout: (ms)</label>
+            <input type="number" value="10000" name="add_slide_timeout" />
+
+            <label for="add_slide_background_color">Barva pozadí: </label>
+            <input type="color" name="add_slide_background_color" />
+
+            <label for="add_slide_color">Barva textu: </label>
+            <input type="color" name="add_slide_color" />
+
+            <label for="add_slide_font_family">Font family: </label>
+            <select name="add_slide_font_family"></select>
+
+            <label for="add_slide_file">Soubor: (Pozadí, video)</label>
+            <input type="file" name="add_slide_file" accept=".jpg, .JPG, .png, .jpeg, .mp4, .m4v, .webm"/>
+
+            <label for="add_slide_text">Text: </label>
+            <textarea name="add_slide_text"></textarea>
+
+            <label for="add_slide_subtitles">Titulky: </label>
+            <input type="file" accept=".vtt" name="add_slide_subtitles" />
+
+            <label for="add_slide_hidden">Skryté: </label>
+            <input type="checkbox" name="add_slide_hidden" />
+
+            <button class="blue-btn" type="submit">Přidat</button>
+        </form>
+    </div>
+
     <div id="loading-box">
         <span class="spinner"></span>
         <p>
