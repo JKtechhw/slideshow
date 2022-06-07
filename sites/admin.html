@@ -19,22 +19,22 @@
         <form id="global-settings" method="post" action="/admin/global">
             <div id="global-background-color" class="option">
                 <h4>Barva pozadí</h4>
-                <input type=color name="background_color">
+                <input type=color name="background_color" required>
             </div>
     
             <div id="global-text-color" class="option">
                 <h4>Barva textu</h4>
-                <input type=color name="text_color">
+                <input type=color name="text_color" required>
             </div>
     
             <div id="global-font" class="option">
                 <h4>Font family</h4>
-                <select name="font_family" id="global-font-selection"></select>
+                <select name="font_family" id="global-font-selection" required></select>
             </div>
     
             <div id="global-transition-time" class="option">
                 <h4>Doba přechodu (ms)</h4>
-                <input type="number" name="transition_time" value="1000" min="0">
+                <input type="number" name="transition_time" value="1000" min="0" required>
             </div>
         </form>
         <button type="submit" class="blue-btn" form="global-settings">Upravit</button>
@@ -120,9 +120,9 @@
 
     <div id="add-slide-box">
         <button class="close-btn"></button>
-        <form action="/admin/add-slide" method="post" id="add-visitations-form" enctype="multipart/form-data">
+        <form action="/admin/add-slide" class="default" method="post" id="add-slide-form" enctype="multipart/form-data">
             <label for="add_slide_name">Název: </label>
-            <input type="text" name="add_slide_name" />
+            <input type="text" name="add_slide_name" required />
 
             <label for="add_slide_type">Typ: </label>
             <select name="add_slide_type">
@@ -142,7 +142,7 @@
             <input type="color" name="add_slide_color" />
 
             <label for="add_slide_font_family">Font family: </label>
-            <select name="add_slide_font_family"></select>
+            <select name="add_slide_font_family" id="add_slide_box_font_family"></select>
 
             <label for="add_slide_file">Soubor: (Pozadí, video)</label>
             <input type="file" name="add_slide_file" accept=".jpg, .JPG, .png, .jpeg, .mp4, .m4v, .webm"/>

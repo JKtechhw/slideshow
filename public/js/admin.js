@@ -5,8 +5,7 @@ class adminPanel {
         this.url = location.protocol + '//' + location.host;
         this.api = "/api/admin/";
         this.dataFromApi
-
-        this.fetchDataFromApi();
+        this.buildAdminPanel();
     }
 
     async fetchDataFromApi() {
@@ -15,7 +14,6 @@ class adminPanel {
         .then(response => response.json()) //Convert to JSON
         .then(data => { 
             this.dataFromApi = data; 
-            this.buildAdminPanel();
         })
         .catch( (err) => { 
             console.error("Can't fatch data from api or api return wrong format"); 
@@ -25,6 +23,7 @@ class adminPanel {
     }
 
     async buildAdminPanel() {
+        await this.fetchDataFromApi();
         this.setupGlobalForm();
         this.addUrlToHosts();
         this.setupPreview();
@@ -167,7 +166,7 @@ class adminPanel {
     }
 
     setEventToForms() {
-        document.querySelectorAll("form").forEach(element => {
+        document.querySelectorAll("form:not(.default)").forEach(element => {
             element.addEventListener("submit", (e) => {
                 e.preventDefault();
                 this.sendForm(e.currentTarget.id, e.currentTarget.action);
@@ -193,6 +192,7 @@ class adminPanel {
     createVisitations(target, form, visitations) {
         let targetBox = document.querySelector(target);
         let visitationsForm = document.querySelector(form);
+        targetBox.innerHTML = "";
 
         if(visitations) {
             visitations.sort(function (a, b) {
@@ -223,6 +223,7 @@ class adminPanel {
 
         visitationsForm.addEventListener("submit", () => {
             document.querySelector("#add-visitation-box").classList.remove("active");
+            this.fetchDataFromApi();
         });
     }
 
@@ -251,6 +252,8 @@ class adminPanel {
         document.querySelector("#visitation-list").addEventListener("change", this.getVisitationListChange.bind(this));
         document.querySelector("#add-slide").addEventListener("click", this.toggleAddSlide.bind(this));
         document.querySelector("#add-slide-box .close-btn").addEventListener("click", this.toggleAddSlide.bind(this));
+
+        this.createFontDropDown("#add_slide_box_font_family", this.dataFromApi.font_family);
     }
 
     toggleAddSlide() {

@@ -247,7 +247,7 @@ app.post("/admin/add-visitations", (req, res) => {
     }
 });
 
-app.post("/admin/add-slide", (req, res) => {
+app.post("/admin/add-slide/", (req, res) => {
     if(req.session.user) {
        let form = new formidable.IncomingForm();
         form.parse(req, (err, fields, files) => {
@@ -316,11 +316,12 @@ app.post("/admin/add-slide", (req, res) => {
                         console.error(err);
                         return;
                     }
-                    res.send("Slide byl přídán");
                     db.close();
                 });
             });
         });
+
+        res.redirect("/admin");
     }
 
     else {
