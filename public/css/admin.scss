@@ -65,9 +65,11 @@ body {
     cursor: pointer;
     font-family: $themeFont;
     user-select: none;
+    background-color: #fff;
     
     &[disabled] {
         cursor: not-allowed;
+        background-color: $lightGrayColor;
     }
 }
 
@@ -155,6 +157,16 @@ body {
                 box-sizing: border-box;
                 width: 100%;
                 list-style-type: none;
+
+                li {
+                    label:hover {
+                        input[type="checkbox"] {
+                            &::before {
+                                border: 1px solid $themeColor;
+                            }
+                        }
+                    }
+                }
     
                 label {
                     user-select: none;
@@ -330,10 +342,19 @@ nav {
                 background-color: $lightGrayColor;
             }
 
+            &.hidden {
+                color: $grayColor;
+                opacity: 0.5;
+            }
+
             td {
                 text-align: center;
                 vertical-align: middle;
                 padding: 8px 0;
+                overflow: hidden;
+                max-width: 130px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
 
                 p {
                     white-space: nowrap;
@@ -350,7 +371,12 @@ nav {
 
                 &:first-child {
                     cursor: move;
+                    position: relative;
                     &::after {
+                        position: absolute;
+                        left: 0;
+                        top: 50%;
+                        transform: translateY(-50%);
                         content: url("/images/drag.svg");
                     }
                 }
@@ -521,10 +547,10 @@ footer {
     align-items: center;
     flex-direction: column;
     top: 0;
-    transition: 1s top;
+    transition: 1s opacity;
 
     &.hidden {
-        top: -100%;
+        opacity: 0;
     }
 
     .spinner {

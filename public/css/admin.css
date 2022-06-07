@@ -55,10 +55,12 @@ body {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
+  background-color: #fff;
 }
 
 .blue-btn[disabled], .gray-btn[disabled] {
   cursor: not-allowed;
+  background-color: #ececec;
 }
 
 .blue-btn {
@@ -169,6 +171,10 @@ body {
           box-sizing: border-box;
   width: 100%;
   list-style-type: none;
+}
+
+.part-white-box .part-box form ul li label:hover input[type="checkbox"]::before {
+  border: 1px solid #2468d7;
 }
 
 .part-white-box .part-box form ul label {
@@ -375,10 +381,19 @@ nav #logout:hover {
   background-color: #ececec;
 }
 
+#slides-table table tr.hidden {
+  color: #999999;
+  opacity: 0.5;
+}
+
 #slides-table table tr td {
   text-align: center;
   vertical-align: middle;
   padding: 8px 0;
+  overflow: hidden;
+  max-width: 130px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 #slides-table table tr td p {
@@ -396,9 +411,15 @@ nav #logout:hover {
 
 #slides-table table tr td:first-child {
   cursor: move;
+  position: relative;
 }
 
 #slides-table table tr td:first-child::after {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
   content: url("/images/drag.svg");
 }
 
@@ -586,12 +607,12 @@ footer #footer-content p {
       -ms-flex-direction: column;
           flex-direction: column;
   top: 0;
-  -webkit-transition: 1s top;
-  transition: 1s top;
+  -webkit-transition: 1s opacity;
+  transition: 1s opacity;
 }
 
 #loading-box.hidden {
-  top: -100%;
+  opacity: 0;
 }
 
 #loading-box .spinner {

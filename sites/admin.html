@@ -8,10 +8,10 @@
     <link rel="stylesheet" type="text/css" href="/css/admin.css">
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 </head>
-<body>
+<body style="overflow: hidden;">
     <nav>
         <h3>Slideshow <span class="description">Dashboard</span></h3>
-        <form method="post" action="/admin/logout"><button type="submit" id="logout" title="Odhlásit"></button></form>
+        <form method="post" action="/admin/logout" id="logout-form"><button type="submit" id="logout" title="Odhlásit"></button></form>
     </nav>
 
     <div class="white-box">
@@ -24,7 +24,7 @@
     
             <div id="global-text-color" class="option">
                 <h4>Barva textu</h4>
-                <input type=color name="text_color" value="#ffffff">
+                <input type=color name="text_color">
             </div>
     
             <div id="global-font" class="option">
@@ -42,17 +42,17 @@
 
     <div class="part-white-box">
         <div class="part-box">
-            <h1>1</h1>
+            <h1 id="query-devices">0</h1>
             <p class="uppercase">Zařízení</p>
         </div>
 
         <div class="part-box">
-            <h1>10</h1>
+            <h1 id="query-count">0</h1>
             <p class="uppercase">Dotazů</p>
         </div>
 
         <div class="part-box">
-            <h1>1</h1>
+            <h1 id="slides-count">0</h1>
             <p class="uppercase">Slidů</p>
         </div>
     </div>
@@ -61,10 +61,9 @@
         <h3>Slidy</h3>
         <div id="controls-buttons">
             <button id="add-slide" class="blue-btn">Přidat slide</button>
-            <button id="remove-slide" class="gray-btn">Smazat všechny slidy</button>
         </div>
 
-        <div id="slides-table">
+        <form id="slides-table">
             <table>
                 <thead>
                     <tr>
@@ -82,55 +81,10 @@
                         <th>Smazat</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td class="drag-slides"></td>
-                        <td>image</td>
-                        <td>10000</td>
-                        <td><input type="color"></td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>1.jpg</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td class="preview-btn"><button class="preview"></button></td>
-                        <td class="hidden-checkbox"><input type="checkbox"></td>
-                        <td class="remove-btn"><button class="remove"></button></td>
-                    </tr>
-
-                    <tr>
-                        <td class="drag-slides"></td>
-                        <td>video</td>
-                        <td>-</td>
-                        <td><input type="color"></td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>video.mp4</td>
-                        <td>-</td>
-                        <td>subtitles.vtt</td>
-                        <td class="preview-btn"><button class="preview"></button></td>
-                        <td class="hidden-checkbox"><input type="checkbox"></td>
-                        <td class="remove-btn"><button class="remove"></button></td>
-                    </tr>
-
-                    <tr>
-                        <td class="drag-slides"></td>
-                        <td>text</td>
-                        <td>10000</td>
-                        <td><input type="color"></td>
-                        <td><input type="color" value="#ffffff"></td>
-                        <td>-</td>
-                        <td>1.jpg</td>
-                        <td><p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nullam sit amet magna in magna gravida vehicula. Curabitur vitae diam non enim vestibulum interdum.</p></td>
-                        <td>-</td>
-                        <td class="preview-btn"><button class="preview"></button></td>
-                        <td class="hidden-checkbox"><input type="checkbox"></td>
-                        <td class="remove-btn"><button class="remove"></button></td>
-                    </tr>
-                </tbody>
+                <tbody></tbody>
             </table>
-        </div>
-        <button class="blue-btn">Upravit</button>
+        </form>
+        <button class="blue-btn" form="slides-table">Upravit</button>
     </div>
 
     <div class="part-white-box">
@@ -154,10 +108,9 @@
         </div>
     </div>
 
-    <!-- Add visitations box -->
     <div id="add-visitation-box">
         <button class="close-btn"></button>
-        <form action="/admin/add-visitations" method="post" >
+        <form action="/admin/add-visitations" method="post" id="add-visitations-form">
             <div id="add-visitation-input-box">
                 <input type="number" name="hours" min="0" max="23" required> : <input type="number" name="minutes" min="0" max="59" required>
             </div>

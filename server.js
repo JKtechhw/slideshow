@@ -6,10 +6,12 @@ const { MongoClient } = require("mongodb");
 const client = new MongoClient(process.env.CONNECTION_STRING);
 const sha1 = require("sha1");
 const config = require("config");
+let requestCount = 0;
+let requestClients = 0;
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true})); 
 app.use(express.static("public"));
 app.use(session({
     secret: process.env.SECRET_KEY,
@@ -18,7 +20,7 @@ app.use(session({
 }));
 
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/index.html");
+    res.sendFile(__dirname + "/sites/index.html");
 });
 
 app.get("/api/sites", (req, res) => {
@@ -39,6 +41,14 @@ app.get("/api/sites", (req, res) => {
                     console.error(err);
                     return;
                 }
+
+                requestCount++;
+                if(!req.session.listed) {
+                    req.session.listed = true;
+                    requestClients++;
+                    console.log("New client from " + req.socket.remoteAddress);
+                }
+
                 let response = ` ${JSON.stringify(resultConfig).slice(1, -1)}, "sites": ${JSON.stringify(resultSites)}`;
                 let hash = sha1(response); 
                 res.send(`{"hash": "${hash}", ${response}}`);
@@ -72,7 +82,7 @@ app.get("/api/admin", (req, res) => {
                             console.error(err);
                             return;
                         }
-                        res.send(`{${JSON.stringify(resultConfig).slice(1, -1)}, ${JSON.stringify(resultFonts).slice(1, -1)},"sites": ${JSON.stringify(resultSites)}}`);
+                        res.send(`{"request_count": ${requestCount}, "request_clients": ${requestClients}, ${JSON.stringify(resultConfig).slice(1, -1)}, ${JSON.stringify(resultFonts).slice(1, -1)},"sites": ${JSON.stringify(resultSites)}}`);
                     });
                 });
             });
@@ -86,11 +96,11 @@ app.get("/api/admin", (req, res) => {
 
 app.get("/admin", (req, res) => {
     if(req.session.user) {
-        res.sendFile(__dirname + "/admin.html");
+        res.sendFile(__dirname + "/sites/admin.html");
     }
 
     else {
-        res.sendFile(__dirname + "/login.html");
+        res.sendFile(__dirname + "/sites/login.html");
     }
 });
 
@@ -122,6 +132,7 @@ app.post("/admin/logout", (req, res) => {
 });
 
 app.post("/admin/global", (req, res) => {
+    console.log(req.body)
     if(req.session.user) {
         MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
             if(err) {
@@ -158,9 +169,7 @@ app.post("/admin/remove-visitations", (req, res) => {
             }
 
             if(!Array.isArray(req.body['visitationtimes[]']) && req.body['visitationtimes[]']) {
-                console.log(req.body['visitationtimes[]'])
                 req.body['visitationtimes[]'] = [ req.body['visitationtimes[]'] ];
-                console.log(req.body['visitationtimes[]'])
             }
 
             else {

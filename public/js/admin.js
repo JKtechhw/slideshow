@@ -30,7 +30,127 @@ class adminPanel {
         this.setupPreview();
         this.addEventsToButton();
         this.createVisitations("#visitation-list");
+        this.setEventToForms();
+        this.buildSlidesTable("#slides-table tbody");
+        this.setStatistics();
         this.hideLoadingBox();
+    }
+
+    async setStatistics() {
+        let connectedClientsBox = document.querySelector("#query-devices");
+        connectedClientsBox.innerText = this.dataFromApi.request_clients;
+
+        let queryCountBox = document.querySelector("#query-count");
+        queryCountBox.innerText = this.dataFromApi.request_count;
+
+        let slidesCloutBox = document.querySelector("#slides-count");
+        slidesCloutBox.innerText = this.dataFromApi.sites.length || 0;  
+    }
+
+    buildSlidesTable(targetId) {
+        let target = document.querySelector(targetId);
+        let slides = this.dataFromApi.sites;
+        for (let i = 0; i < slides.length; i++) {
+            let slide = document.createElement("tr");
+            slide.dataset.id = slides[i]._id;
+            slide.dataset.type = slides[i].type;
+
+            if(slides[i].hidden) {
+                slide.classList.add("hidden");
+            }
+
+            let dragArea = document.createElement("td");
+            dragArea.classList.add("drag-slides");
+            slide.appendChild(dragArea);
+
+            let typeTd = document.createElement("td");
+            typeTd.innerText = slides[i].name;
+            slide.appendChild(typeTd);
+
+            let spendTime = document.createElement("td");
+            spendTime.innerText = slides[i].timeout;
+            slide.appendChild(spendTime);
+
+            let bgColor = document.createElement("td");
+            if(slides[i].background_color) {
+                let bgColorInput = document.createElement("input");
+                bgColorInput.type = "color";
+                bgColorInput.value = slides[i].background_color;
+                bgColor.appendChild(bgColorInput);
+
+                bgColorInput.name = "lolando";
+            }
+
+            else {
+                bgColor.innerText =  "-";
+            }
+
+            slide.appendChild(bgColor);
+
+            let textColor = document.createElement("td");
+            if(slides[i].color) {
+                let textColorInput = document.createElement("input");
+                textColorInput.type = "color";
+                textColorInput.value = slides[i].color;
+                textColor.appendChild(textColorInput);
+            }
+
+            else {
+                textColor.innerText = "-";
+            }
+
+            slide.appendChild(textColor);
+
+            let fontFamily = document.createElement("td");
+            fontFamily.innerText = slides[i].font_family || "-";
+            slide.appendChild(fontFamily);
+
+            let file = document.createElement("td");
+            file.innerText = slides[i].filename || "-";
+            slide.appendChild(file);
+
+            let text = document.createElement("td");
+            text.innerText = slides[i].text || "-";
+            slide.appendChild(text);
+
+            let subtitles = document.createElement("td");
+            subtitles.innerText = slides[i].subtitles || "-";
+            slide.appendChild(subtitles);
+
+            let previewTd = document.createElement("td");
+            previewTd.classList.add("preview-btn");
+            let previewBtn = document.createElement("button");
+            previewBtn.classList.add("preview");
+            previewTd.appendChild(previewBtn);
+            slide.appendChild(previewTd);
+
+            let hideTd = document.createElement("td");
+            hideTd.classList.add("hidden-checkbox");
+            let hideCheckbox= document.createElement("input");
+            hideCheckbox.type = "checkbox";
+            if(slides[i].hidden) {
+                hideCheckbox.checked = true;
+            }
+
+            hideCheckbox.addEventListener("change", (e) => {
+                e.currentTarget.parentNode.parentNode.classList.toggle("hidden");
+            });
+
+            hideTd.appendChild(hideCheckbox);
+            slide.appendChild(hideTd);
+
+            let removeTd = document.createElement("td");
+            removeTd.classList.add("remove-btn");
+            let removeBtn = document.createElement("button");
+            removeBtn.addEventListener("click", (e) => {
+                e.currentTarget.parentNode.parentNode.remove();
+            })
+            removeBtn.classList.add("remove");
+            removeTd.appendChild(removeBtn);
+            slide.appendChild(removeTd);
+
+            target.appendChild(slide);
+        }
     }
 
     setupGlobalForm() {
@@ -44,6 +164,15 @@ class adminPanel {
         document.querySelector("#global-transition-time input").value = this.dataFromApi.transition_time;
 
         this.createFontDropDown("#global-font-selection", this.dataFromApi.font_family);
+    }
+
+    setEventToForms() {
+        // document.querySelectorAll("form").forEach(element => {
+        //     element.addEventListener("submit", (e) => {
+        //         e.preventDefault();
+        //         this.sendForm(e.currentTarget.id, e.currentTarget.action);
+        //     });
+        // });
     }
 
     createFontDropDown(target, active) {
@@ -89,11 +218,7 @@ class adminPanel {
 
         else {
             document.querySelector("#remove-visitations").remove();
-            let message = document.createElement("p");
-            message.classList.add("description");
-            message.classList.add("center");
-            message.innerText = "Nejsou nastavené žádné prohlídky";
-            targetBox.appendChild(message);
+            targetBox.parentNode.innerHTML = '<p class="center description">Nejsou nastavené žádné prohlídky</p>';
         }
     }
 
@@ -140,7 +265,6 @@ class adminPanel {
     getVisitationListChange() {
         let visitationListChecked = document.querySelectorAll("#visitation-list input[type=\"checkbox\"]:checked").length;
         let visitationList = document.querySelectorAll("#visitation-list input[type=\"checkbox\"]").length;
-        console.log(visitationList, visitationListChecked)
         if(visitationListChecked - visitationList == 0) {
             document.querySelector("#remove-visitations").disabled = true;
         }
@@ -152,8 +276,24 @@ class adminPanel {
 
     hideLoadingBox() {
         document.querySelector("#loading-box").classList.add("hidden");
+        document.body.style = null;
         setTimeout(() => {
             document.querySelector("#loading-box").remove();
-        }, 5000);
+        }, 1000);
+    }
+
+    async sendForm(formId, url) {
+        let form = document.getElementById(formId);
+        console.log(form);
+        const XHR = new XMLHttpRequest();
+        const FD = new FormData(form);
+
+        XHR.addEventListener("load", (e) => {
+            alert(e.currentTarget.responseText);
+        });
+
+        XHR.open("POST", url);
+        //XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        XHR.send(FD);
     }
 }
