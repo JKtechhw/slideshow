@@ -148,7 +148,7 @@ app.post("/admin/global", (req, res) => {
                 dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
                     if(err) {
                         res.send("Aktualizace se nezdařila");
-                        console.log(err);
+                        console.error(err);
                         return;
                     }
     
@@ -186,7 +186,45 @@ app.post("/admin/remove-visitations", (req, res) => {
                 dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
                     if(err) {
                         res.send("Časy se nepodařilo odebrat");
-                        console.log(err);
+                        console.error(err);
+                        return;
+                    }
+
+                    res.send("Časy byly úspěšně odebrány");
+                });
+            });
+        });
+    }
+
+    else {
+        res.status(401).send("401 Unauthorized");
+    }
+});
+
+app.post("/admin/remove-degustation", (req, res) => {
+    if(req.session.user) {
+        let form = new formidable.IncomingForm({multiples: true});
+        form.parse(req, (err, fields, files) => {
+            MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
+                if(err) {
+                    console.error(err);
+                    return;
+                }
+
+                if(!Array.isArray(fields.degustationtimes) && fields.degustationtimes) {
+                    fields.degustationtimes = [ fields.degustationtimes ];
+                }
+
+                else {
+                    fields.degustationtimes ? fields.degustationtimes : [];
+                }
+
+                let newValues = { $set: { degustation_times: fields.degustationtimes } };
+                let dbo = database.db("slideshow");
+                dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
+                    if(err) {
+                        res.send("Časy se nepodařilo odebrat");
+                        console.error(err);
                         return;
                     }
 
@@ -214,7 +252,7 @@ app.post("/admin/add-visitations", (req, res) => {
                 let dbo = database.db("slideshow");
                 dbo.collection("config").findOne({name: "config"}, (err, getTime) => {
                     if(err) {
-                        console.log(err);
+                        console.error(err);
                         return;
                     }
     
@@ -230,7 +268,53 @@ app.post("/admin/add-visitations", (req, res) => {
                         dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
                             if(err) {
                             res.send("Aktualizace se nezdařila");
-                                console.log(err);
+                                console.error(err);
+                                return;
+                            }
+    
+                            res.send("Aktualizace byla úspěšná");
+                        });
+                    }
+                });
+            });
+        });
+    }
+
+    else {
+        res.status(401).send("401 Unauthorized");
+    }
+});
+
+app.post("/admin/add-degustation", (req, res) => {
+    if(req.session.user) {
+        let form = new formidable.IncomingForm();
+        form.parse(req, (err, fields, files) => {
+            MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
+                if(err) {
+                    console.error(err);
+                    return;
+                }
+                
+                let dbo = database.db("slideshow");
+                dbo.collection("config").findOne({name: "config"}, (err, getTime) => {
+                    if(err) {
+                        console.error(err);
+                        return;
+                    }
+    
+                    getTime.degustation_times ? getTime.degustation_times = getTime.degustation_times : getTime.degustation_times = [];
+    
+                    if(getTime.degustation_times.includes(fields.hours + ":" + fields.minutes)) {
+                        res.send("Prohlídka na tento čas je již nastavena");
+                    }
+    
+                    else {
+                        getTime.degustation_times.push(fields.hours + ":" + fields.minutes);
+                        let newValues = { $set: { degustation_times: getTime.degustation_times} };
+                        dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
+                            if(err) {
+                            res.send("Aktualizace se nezdařila");
+                                console.error(err);
                                 return;
                             }
     
@@ -255,8 +339,6 @@ app.post("/admin/add-slide/", (req, res) => {
             let uploadSubtitles = null;
             let hidden = fields.add_slide_hidden ? true : false;
 
-            console.log(files.add_slide_file);
-            console.log(files.add_slide_subtitles)
             if(files.add_slide_file.size != 0) {
                 let oldPath = files.add_slide_file.filepath;
                 let newPath = __dirname + "/public/content/" + files.add_slide_file.originalFilename;
@@ -349,14 +431,14 @@ app.post("/admin/remove-slide", (req, res) => {
                         if(resRemove) {
                             if(resRemove.filename) {
                                 fs.unlink(__dirname + "/public/content/" + resRemove.filename, (err) => {
-                                    console.log(err);
+                                    console.error(err);
                                     return;
                                 });
                             }
 
                             if(resRemove.subtitles) {
                                 fs.unlink(__dirname + "/public/content/" + resRemove.subtitles, (err) => {
-                                    console.log(err);
+                                    console.error(err);
                                     return;
                                 });
                             }

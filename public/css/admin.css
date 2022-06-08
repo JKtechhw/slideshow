@@ -105,6 +105,15 @@ input {
           filter: invert(1);
 }
 
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .white-box {
   max-width: 1200px;
   margin: 30px auto;
@@ -352,12 +361,6 @@ nav #logout:hover {
   padding: 5px;
   border-radius: 3px;
   border: 1px solid #999999;
-  -moz-appearance: textfield;
-}
-
-#global-settings .option input[type="number"]::-webkit-outer-spin-button, #global-settings .option input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }
 
 #global-settings .option select {
@@ -497,7 +500,7 @@ nav #logout:hover {
 }
 
 #prewiew-box button#toggle-iframe-btn {
-  right: 40px;
+  right: 45px;
 }
 
 #prewiew-box button#toggle-iframe-btn.pause::after {
@@ -545,7 +548,7 @@ footer #footer-content p {
   text-align: center;
 }
 
-#add-visitation-box {
+#add-visitation-box, #add-degustation-box {
   position: fixed;
   left: 0;
   top: 0;
@@ -565,13 +568,13 @@ footer #footer-content p {
   display: none;
 }
 
-#add-visitation-box.active {
+#add-visitation-box.active, #add-degustation-box.active {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
 
-#add-visitation-box form {
+#add-visitation-box form, #add-degustation-box form {
   background-color: #fff;
   padding: 10px;
   display: -webkit-box;
@@ -583,35 +586,29 @@ footer #footer-content p {
           flex-direction: column;
 }
 
-#add-visitation-box form #add-visitation-input-box {
+#add-visitation-box form #add-visitation-input-box, #add-visitation-box form #add-degustation-input-box, #add-degustation-box form #add-visitation-input-box, #add-degustation-box form #add-degustation-input-box {
   margin: 20px 5px;
 }
 
-#add-visitation-box form #add-visitation-input-box input[type="number"] {
+#add-visitation-box form #add-visitation-input-box input[type="number"], #add-visitation-box form #add-degustation-input-box input[type="number"], #add-degustation-box form #add-visitation-input-box input[type="number"], #add-degustation-box form #add-degustation-input-box input[type="number"] {
   width: 43px;
   font-size: 22px;
   outline: none;
-  -moz-appearance: textfield;
   border: 1px solid #999999;
   padding: 3px 6px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }
 
-#add-visitation-box form #add-visitation-input-box input[type="number"]::-webkit-outer-spin-button, #add-visitation-box form #add-visitation-input-box input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-#add-visitation-box form #add-visitation-input-box input[type="number"]:first-child {
+#add-visitation-box form #add-visitation-input-box input[type="number"]:first-child, #add-visitation-box form #add-degustation-input-box input[type="number"]:first-child, #add-degustation-box form #add-visitation-input-box input[type="number"]:first-child, #add-degustation-box form #add-degustation-input-box input[type="number"]:first-child {
   text-align: right;
 }
 
-#add-visitation-box form #add-visitation-input-box input[type="number"]:last-child {
+#add-visitation-box form #add-visitation-input-box input[type="number"]:last-child, #add-visitation-box form #add-degustation-input-box input[type="number"]:last-child, #add-degustation-box form #add-visitation-input-box input[type="number"]:last-child, #add-degustation-box form #add-degustation-input-box input[type="number"]:last-child {
   text-align: left;
 }
 
-#add-visitation-box form #add-visitation-input-box button {
+#add-visitation-box form #add-visitation-input-box button, #add-visitation-box form #add-degustation-input-box button, #add-degustation-box form #add-visitation-input-box button, #add-degustation-box form #add-degustation-input-box button {
   margin: 10px 0;
 }
 
@@ -653,25 +650,81 @@ footer #footer-content p {
 }
 
 #add-slide-box form label {
-  margin: 5px 0;
+  margin: 5px 10px;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: #999999;
+  letter-spacing: 1.5px;
+  font-weight: 600;
 }
 
-#add-slide-box form input {
+#add-slide-box form button[type="submit"] {
+  padding: 10px 0;
+}
+
+#add-slide-box form input[type="text"], #add-slide-box form input[type="number"], #add-slide-box form select, #add-slide-box form input[type="file"], #add-slide-box form textarea {
+  border: transparent;
+  border-radius: 5px;
+  background-color: #ececec;
+  outline: none;
+  padding: 10px 15px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  border: 1px solid #ececec;
+  -webkit-transition: border 0.2s;
+  transition: border 0.2s;
+  overflow: hidden;
+}
+
+#add-slide-box form input[type="text"]::file-selector-button, #add-slide-box form input[type="number"]::file-selector-button, #add-slide-box form select::file-selector-button, #add-slide-box form input[type="file"]::file-selector-button, #add-slide-box form textarea::file-selector-button {
+  display: none;
+}
+
+#add-slide-box form input[type="text"]:focus, #add-slide-box form input[type="number"]:focus, #add-slide-box form select:focus, #add-slide-box form input[type="file"]:focus, #add-slide-box form textarea:focus {
+  border: 1px solid #999999;
 }
 
 #add-slide-box form input[type="color"] {
-  border: none;
   background-color: transparent;
+  border: none;
+  margin-left: 10px;
 }
 
 #add-slide-box form input[type="checkbox"] {
-  margin-bottom: 20px;
+  margin-left: 10px;
+  margin-bottom: 15px;
 }
 
-#add-slide-box form input[type="file"]::-webkit-file-upload-button {
-  visibility: hidden;
+#add-slide-box form .row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+#add-slide-box form .row .column {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  margin: 10px;
+}
+
+#add-slide-box form .row .column:first-child {
+  margin-left: 0;
+}
+
+#add-slide-box form .row .column:last-child {
+  margin-right: 0;
 }
 
 #add-slide-box form textarea {

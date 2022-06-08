@@ -110,6 +110,14 @@ input {
     }
 }
 
+input[type="number"] {
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+}
+
 .white-box {
     max-width: 1200px;
     margin: 30px auto;
@@ -311,12 +319,6 @@ nav {
             padding: 5px;
             border-radius: 3px;
             border: 1px solid $grayColor;
-            -moz-appearance: textfield;
-
-            &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
-                -webkit-appearance: none;
-                margin: 0;
-            }
         }
 
         select {
@@ -460,7 +462,7 @@ nav {
         }
 
         &#toggle-iframe-btn {
-            right: 40px;
+            right: 45px;
 
             &.pause {
                 &::after {
@@ -515,7 +517,7 @@ footer {
     }
 }
 
-#add-visitation-box {
+#add-visitation-box, #add-degustation-box {
     position: fixed;
     left: 0;
     top: 0;
@@ -538,22 +540,16 @@ footer {
         display: flex;
         flex-direction: column;
 
-        #add-visitation-input-box {
+        #add-visitation-input-box, #add-degustation-input-box {
             margin: 20px 5px;
 
             input[type="number"] {
                 width: 43px;
                 font-size: 22px;
                 outline: none;
-                -moz-appearance: textfield;
                 border: 1px solid $grayColor;
                 padding: 3px 6px;
                 box-sizing: border-box;
-
-                &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
-                    -webkit-appearance: none;
-                    margin: 0;
-                }
 
                 &:first-child {
                     text-align: right;
@@ -596,31 +592,72 @@ footer {
         width: 800px;
 
         label {
-            margin: 5px 0;
+            margin: 5px 10px;
+            text-transform: uppercase;
+            font-size: 12px;
+            color: $grayColor;
+            letter-spacing: 1.5px;
+            font-weight: 600;
         }
 
-        input {
+        button[type="submit"] {
+            padding: 10px 0;
+        }
+
+        input[type="text"], input[type="number"], select, input[type="file"], textarea {
+            border: transparent;
+            border-radius: 5px;
+            background-color: $lightGrayColor;
+            outline: none;
+            padding: 10px 15px;
             box-sizing: border-box;
+            border: 1px solid $lightGrayColor;
+            transition: border 0.2s;
+            overflow: hidden;
 
-            &[type="color"] {
-                border: none;
-                background-color: transparent;
+            &::file-selector-button {
+                display: none;
             }
 
-            &[type="checkbox"] {
-                margin-bottom: 20px;
+            &:focus {
+                border: 1px solid $grayColor;
             }
+        }
 
-            &[type="file"] {
-                &::-webkit-file-upload-button {
-                    visibility: hidden;
+        input[type="color"] {
+            background-color: transparent;
+            border: none;
+            margin-left: 10px;
+        }
+
+        input[type="checkbox"] {
+            margin-left: 10px;
+            margin-bottom: 15px;
+        }
+
+        .row {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+
+            .column {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                margin: 10px;
+
+                &:first-child {
+                    margin-left: 0;
+                }
+
+                &:last-child {
+                    margin-right: 0;
                 }
             }
         }
 
         textarea {
             resize: vertical;
-
             height: 100px;
         }
     }

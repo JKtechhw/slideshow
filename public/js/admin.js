@@ -31,6 +31,7 @@ class adminPanel {
         this.setupPreview();
         this.addEventsToButton();
         this.updateVisitations("#visitation-list", this.dataFromApi.visitation_times);
+        this.updateDegustations("#degustation-list", this.dataFromApi.degustation_times);
         this.setEventToForms();
         this.hideLoadingBox();
     }
@@ -44,6 +45,10 @@ class adminPanel {
 
         let slidesCloutBox = document.querySelector("#slides-count");
         slidesCloutBox.innerText = this.dataFromApi.sites.length || 0;  
+    }
+
+    addSlideEvents() {
+        
     }
 
     buildSlidesTable(targetId) {
@@ -70,6 +75,13 @@ class adminPanel {
 
                 let spendTime = document.createElement("td");
                 spendTime.innerText = slides[i].timeout / 1000;
+                spendTime.addEventListener("dblclick", () => {
+                    let value = slides[i].timeout / 1000;
+                    let newInput = document.createElement("input");
+                    newInput.value = value;
+                    newInput.type = "number";
+                    spendTime.appendChild(newInput);
+                });
                 slide.appendChild(spendTime);
 
                 let bgColor = document.createElement("td");
@@ -148,6 +160,18 @@ class adminPanel {
                     XHR.onload = () => {
                         this.alertUser(XHR.responseText);
                         slideToRemove.remove();
+
+                        if(target.children.length == 0) {
+                            let columns = target.parentNode.querySelector("tr").children.length;
+                            let emptyLineRow = document.createElement("tr");
+                            let emptyLine = document.createElement("td");
+                            emptyLine.colSpan = columns;
+                            emptyLine.classList.add("empty");
+                            emptyLine.classList.add("description");
+                            emptyLine.innerText = "Nebyly přidány žádné slidy";
+                            emptyLineRow.appendChild(emptyLine);
+                            target.appendChild(emptyLineRow);
+                        }
                     };
                     XHR.open("POST", "/admin/remove-slide", true);
                     XHR.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -247,6 +271,40 @@ class adminPanel {
         }
     }
 
+    async updateDegustations(target, degustations) {
+        let targetBox = document.querySelector(target);
+        targetBox.innerHTML = "";
+
+        if(degustations) {
+            degustations.sort(function (a, b) {
+                return a.localeCompare(b);
+            });
+        }
+
+        if(degustations) {
+            for (let i = 0; i < degustations.length; i++) {
+                let time = document.createElement("li");
+                let timeLabel = document.createElement("label");
+                timeLabel.innerText = " " + degustations[i];
+                let timeInput = document.createElement("input");
+                timeInput.type = "checkbox";
+                timeInput.value = degustations[i];
+                timeInput.checked = true;
+                timeInput.name = "degustationtimes[]";
+                timeLabel.insertAdjacentElement("afterbegin",timeInput);
+                time.appendChild(timeLabel);
+                targetBox.appendChild(time);
+            }
+        }
+
+        else {
+            if(document.querySelector("#remove-degustations")) {
+                document.querySelector("#remove-degustations").remove();
+            }
+            targetBox.innerHTML = '<p class="center description">Nejsou nastavené žádné degustace</p>';
+        }
+    }
+
     addUrlToHosts() {
         document.querySelectorAll(".host-url").forEach(element => {
             element.href = this.url;
@@ -256,13 +314,12 @@ class adminPanel {
 
     setupPreview() {
         document.querySelectorAll(".preview-iframe").forEach(element => {
-            document.querySelector("#toggle-iframe-btn").className = "pause";
+            document.querySelector("#toggle-iframe-btn").className = "play";
         });
 
         document.querySelector("#refresh-iframe-btn").addEventListener("click", () => {
             document.querySelectorAll(".preview-iframe").forEach(element => {
                 element.src = this.url;
-                document.querySelector("#toggle-iframe-btn").className = "pause";
             });
         });
 
@@ -286,9 +343,15 @@ class adminPanel {
     }
 
     addEventsToButton() {
+        //Visitation
         document.querySelector("#add-visitation-btn").addEventListener("click", this.toggleAddVisitation.bind(this));
         document.querySelector("#add-visitation-box .close-btn").addEventListener("click", this.toggleAddVisitation.bind(this));
         document.querySelector("#visitation-list").addEventListener("change", this.getVisitationListChange.bind(this));
+        //Degustation
+        document.querySelector("#add-degustation-btn").addEventListener("click", this.toggleAddDegustation.bind(this));
+        document.querySelector("#add-degustation-box .close-btn").addEventListener("click", this.toggleAddDegustation.bind(this));
+        document.querySelector("#degustation-list").addEventListener("change", this.getDegustationListChange.bind(this));
+        //Add slide
         document.querySelector("#add-slide").addEventListener("click", this.toggleAddSlide.bind(this));
         document.querySelector("#add-slide-box .close-btn").addEventListener("click", this.toggleAddSlide.bind(this));
 
@@ -300,6 +363,12 @@ class adminPanel {
             document.querySelector("#add-visitation-box").classList.remove("active");
         });
 
+        document.querySelector("#add-degustation-form").addEventListener("submit", async () => {
+            await this.fetchDataFromApi();
+            await this.updateDegustations("#degustation-list", this.dataFromApi.degustation_times);
+            document.querySelector("#add-degustation-box").classList.remove("active");
+        });
+
         document.querySelector("#remove-visitations-form").addEventListener("submit", async () => {
             await this.fetchDataFromApi();
             await this.updateVisitations("#visitation-list", this.dataFromApi.visitation_times);
@@ -307,21 +376,43 @@ class adminPanel {
     }
 
     toggleAddSlide() {
-        document.querySelector("#add-slide-box").classList.toggle("active");
+        let addSlideBox = document.querySelector("#add-slide-box");
+        if(addSlideBox.classList.contains("active")) {
+            addSlideBox.classList.remove("active");
+        }
+
+        else {
+            addSlideBox.classList.add("active");
+            addSlideBox.querySelector("input[name=\"add_slide_background_color\"]").value = this.dataFromApi.background_color;
+            addSlideBox.querySelector("input[name=\"add_slide_color\"]").value = this.dataFromApi.color;
+        }
     }
 
     toggleAddVisitation() {
         let date = new Date();
         if (document.querySelector("#add-visitation-box").classList.contains("active")) {
-            document.body.style.overflow = null;
             document.querySelector("#add-visitation-box").classList.remove("active");
         }
 
         else {
-            document.body.style.overflow = "hidden";
             document.querySelector("#add-visitation-box").classList.add("active");
             document.querySelector("#add-visitation-box input[name=\"hours\"]").value = date.getHours();
             document.querySelector("#add-visitation-box input[name=\"minutes\"]").value = "00";
+            document.querySelector("#add-visitation-box input[name=\'hours\']").focus();
+        }
+    }
+
+    toggleAddDegustation() {
+        let date = new Date();
+        if (document.querySelector("#add-degustation-box").classList.contains("active")) {
+            document.querySelector("#add-degustation-box").classList.remove("active");
+        }
+
+        else {
+            document.querySelector("#add-degustation-box").classList.add("active");
+            document.querySelector("#add-degustation-box input[name=\"hours\"]").value = date.getHours();
+            document.querySelector("#add-degustation-box input[name=\"minutes\"]").value = "00";
+            document.querySelector("#add-degustation-box input[name=\'hours\']").focus();
         }
     }
 
@@ -334,6 +425,18 @@ class adminPanel {
 
         else {
             document.querySelector("#remove-visitations").disabled = false;
+        }
+    }
+
+    getDegustationListChange() {
+        let visitationListChecked = document.querySelectorAll("#degustation-list input[type=\"checkbox\"]:checked").length;
+        let visitationList = document.querySelectorAll("#degustation-list input[type=\"checkbox\"]").length;
+        if(visitationListChecked - visitationList == 0) {
+            document.querySelector("#remove-degustation").disabled = true;
+        }
+
+        else {
+            document.querySelector("#remove-degustation").disabled = false;
         }
     }
 

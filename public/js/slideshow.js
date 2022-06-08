@@ -46,10 +46,16 @@ class slideshow {
 
                     this.transitionTime = data.transition_time;
                     this.visitationTimes = data.visitation_times;
+                    this.degustationTimes = data.degustation_times;
 
                     this.visitationTimes ? this.visitationTimes = this.visitationTimes : this.visitationTimes = [];
+                    this.degustationTimes ? this.degustationTimes = this.degustationTimes : this.degustationTimes = [];
                     //Sort by time
                     this.visitationTimes.sort(function (a, b) {
+                        return a.localeCompare(b);
+                    });
+
+                    this.degustationTimes.sort(function (a, b) {
                         return a.localeCompare(b);
                     });
                     this.buildSlideshowBox();
@@ -84,7 +90,11 @@ class slideshow {
         //Set timeout on first screen
         let interval;
         if(this.sites[0].type == "visitationtime") {
-            interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes);
+            interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes, "visitationtime");
+        }
+
+        else if(this.sites[0].type == "degustationtime") {
+            interval = this.cooldown(document.querySelector(".cooldown-clock"), this.degustationTimes, "degustationtime");
         }
 
         setTimeout(() => {
@@ -111,7 +121,11 @@ class slideshow {
         this.target.querySelector(".side:last-child").classList.add("active");
         let interval;
         if(this.sites[0].type == "visitationtime") {
-            interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes);
+            interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes, "visitationtime");
+        }
+
+        else if(this.sites[0].type == "degustationtime") {
+            interval = this.cooldown(document.querySelector(".cooldown-clock"), this.degustationTimes, "degustationtime");
         }
 
         setTimeout(() => {
@@ -207,10 +221,65 @@ class slideshow {
             clock.className = "cooldown-clock";
             clock.innerHTML = ""
     
-            let backgroundImage = document.createElement("img");
-            backgroundImage.src = this.dir + element.filename;
+            if(element.filename) {
+                let backgroundImage = document.createElement("img");
+                backgroundImage.src = this.dir + element.filename;
+                side.appendChild(backgroundImage);
+            }
+            side.appendChild(title);
+            side.appendChild(description);
+            side.appendChild(label1);
+            side.appendChild(times);
+            side.appendChild(label2);
+            side.appendChild(clock);
     
-            side.appendChild(backgroundImage);
+            document.getElementById("slideshow-box").appendChild(side);
+        }
+
+        else if (element.type == "degustationtime") {    
+            //div
+            side = document.createElement("div");
+            side.className = "visitation-cooldown";
+            side.style.backgroundColor = element.background_color;
+            side.style.color = element.color;
+            side.dataset.timeout = element.timeout;
+    
+            //title
+            let title = document.createElement("h1");
+            title.className = "cooldown-title";
+            title.innerHTML = "Řízené ochutnávky mešního vína";
+    
+            //description
+            let description = document.createElement("p");
+            description.className = "cooldown-desc";
+            description.innerHTML = "Přibližná délka ochutnávky je 50 minut";
+    
+            //label1
+            let label1 = document.createElement("p");
+            label1.className = "cooldown-label1";
+            label1.innerHTML = "Časy ochutnávek:"
+    
+            //times
+            let times = document.createElement("p");
+            times.className = "cooldown-times";
+            times.innerHTML = this.degustationTimes.join(" ");
+    
+            //label2
+            let label2 = document.createElement("p");
+            label2.className = "cooldown-label2";
+            label2.innerHTML = "Nejbližší ochutnávka začíná za:"
+    
+            //clock
+            let clock = document.createElement("p");
+            clock.className = "cooldown-clock";
+            clock.innerHTML = ""
+            
+            if(element.filename) {
+                let backgroundImage = document.createElement("img");
+                backgroundImage.src = this.dir + element.filename;
+                side.appendChild(backgroundImage);
+            }
+    
             side.appendChild(title);
             side.appendChild(description);
             side.appendChild(label1);
@@ -261,7 +330,18 @@ class slideshow {
             }
 
             else if (newSite.dataset.type == "visitationtime") {
-                let interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes);
+                let interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes, "visitationtime");
+                setTimeout(() => {
+                    //Stop when not active
+                    if (interval) {
+                        clearInterval(interval);
+                    }
+                    this.changeSite();
+                }, newSite.dataset.timeout);
+            }
+
+            else if (newSite.dataset.type == "degustationtime") {
+                let interval = this.cooldown(document.querySelector(".cooldown-clock"), this.degustationTimes, "degustationtime");
                 setTimeout(() => {
                     //Stop when not active
                     if (interval) {
@@ -284,7 +364,7 @@ class slideshow {
         }
     }
 
-    cooldown(target, times) {
+    cooldown(target, times, type) {
         let nextVisitation;
         //Get next visitation time
         const date = new Date();
@@ -324,7 +404,15 @@ class slideshow {
         }
 
         else {
-            target.innerHTML = 'Dnes již není naplánovaná žádná prohlídka';
+            let word;
+            if(type == "degustationtime") {
+                word = "degustace";
+            }
+
+            else if (type == "visitationtime") {
+                word = "prohlídka";
+            }
+            target.innerHTML = 'Dnes již není naplánovaná žádná ' + word;
         }
     }
 }
