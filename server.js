@@ -3,7 +3,7 @@ const express = require("express");
 const session = require('express-session');
 const formidable = require('formidable');
 const fs = require('fs');
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const sha1 = require("sha1");
 const config = require("config");
 let requestCount = 0;
@@ -333,7 +333,33 @@ app.post("/admin/add-slide/", (req, res) => {
 });
 
 app.post("/admin/remove-slide", (req, res) => {
+    if(req.session.user) {
+        const form = new formidable.IncomingForm();
 
+        form.parse(req, (err, fields, files) => {
+            if(fields.id) {
+                MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
+                    if(err) {
+                        console.error(err);
+                        return
+                    }
+                    let dbo = database.db("slideshow");
+                    dbo.collection("slides").deleteOne({_id: ObjectId(fields.id)}, (err, dbRmRes) => {
+                        if(err) {
+                            res.send("Slide se nepodařilo odebrat");
+                            return;
+                        }
+
+                        res.send("Slide byl úspěšně odebrán");
+                    });
+                });
+            }
+        });
+    }
+
+    else {
+        res.status(401).send("401 Unauthorized");
+    }
 });
 
 

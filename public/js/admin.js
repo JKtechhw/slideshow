@@ -142,8 +142,19 @@ class adminPanel {
                 removeTd.classList.add("remove-btn");
                 let removeBtn = document.createElement("button");
                 removeBtn.addEventListener("click", (e) => {
-                    e.currentTarget.parentNode.parentNode.remove();
-                })
+                    let slideToRemove = e.currentTarget.parentNode.parentNode;
+                    let id = "id=" + slideToRemove.dataset.id;
+                    const XHR = new XMLHttpRequest();
+                    XHR.onload = () => {
+                        this.alertUser(XHR.responseText);
+                        slideToRemove.remove();
+                    };
+                    XHR.open("POST", "/admin/remove-slide", true);
+                    XHR.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                    XHR.send(id);
+                    
+                });
+                removeBtn.type = "button";
                 removeBtn.classList.add("remove");
                 removeTd.appendChild(removeBtn);
                 slide.appendChild(removeTd);
@@ -207,7 +218,6 @@ class adminPanel {
         targetBox.innerHTML = "";
 
         if(visitations) {
-            console.log(visitations)
             visitations.sort(function (a, b) {
                 return a.localeCompare(b);
             });
@@ -230,8 +240,10 @@ class adminPanel {
         }
 
         else {
-            document.querySelector("#remove-visitations").remove();
-            targetBox.parentNode.innerHTML = '<p class="center description">Nejsou nastavené žádné prohlídky</p>';
+            if(document.querySelector("#remove-visitations")) {
+                document.querySelector("#remove-visitations").remove();
+            }
+            targetBox.innerHTML = '<p class="center description">Nejsou nastavené žádné prohlídky</p>';
         }
     }
 
@@ -244,12 +256,13 @@ class adminPanel {
 
     setupPreview() {
         document.querySelectorAll(".preview-iframe").forEach(element => {
-            element.src = this.url;
+            document.querySelector("#toggle-iframe-btn").className = "pause";
         });
 
         document.querySelector("#refresh-iframe-btn").addEventListener("click", () => {
             document.querySelectorAll(".preview-iframe").forEach(element => {
                 element.src = this.url;
+                document.querySelector("#toggle-iframe-btn").className = "pause";
             });
         });
 
@@ -342,7 +355,6 @@ class adminPanel {
         });
 
         XHR.addEventListener("error", (e) => {
-            console.log(error)
             this.alertUser(e.currentTarget.responseText, true);
         });
 
