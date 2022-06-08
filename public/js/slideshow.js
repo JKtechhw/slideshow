@@ -88,21 +88,32 @@ class slideshow {
         this.target.querySelector(".side:last-child").style.animation = `fadeIn ${this.transitionTime}ms linear`;
         this.target.querySelector(".side:last-child").classList.add("active");
         //Set timeout on first screen
-        let interval;
-        if(this.sites[0].type == "visitationtime") {
-            interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes, "visitationtime");
+        if(this.sites[0].type == "video") {
+            setTimeout(() => {
+                this.target.querySelector("video:last-child").play();
+            }, 100);
+
+            this.target.querySelector("video:last-child").addEventListener("ended", this.videoEndedEvent);
         }
 
-        else if(this.sites[0].type == "degustationtime") {
-            interval = this.cooldown(document.querySelector(".cooldown-clock"), this.degustationTimes, "degustationtime");
-        }
-
-        setTimeout(() => {
-            if(interval) {
-                clearInterval(interval);
+        else {
+            let interval;
+            if(this.sites[0].type == "visitationtime") {
+                interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes, "visitationtime");
             }
-            this.changeSite();
-        },this.sites[0].timeout);
+    
+            else if(this.sites[0].type == "degustationtime") {
+                interval = this.cooldown(document.querySelector(".cooldown-clock"), this.degustationTimes, "degustationtime");
+            }
+    
+    
+            setTimeout(() => {
+                if(interval) {
+                    clearInterval(interval);
+                }
+                this.changeSite();
+            },this.sites[0].timeout);
+        }
     }
 
     async recoverSites() {
@@ -119,21 +130,31 @@ class slideshow {
         });
         
         this.target.querySelector(".side:last-child").classList.add("active");
-        let interval;
-        if(this.sites[0].type == "visitationtime") {
-            interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes, "visitationtime");
+        if(this.sites[0].type == "video") {
+            setTimeout(() => {
+                this.target.querySelector("video:last-child").play();
+            }, 100);
+
+            this.target.querySelector("video:last-child").addEventListener("ended", this.videoEndedEvent);
         }
 
-        else if(this.sites[0].type == "degustationtime") {
-            interval = this.cooldown(document.querySelector(".cooldown-clock"), this.degustationTimes, "degustationtime");
-        }
-
-        setTimeout(() => {
-            if(interval) {
-                clearInterval(interval);
+        else {
+            let interval;
+            if(this.sites[0].type == "visitationtime") {
+                interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes, "visitationtime");
             }
-            this.changeSite();
-        }, this.sites[0].timeout);
+
+            else if(this.sites[0].type == "degustationtime") {
+                interval = this.cooldown(document.querySelector(".cooldown-clock"), this.degustationTimes, "degustationtime");
+            }
+
+            setTimeout(() => {
+                if(interval) {
+                    clearInterval(interval);
+                }
+                this.changeSite();
+            }, this.sites[0].timeout);
+        }
     }
 
     addSite(element) {
@@ -175,6 +196,9 @@ class slideshow {
             let sideH = document.createElement("h1");
             sideH.innerText = element.text
             sideH.style.color = element.color;
+            if(element.font_family) {
+                sideH.style.fontFamily = element.font_family;
+            }
             //create background image
             if(element.filename) {
                 side.style.backgroundImage = `url(/content/${element.filename})`; 
@@ -190,6 +214,10 @@ class slideshow {
             side.style.backgroundColor = element.background_color;
             side.style.color = element.color;
             side.dataset.timeout = element.timeout;
+
+            if(element.font_family) {
+                side.style.fontFamily = element.font_family;
+            }
     
             //title
             let title = document.createElement("h1");
@@ -243,6 +271,10 @@ class slideshow {
             side.style.backgroundColor = element.background_color;
             side.style.color = element.color;
             side.dataset.timeout = element.timeout;
+
+            if(element.font_family) {
+                side.style.fontFamily = element.font_family;
+            }
     
             //title
             let title = document.createElement("h1");
@@ -369,7 +401,7 @@ class slideshow {
         //Get next visitation time
         const date = new Date();
         for (let time of times) {
-            if(date < new Date(Date.parse(`${Number(date.getMonth() + 1)}/${date.getDate()}/${date.getFullYear()} ${time}:00`))) {
+            if(date < new Date(`${Number(date.getFullYear())}/${date.getMonth() + 1}/${date.getDate()} ${time}`)) {
                 nextVisitation = time;
                 break;
             }
@@ -380,7 +412,7 @@ class slideshow {
             let interval;
             interval = setInterval(() => {
                 const currentDate = new Date();
-                const visitation = new Date(Date.parse(`${Number(currentDate.getMonth() + 1)}.${currentDate.getDate()}.${currentDate.getFullYear()} ${nextVisitation}:00`));
+                const visitation = new Date(`${Number(currentDate.getFullYear())}/${currentDate.getMonth() + 1}/${currentDate.getDate()} ${nextVisitation}`);
                 
                 //Get time diff and convert ti hh:mm:ss
                 let diff = (visitation - currentDate) / 1000;
@@ -393,6 +425,7 @@ class slideshow {
                 if(seconds == 0 && minutes == 0 && hours == 0) {
                     clearInterval(interval);
                 }
+
                 //Fix single digit number format 
                 if (hours < 10) {hours = "0" + hours;}
                 if (minutes < 10) {minutes = "0" + minutes;}

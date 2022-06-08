@@ -28,7 +28,7 @@ body {
   padding-top: 60px;
 }
 
-input {
+input, textarea {
   font-family: "Montserrat", sans-serif;
 }
 
@@ -68,7 +68,7 @@ input {
 
 .blue-btn[disabled], .gray-btn[disabled] {
   cursor: not-allowed;
-  background-color: #ececec;
+  opacity: 0.5;
 }
 
 .blue-btn {
@@ -649,6 +649,16 @@ footer #footer-content p {
   width: 800px;
 }
 
+#add-slide-box form .input {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
 #add-slide-box form label {
   margin: 5px 10px;
   text-transform: uppercase;
@@ -660,6 +670,7 @@ footer #footer-content p {
 
 #add-slide-box form button[type="submit"] {
   padding: 10px 0;
+  margin-top: 20px;
 }
 
 #add-slide-box form input[type="text"], #add-slide-box form input[type="number"], #add-slide-box form select, #add-slide-box form input[type="file"], #add-slide-box form textarea {

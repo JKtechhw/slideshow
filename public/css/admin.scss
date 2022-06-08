@@ -39,7 +39,7 @@ body {
     padding-top: 60px;
 }
 
-input {
+input, textarea {
     font-family: $themeFont;
 }
 
@@ -77,7 +77,7 @@ input {
     
     &[disabled] {
         cursor: not-allowed;
-        background-color: $lightGrayColor;
+        opacity: 0.5;
     }
 }
 
@@ -591,6 +591,11 @@ footer {
         max-width: 100%;
         width: 800px;
 
+        .input {
+            display: flex;
+            flex-direction: column;
+        }
+
         label {
             margin: 5px 10px;
             text-transform: uppercase;
@@ -602,6 +607,7 @@ footer {
 
         button[type="submit"] {
             padding: 10px 0;
+            margin-top: 20px;
         }
 
         input[type="text"], input[type="number"], select, input[type="file"], textarea {

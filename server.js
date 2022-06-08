@@ -3,6 +3,7 @@ const express = require("express");
 const session = require('express-session');
 const formidable = require('formidable');
 const fs = require('fs');
+const path = require('path');
 const { MongoClient, ObjectId } = require("mongodb");
 const sha1 = require("sha1");
 const config = require("config");
@@ -344,17 +345,19 @@ app.post("/admin/add-slide/", (req, res) => {
                 let newPath = __dirname + "/public/content/" + files.add_slide_file.originalFilename;
                 uploadFilename = files.add_slide_file.originalFilename;
         
-                if(!fs.existsSync(newPath)) {
-                    fs.rename(oldPath, newPath, (err) => {
-                        if (err) {
-                            console.error(err);
-                        };
-                    });
+                if(fs.existsSync(newPath)) {
+                    let i = 1;
+                    while(fs.existsSync(newPath)) {
+                        let filename = files.add_slide_file.originalFilename;
+                        newPath = __dirname + "/public/content/" + path.parse(filename).name + "-" + i + path.parse(filename).ext;
+                    }
                 }
         
-                else {
-                    console.error("File exists!");
-                }
+                fs.rename(oldPath, newPath, (err) => {
+                    if (err) {
+                        console.error(err);
+                    };
+                });
             }
 
             if(files.add_slide_subtitles.size != 0) {
@@ -362,17 +365,19 @@ app.post("/admin/add-slide/", (req, res) => {
                 let newPath = __dirname + "/public/content/" + files.add_slide_subtitles.originalFilename;
                 uploadSubtitles = files.add_slide_subtitles.originalFilename;
         
-                if(!fs.existsSync(newPath)) {
-                    fs.rename(oldPath, newPath, (err) => {
-                        if (err) {
-                            console.error(err);
-                        };
-                    });
+                if(fs.existsSync(newPath)) {
+                    let i = 1;
+                    while(fs.existsSync(newPath)) {
+                        let filename = files.add_slide_file.originalFilename;
+                        newPath = __dirname + "/public/content/" + path.parse(filename).name + "-" + i + path.parse(filename).ext;
+                    }
                 }
-        
-                else {
-                    console.error("File exists!");
-                }
+
+                fs.rename(oldPath, newPath, (err) => {
+                    if (err) {
+                        console.error(err);
+                    };
+                });
             }
 
 
@@ -380,6 +385,7 @@ app.post("/admin/add-slide/", (req, res) => {
                 "name": fields.add_slide_name,  
                 "type": fields.add_slide_type,
                 "color": fields.add_slide_color,
+                "font_family": fields.add_slide_font_family,
                 "background_color": fields.add_slide_background_color,
                 "filename": uploadFilename,
                 "subtitles": uploadSubtitles,
@@ -427,23 +433,23 @@ app.post("/admin/remove-slide", (req, res) => {
                     }
                     let dbo = database.db("slideshow");
 
-                    dbo.collection("slides").findOne({_id: ObjectId(fields.id)}, (err, resRemove) => {
-                        if(resRemove) {
-                            if(resRemove.filename) {
-                                fs.unlink(__dirname + "/public/content/" + resRemove.filename, (err) => {
-                                    console.error(err);
-                                    return;
-                                });
-                            }
+                    // dbo.collection("slides").findOne({_id: ObjectId(fields.id)}, (err, resRemove) => {
+                    //     if(resRemove) {
+                    //         if(resRemove.filename) {
+                    //             fs.unlink(__dirname + "/public/content/" + resRemove.filename, (err) => {
+                    //                 console.error(err);
+                    //                 return;
+                    //             });
+                    //         }
 
-                            if(resRemove.subtitles) {
-                                fs.unlink(__dirname + "/public/content/" + resRemove.subtitles, (err) => {
-                                    console.error(err);
-                                    return;
-                                });
-                            }
-                        }
-                    });
+                    //         if(resRemove.subtitles) {
+                    //             fs.unlink(__dirname + "/public/content/" + resRemove.subtitles, (err) => {
+                    //                 console.error(err);
+                    //                 return;
+                    //             });
+                    //         }
+                    //     }
+                    // });
 
                     dbo.collection("slides").deleteOne({_id: ObjectId(fields.id)}, (err, dbRmRes) => {
                         if(err) {

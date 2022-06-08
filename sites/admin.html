@@ -142,10 +142,11 @@
         <button class="close-btn"></button>
         <form action="/admin/add-slide" class="default" method="post" id="add-slide-form" enctype="multipart/form-data">
             <label for="add_slide_name">Název:</label>
-            <input type="text" name="add_slide_name" required />
+            <input type="text" name="add_slide_name" placeholder="Povinné..." required />
 
             <label for="add_slide_type">Typ: </label>
-            <select name="add_slide_type">
+            <select name="add_slide_type" id="add-slide-type" required>
+                <option value="" hidden selected>Vyberte</option>
                 <option value="image">Fotka</option>
                 <option value="video">Video</option>
                 <option value="text">Text</option>
@@ -153,43 +154,51 @@
                 <option value="degustationtime">Odpočet degustace</option>
             </select>
 
-            <label for="add_slide_timeout">Timeout: (s)</label>
-            <input type="number" value="10" name="add_slide_timeout" />
+            <div id="add-slide-timeout" class="input" style="display: none;">
+                <label for="add_slide_timeout">Timeout: (s)</label>
+                <input type="number" value="10" name="add_slide_timeout" />
+            </div>
 
-            <label for="add_slide_font_family">Font family: </label>
-            <select name="add_slide_font_family" id="add_slide_box_font_family"></select>
+            <div id="font-family-box" class="input" style="display: none;">
+                <label for="add_slide_font_family">Font family: </label>
+                <select name="add_slide_font_family" id="add_slide_box_font_family"></select>
+            </div>
 
             <div class="row">
-                <div class="column">
+                <div class="column" id="background-color-box" style="display: none;">
                     <label for="add_slide_background_color">Barva pozadí: </label>
                     <input type="color" name="add_slide_background_color" />
                 </div>
 
-                <div class="column">
+                <div class="column" id="color-box" style="display: none;">
                     <label for="add_slide_color">Barva textu: </label>
                     <input type="color" name="add_slide_color" />
                 </div>
             </div>
 
             <div class="row">
-                <div class="column">
-                    <label for="add_slide_file">Soubor: (Pozadí, video)</label>
+                <div class="column" id="file-box" style="display: none;">
+                    <label for="add_slide_file">Soubor:</label>
                     <input type="file" name="add_slide_file" accept=".jpg, .JPG, .png, .jpeg, .mp4, .m4v, .webm"/>
                 </div>
 
-                <div class="column">
+                <div class="column" id="subtitles-box" style="display: none;">
                     <label for="add_slide_subtitles">Titulky: </label>
                     <input type="file" accept=".vtt" name="add_slide_subtitles" />
                 </div>
             </div>
 
-            <label for="add_slide_text">Text: </label>
-            <textarea name="add_slide_text"></textarea>
+            <div id="text-box" class="input" style="display: none;">
+                <label for="add_slide_text">Text: </label>
+                <textarea name="add_slide_text"></textarea>
+            </div>
 
-            <label for="add_slide_hidden">Skryté: </label>
-            <input type="checkbox" name="add_slide_hidden" />
+            <div id="hidden-box" style="display: none;">
+                <label for="add_slide_hidden">Skryté: </label>
+                <input type="checkbox" name="add_slide_hidden" />
+            </div>
 
-            <button class="blue-btn" type="submit" form="add-slide-form">Přidat</button>
+            <button class="blue-btn" type="submit" form="add-slide-form" disabled>Přidat</button>
         </form>
     </div>
 
