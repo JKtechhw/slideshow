@@ -23,6 +23,12 @@ npm install
 ```
 Create .env file in cloned repository directory and specify CONNECTION_STRING for MongoDB and SECRET_KEY for sessions
 
+## Run
+In cloned repository directory run:
+```markdown
+node server.js
+```
+
 
 ## Demo
 <a href="http://slideshow.jktech.dev">Demo<a>
