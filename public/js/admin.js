@@ -252,6 +252,24 @@ class adminPanel {
                 element.src = this.url;
             });
         });
+
+        document.querySelector("#toggle-iframe-btn").addEventListener("click", () => {
+            if(document.querySelector(".preview-iframe").src) {
+                document.querySelectorAll(".preview-iframe").forEach(element => {
+                    element.removeAttribute("src");
+                    document.querySelector("#toggle-iframe-btn").title = "Pokračovat";
+                    document.querySelector("#toggle-iframe-btn").className = "play";
+                });
+            }
+
+            else {
+                document.querySelectorAll(".preview-iframe").forEach(element => {
+                    element.src = this.url;
+                    document.querySelector("#toggle-iframe-btn").className = "pause";
+                    document.querySelector("#toggle-iframe-btn").title = "Pozastavit";
+                });
+            }
+        });
     }
 
     addEventsToButton() {

@@ -437,23 +437,43 @@ nav {
 #prewiew-box {
     position: relative;
 
-    #refresh-iframe-btn {
+   button {
         position: absolute;
         top: 30px;
-        right: 20px;
         background-color: transparent;
         border: none;
         cursor: pointer;
-        &::after {
-            display: inline-block;
-            content: url("/images/arrow-spin.svg");
-            transition: transform 0.2s;
+        
+        &#refresh-iframe-btn {
+            right: 20px;
+            &::after {
+                display: inline-block;
+                content: url("/images/arrow-spin.svg");
+                transition: transform 0.2s;
+            }
+    
+            &:hover {
+                &::after {
+                    transform: rotate(25deg);
+                }
+            }
         }
 
-        &:hover {
-            &::after {
-                transform: rotate(25deg);
+        &#toggle-iframe-btn {
+            right: 40px;
+
+            &.pause {
+                &::after {
+                    content: url("/images/pause.svg");
+                }
             }
+
+            &.play {
+                &::after {
+                    content: url("/images/play.svg");
+                }
+            }
+
         }
     }
 }

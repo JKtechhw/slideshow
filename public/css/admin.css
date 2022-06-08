@@ -470,16 +470,19 @@ nav #logout:hover {
   position: relative;
 }
 
-#prewiew-box #refresh-iframe-btn {
+#prewiew-box button {
   position: absolute;
   top: 30px;
-  right: 20px;
   background-color: transparent;
   border: none;
   cursor: pointer;
 }
 
-#prewiew-box #refresh-iframe-btn::after {
+#prewiew-box button#refresh-iframe-btn {
+  right: 20px;
+}
+
+#prewiew-box button#refresh-iframe-btn::after {
   display: inline-block;
   content: url("/images/arrow-spin.svg");
   -webkit-transition: -webkit-transform 0.2s;
@@ -488,9 +491,21 @@ nav #logout:hover {
   transition: transform 0.2s, -webkit-transform 0.2s;
 }
 
-#prewiew-box #refresh-iframe-btn:hover::after {
+#prewiew-box button#refresh-iframe-btn:hover::after {
   -webkit-transform: rotate(25deg);
           transform: rotate(25deg);
+}
+
+#prewiew-box button#toggle-iframe-btn {
+  right: 40px;
+}
+
+#prewiew-box button#toggle-iframe-btn.pause::after {
+  content: url("/images/pause.svg");
+}
+
+#prewiew-box button#toggle-iframe-btn.play::after {
+  content: url("/images/play.svg");
 }
 
 footer {

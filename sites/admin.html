@@ -11,7 +11,7 @@
 <body style="overflow: hidden;">
     <nav>
         <h3>Slideshow <span class="description">Dashboard</span></h3>
-        <form method="post" action="/admin/logout" id="logout-form"><button type="submit" id="logout" title="Odhlásit"></button></form>
+        <form method="post" action="/admin/logout" id="logout-form" class="default"><button type="submit" id="logout" title="Odhlásit"></button></form>
     </nav>
 
     <div class="white-box">
@@ -102,8 +102,9 @@
         <div class="part-box" id="prewiew-box">
             <h3>Náhled <span class="description">&nbsp;&nbsp;16:9</span></h3>
             <button id="refresh-iframe-btn" title="Obnovit"></button>
+            <button id="toggle-iframe-btn" class="pause" title="Pozastavit"></button>
             <div class="iframe-box">
-                <!-- <iframe class="preview-iframe"></iframe> -->
+                <iframe class="preview-iframe"></iframe>
             </div>
         </div>
     </div>
@@ -114,7 +115,7 @@
             <div id="add-visitation-input-box">
                 <input type="number" name="hours" min="0" max="23" required> : <input type="number" name="minutes" min="0" max="59" required>
             </div>
-            <button class="blue-btn" type="submit">Přidat</button>
+            <button class="blue-btn" type="submit" form="add-visitations-form">Přidat</button>
         </form>
     </div>
 
@@ -156,7 +157,7 @@
             <label for="add_slide_hidden">Skryté: </label>
             <input type="checkbox" name="add_slide_hidden" />
 
-            <button class="blue-btn" type="submit">Přidat</button>
+            <button class="blue-btn" type="submit" form="add-slide-form">Přidat</button>
         </form>
     </div>
 
