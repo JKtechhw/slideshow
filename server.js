@@ -344,6 +344,25 @@ app.post("/admin/remove-slide", (req, res) => {
                         return
                     }
                     let dbo = database.db("slideshow");
+
+                    dbo.collection("slides").findOne({_id: ObjectId(fields.id)}, (err, resRemove) => {
+                        if(resRemove) {
+                            if(resRemove.filename) {
+                                fs.unlink(__dirname + "/public/content/" + resRemove.filename, (err) => {
+                                    console.log(err);
+                                    return;
+                                });
+                            }
+
+                            if(resRemove.subtitles) {
+                                fs.unlink(__dirname + "/public/content/" + resRemove.subtitles, (err) => {
+                                    console.log(err);
+                                    return;
+                                });
+                            }
+                        }
+                    });
+
                     dbo.collection("slides").deleteOne({_id: ObjectId(fields.id)}, (err, dbRmRes) => {
                         if(err) {
                             res.send("Slide se nepodařilo odebrat");
