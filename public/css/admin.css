@@ -36,6 +36,10 @@ input {
   text-transform: uppercase;
 }
 
+.right {
+  float: right;
+}
+
 .description {
   color: #999999;
   font-weight: 300;
@@ -111,6 +115,7 @@ input {
           box-shadow: 5px 5px 12px 5px rgba(0, 0, 0, 0.1);
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  overflow: hidden;
 }
 
 .white-box h3 {
@@ -244,6 +249,7 @@ input {
   display: -ms-flexbox;
   display: flex;
   width: 100%;
+  float: inherit;
 }
 
 .part-white-box .part-box .controls-buttons button {
@@ -413,18 +419,22 @@ nav #logout:hover {
   border: none;
 }
 
-#slides-table table tr td:first-child {
+#slides-table table tr td:not(.empty):first-child {
   cursor: move;
   position: relative;
 }
 
-#slides-table table tr td:first-child::after {
+#slides-table table tr td:not(.empty):first-child::after {
   position: absolute;
   left: 0;
   top: 50%;
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%);
   content: url("/images/drag.svg");
+}
+
+#slides-table table tr td.empty {
+  padding: 20px 0 14px 0;
 }
 
 #slides-table table tr td button {
@@ -651,6 +661,7 @@ footer #footer-content p {
 
 #add-slide-box form textarea {
   resize: vertical;
+  height: 100px;
 }
 
 #loading-box {
@@ -685,8 +696,8 @@ footer #footer-content p {
 #loading-box .spinner {
   border-radius: 100%;
   border-top: 10px solid #2468d7;
-  border-bottom: 10px solid #2468d7;
-  border-left: 10px solid #999999;
+  border-left: 10px solid #2468d7;
+  border-bottom: 10px solid #999999;
   border-right: 10px solid #999999;
   -webkit-animation: spinning infinite linear 2s;
           animation: spinning infinite linear 2s;

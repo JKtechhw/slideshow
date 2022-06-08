@@ -37,7 +37,7 @@
                 <input type="number" name="transition_time" value="1000" min="0" required>
             </div>
         </form>
-        <button type="submit" class="blue-btn" form="global-settings">Upravit</button>
+        <button type="submit" class="blue-btn right" form="global-settings">Upravit</button>
     </div>
 
     <div class="part-white-box">
@@ -69,7 +69,7 @@
                     <tr>
                         <th>#</th>
                         <th>Typ</th>
-                        <th>Timeout (ms)</th>
+                        <th>Timeout (s)</th>
                         <th>Barva pozadí</th>
                         <th>Barva textu</th>
                         <th>Font family</th>
@@ -84,7 +84,7 @@
                 <tbody></tbody>
             </table>
         </form>
-        <button class="blue-btn" form="slides-table">Upravit</button>
+        <button class="blue-btn right" form="slides-table">Upravit</button>
     </div>
 
     <div class="part-white-box">
@@ -92,9 +92,9 @@
             <h3>Prohlídky</h3>
             <div class="controls-buttons">
                 <button class="blue-btn" id="add-visitation-btn">Přidat prohlídku</button>
-                <button class="gray-btn" id="remove-visitations" form="visitations-form" disabled>Smazat prohlídky</button>
+                <button class="gray-btn" id="remove-visitations" form="remove-visitations-form" disabled>Smazat prohlídky</button>
             </div>
-            <form id="visitations-form" action="/admin/remove-visitations" method="post">
+            <form id="remove-visitations-form" action="/admin/remove-visitations" method="post">
                 <ul id="visitation-list"></ul>
             </form>
         </div>
@@ -121,7 +121,7 @@
     <div id="add-slide-box">
         <button class="close-btn"></button>
         <form action="/admin/add-slide" class="default" method="post" id="add-slide-form" enctype="multipart/form-data">
-            <label for="add_slide_name">Název: </label>
+            <label for="add_slide_name">Název: *</label>
             <input type="text" name="add_slide_name" required />
 
             <label for="add_slide_type">Typ: </label>
@@ -132,8 +132,8 @@
                 <option value="visitationtime">Odpočet prohlídka</option>
             </select>
 
-            <label for="add_slide_timeout">Timeout: (ms)</label>
-            <input type="number" value="10000" name="add_slide_timeout" />
+            <label for="add_slide_timeout">Timeout: (s)</label>
+            <input type="number" value="10" name="add_slide_timeout" />
 
             <label for="add_slide_background_color">Barva pozadí: </label>
             <input type="color" name="add_slide_background_color" />

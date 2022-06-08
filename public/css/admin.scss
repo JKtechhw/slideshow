@@ -47,6 +47,10 @@ input {
     text-transform: uppercase;
 }
 
+.right {
+    float: right;
+}
+
 .description {
     color: $grayColor;
     font-weight: 300;
@@ -114,6 +118,7 @@ input {
     padding: 10px;
     box-shadow: $whiteBoxShadow;
     box-sizing: border-box;
+    overflow: hidden;
 
     h3 {
         margin-left: 10px;
@@ -227,6 +232,7 @@ input {
         .controls-buttons {
             display: flex;
             width: 100%;
+            float: inherit;
             button {
                 margin: 3px;
             }
@@ -373,16 +379,22 @@ nav {
                     border: none;
                 }
 
-                &:first-child {
-                    cursor: move;
-                    position: relative;
-                    &::after {
-                        position: absolute;
-                        left: 0;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        content: url("/images/drag.svg");
+                &:not(.empty) {
+                    &:first-child {
+                        cursor: move;
+                        position: relative;
+                        &::after {
+                            position: absolute;
+                            left: 0;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            content: url("/images/drag.svg");
+                        }
                     }
+                }
+
+                &.empty {
+                    padding: 20px 0 14px 0;
                 }
 
                 button {
@@ -588,6 +600,8 @@ footer {
 
         textarea {
             resize: vertical;
+
+            height: 100px;
         }
     }
 }
@@ -613,8 +627,8 @@ footer {
     .spinner {
         border-radius: 100%;
         border-top: 10px solid $themeColor;
-        border-bottom: 10px solid $themeColor;
-        border-left: 10px solid $grayColor;
+        border-left: 10px solid $themeColor;
+        border-bottom: 10px solid $grayColor;
         border-right: 10px solid $grayColor;
         animation: spinning infinite linear 2s;
     }

@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const session = require('express-session');
-const bodyParser = require("body-parser");
 const formidable = require('formidable');
 const fs = require('fs');
 const { MongoClient } = require("mongodb");
@@ -11,8 +10,6 @@ let requestCount = 0;
 let requestClients = 0;
 
 const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true})); 
 app.use(express.static("public"));
 app.use(session({
     secret: process.env.SECRET_KEY,
@@ -106,22 +103,25 @@ app.get("/admin", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-    MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
-        if(err) {
-            console.error(err);
-            return;
-        }
-        let dbo = database.db("slideshow");
-        dbo.collection("config").findOne({name: "password"}, {projection: {_id: 0, name: 0}}, (err, password) => {
-            if(sha1(req.body.password).localeCompare(password.value) == 0) {
-                req.session.user = "user";
-                res.redirect("/admin");
+    let form = new formidable.IncomingForm();
+    form.parse(req, (err, fields, files) => {
+        MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
+            if(err) {
+                console.error(err);
+                return;
             }
+            let dbo = database.db("slideshow");
+            dbo.collection("config").findOne({name: "password"}, {projection: {_id: 0, name: 0}}, (err, password) => {
+                if(sha1(fields.password).localeCompare(password.value) == 0) {
+                    req.session.user = "user";
+                    res.redirect("/admin");
+                }
 
-            else {
-                console.warn("Wrong password from " + req.socket.remoteAddress);
-                res.redirect("/admin?wrong-password");
-            }
+                else {
+                    console.warn("Wrong password from " + req.socket.remoteAddress);
+                    res.redirect("/admin?wrong-password");
+                }
+            });
         });
     });
 });
@@ -254,7 +254,10 @@ app.post("/admin/add-slide/", (req, res) => {
             let uploadFilename = null;
             let uploadSubtitles = null;
             let hidden = fields.add_slide_hidden ? true : false;
-            if(files.add_slide_file) {
+
+            console.log(files.add_slide_file);
+            console.log(files.add_slide_subtitles)
+            if(files.add_slide_file.size != 0) {
                 let oldPath = files.add_slide_file.filepath;
                 let newPath = __dirname + "/public/content/" + files.add_slide_file.originalFilename;
                 uploadFilename = files.add_slide_file.originalFilename;
@@ -272,7 +275,7 @@ app.post("/admin/add-slide/", (req, res) => {
                 }
             }
 
-            if(files.add_slide_subtitles) {
+            if(files.add_slide_subtitles.size != 0) {
                 let oldPath = files.add_slide_subtitles.filepath;
                 let newPath = __dirname + "/public/content/" + files.add_slide_subtitles.originalFilename;
                 uploadSubtitles = files.add_slide_subtitles.originalFilename;
@@ -298,8 +301,8 @@ app.post("/admin/add-slide/", (req, res) => {
                 "background_color": fields.add_slide_background_color,
                 "filename": uploadFilename,
                 "subtitles": uploadSubtitles,
-                "timeout": fields.add_slide_timeout,
-                "text": fields.text,
+                "timeout": Number(fields.add_slide_timeout * 1000),
+                "text": fields.add_slide_text,
                 "position": 8,
                 "hidden": hidden
             }

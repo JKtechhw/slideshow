@@ -137,6 +137,9 @@ body {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   opacity: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 #slideshow-box .side.remove {
@@ -164,4 +167,4 @@ body {
     opacity: 1;
   }
 }
-/*# sourceMappingURL=style.css.map */
+/*# sourceMappingURL=slideshow.css.map */

@@ -60,15 +60,13 @@ class slideshow {
 
             else {
                 console.error("Response is empty, waiting 10 seconds");
-
-                setTimeout(this.fetchFromApi.bind(this), 10000)
-                return;
+                setTimeout(this.fetchFromApi.bind(this), 10000);
             }
         })
         .catch( (err) => { 
-            console.error("Can't fatch data from api or api return wrong format"); 
+            console.error("Can't fatch data from api or api return wrong format, waiting 10 seconds"); 
             console.error(err);
-            return;
+            setTimeout(this.fetchFromApi.bind(this), 10000);
         });
     }
 
@@ -137,6 +135,7 @@ class slideshow {
 
         else if (element.type == "video") {
             side = document.createElement("video");
+            side.style.backgroundColor = element.background_color;
             side.muted = true;
             //Source for video 
             let videoSrc = document.createElement("source");
@@ -162,6 +161,10 @@ class slideshow {
             let sideH = document.createElement("h1");
             sideH.innerText = element.text
             sideH.style.color = element.color;
+            //create background image
+            if(element.filename) {
+                side.style.backgroundImage = `url(/content/${element.filename})`; 
+            }
             side.style.backgroundColor = element.background_color;
             side.appendChild(sideH);
         }

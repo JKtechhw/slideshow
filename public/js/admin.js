@@ -24,14 +24,14 @@ class adminPanel {
 
     async buildAdminPanel() {
         await this.fetchDataFromApi();
+        this.buildSlidesTable("#slides-table tbody");
+        this.setStatistics();
         this.setupGlobalForm();
         this.addUrlToHosts();
         this.setupPreview();
         this.addEventsToButton();
-        this.createVisitations("#visitation-list", "#add-visitations-form", this.dataFromApi.visitation_times);
+        this.updateVisitations("#visitation-list", this.dataFromApi.visitation_times);
         this.setEventToForms();
-        this.buildSlidesTable("#slides-table tbody");
-        this.setStatistics();
         this.hideLoadingBox();
     }
 
@@ -49,106 +49,119 @@ class adminPanel {
     buildSlidesTable(targetId) {
         let target = document.querySelector(targetId);
         let slides = this.dataFromApi.sites;
-        for (let i = 0; i < slides.length; i++) {
-            let slide = document.createElement("tr");
-            slide.dataset.id = slides[i]._id;
-            slide.dataset.type = slides[i].type;
 
-            if(slides[i].hidden) {
-                slide.classList.add("hidden");
+        if(slides.length > 0) {
+            for (let i = 0; i < slides.length; i++) {
+                let slide = document.createElement("tr");
+                slide.dataset.id = slides[i]._id;
+                slide.dataset.type = slides[i].type;
+
+                if(slides[i].hidden) {
+                    slide.classList.add("hidden");
+                }
+
+                let dragArea = document.createElement("td");
+                dragArea.classList.add("drag-slides");
+                slide.appendChild(dragArea);
+
+                let typeTd = document.createElement("td");
+                typeTd.innerText = slides[i].name;
+                slide.appendChild(typeTd);
+
+                let spendTime = document.createElement("td");
+                spendTime.innerText = slides[i].timeout / 1000;
+                slide.appendChild(spendTime);
+
+                let bgColor = document.createElement("td");
+                if(slides[i].background_color) {
+                    let bgColorInput = document.createElement("input");
+                    bgColorInput.type = "color";
+                    bgColorInput.value = slides[i].background_color;
+                    bgColor.appendChild(bgColorInput);
+                }
+
+                else {
+                    bgColor.innerText =  "-";
+                }
+
+                slide.appendChild(bgColor);
+
+                let textColor = document.createElement("td");
+                if(slides[i].color) {
+                    let textColorInput = document.createElement("input");
+                    textColorInput.type = "color";
+                    textColorInput.value = slides[i].color;
+                    textColor.appendChild(textColorInput);
+                }
+
+                else {
+                    textColor.innerText = "-";
+                }
+
+                slide.appendChild(textColor);
+
+                let fontFamily = document.createElement("td");
+                fontFamily.innerText = slides[i].font_family || "-";
+                slide.appendChild(fontFamily);
+
+                let file = document.createElement("td");
+                file.innerText = slides[i].filename || "-";
+                slide.appendChild(file);
+
+                let text = document.createElement("td");
+                text.innerText = slides[i].text || "-";
+                slide.appendChild(text);
+
+                let subtitles = document.createElement("td");
+                subtitles.innerText = slides[i].subtitles || "-";
+                slide.appendChild(subtitles);
+
+                let previewTd = document.createElement("td");
+                previewTd.classList.add("preview-btn");
+                let previewBtn = document.createElement("button");
+                previewBtn.classList.add("preview");
+                previewTd.appendChild(previewBtn);
+                slide.appendChild(previewTd);
+
+                let hideTd = document.createElement("td");
+                hideTd.classList.add("hidden-checkbox");
+                let hideCheckbox= document.createElement("input");
+                hideCheckbox.type = "checkbox";
+                if(slides[i].hidden) {
+                    hideCheckbox.checked = true;
+                }
+
+                hideCheckbox.addEventListener("change", (e) => {
+                    e.currentTarget.parentNode.parentNode.classList.toggle("hidden");
+                });
+
+                hideTd.appendChild(hideCheckbox);
+                slide.appendChild(hideTd);
+
+                let removeTd = document.createElement("td");
+                removeTd.classList.add("remove-btn");
+                let removeBtn = document.createElement("button");
+                removeBtn.addEventListener("click", (e) => {
+                    e.currentTarget.parentNode.parentNode.remove();
+                })
+                removeBtn.classList.add("remove");
+                removeTd.appendChild(removeBtn);
+                slide.appendChild(removeTd);
+
+                target.appendChild(slide);
             }
+        }
 
-            let dragArea = document.createElement("td");
-            dragArea.classList.add("drag-slides");
-            slide.appendChild(dragArea);
-
-            let typeTd = document.createElement("td");
-            typeTd.innerText = slides[i].name;
-            slide.appendChild(typeTd);
-
-            let spendTime = document.createElement("td");
-            spendTime.innerText = slides[i].timeout;
-            slide.appendChild(spendTime);
-
-            let bgColor = document.createElement("td");
-            if(slides[i].background_color) {
-                let bgColorInput = document.createElement("input");
-                bgColorInput.type = "color";
-                bgColorInput.value = slides[i].background_color;
-                bgColor.appendChild(bgColorInput);
-
-                bgColorInput.name = "lolando";
-            }
-
-            else {
-                bgColor.innerText =  "-";
-            }
-
-            slide.appendChild(bgColor);
-
-            let textColor = document.createElement("td");
-            if(slides[i].color) {
-                let textColorInput = document.createElement("input");
-                textColorInput.type = "color";
-                textColorInput.value = slides[i].color;
-                textColor.appendChild(textColorInput);
-            }
-
-            else {
-                textColor.innerText = "-";
-            }
-
-            slide.appendChild(textColor);
-
-            let fontFamily = document.createElement("td");
-            fontFamily.innerText = slides[i].font_family || "-";
-            slide.appendChild(fontFamily);
-
-            let file = document.createElement("td");
-            file.innerText = slides[i].filename || "-";
-            slide.appendChild(file);
-
-            let text = document.createElement("td");
-            text.innerText = slides[i].text || "-";
-            slide.appendChild(text);
-
-            let subtitles = document.createElement("td");
-            subtitles.innerText = slides[i].subtitles || "-";
-            slide.appendChild(subtitles);
-
-            let previewTd = document.createElement("td");
-            previewTd.classList.add("preview-btn");
-            let previewBtn = document.createElement("button");
-            previewBtn.classList.add("preview");
-            previewTd.appendChild(previewBtn);
-            slide.appendChild(previewTd);
-
-            let hideTd = document.createElement("td");
-            hideTd.classList.add("hidden-checkbox");
-            let hideCheckbox= document.createElement("input");
-            hideCheckbox.type = "checkbox";
-            if(slides[i].hidden) {
-                hideCheckbox.checked = true;
-            }
-
-            hideCheckbox.addEventListener("change", (e) => {
-                e.currentTarget.parentNode.parentNode.classList.toggle("hidden");
-            });
-
-            hideTd.appendChild(hideCheckbox);
-            slide.appendChild(hideTd);
-
-            let removeTd = document.createElement("td");
-            removeTd.classList.add("remove-btn");
-            let removeBtn = document.createElement("button");
-            removeBtn.addEventListener("click", (e) => {
-                e.currentTarget.parentNode.parentNode.remove();
-            })
-            removeBtn.classList.add("remove");
-            removeTd.appendChild(removeBtn);
-            slide.appendChild(removeTd);
-
-            target.appendChild(slide);
+        else {
+            let columns = target.parentNode.querySelector("tr").children.length;
+            let emptyLineRow = document.createElement("tr");
+            let emptyLine = document.createElement("td");
+            emptyLine.colSpan = columns;
+            emptyLine.classList.add("empty");
+            emptyLine.classList.add("description");
+            emptyLine.innerText = "Nebyly přidány žádné slidy";
+            emptyLineRow.appendChild(emptyLine);
+            target.appendChild(emptyLineRow);
         }
     }
 
@@ -189,12 +202,12 @@ class adminPanel {
         });
     }
 
-    createVisitations(target, form, visitations) {
+    async updateVisitations(target, visitations) {
         let targetBox = document.querySelector(target);
-        let visitationsForm = document.querySelector(form);
         targetBox.innerHTML = "";
 
         if(visitations) {
+            console.log(visitations)
             visitations.sort(function (a, b) {
                 return a.localeCompare(b);
             });
@@ -220,11 +233,6 @@ class adminPanel {
             document.querySelector("#remove-visitations").remove();
             targetBox.parentNode.innerHTML = '<p class="center description">Nejsou nastavené žádné prohlídky</p>';
         }
-
-        visitationsForm.addEventListener("submit", () => {
-            document.querySelector("#add-visitation-box").classList.remove("active");
-            this.fetchDataFromApi();
-        });
     }
 
     addUrlToHosts() {
@@ -254,6 +262,17 @@ class adminPanel {
         document.querySelector("#add-slide-box .close-btn").addEventListener("click", this.toggleAddSlide.bind(this));
 
         this.createFontDropDown("#add_slide_box_font_family", this.dataFromApi.font_family);
+
+        document.querySelector("#add-visitations-form").addEventListener("submit", async () => {
+            await this.fetchDataFromApi();
+            await this.updateVisitations("#visitation-list", this.dataFromApi.visitation_times);
+            document.querySelector("#add-visitation-box").classList.remove("active");
+        });
+
+        document.querySelector("#remove-visitations-form").addEventListener("submit", async () => {
+            await this.fetchDataFromApi();
+            await this.updateVisitations("#visitation-list", this.dataFromApi.visitation_times);
+        });
     }
 
     toggleAddSlide() {
@@ -271,7 +290,7 @@ class adminPanel {
             document.body.style.overflow = "hidden";
             document.querySelector("#add-visitation-box").classList.add("active");
             document.querySelector("#add-visitation-box input[name=\"hours\"]").value = date.getHours();
-            document.querySelector("#add-visitation-box input[name=\"minutes\"]").value = date.getMinutes();
+            document.querySelector("#add-visitation-box input[name=\"minutes\"]").value = "00";
         }
     }
 
@@ -297,7 +316,6 @@ class adminPanel {
 
     async sendForm(formId, url) {
         let form = document.getElementById(formId);
-        console.log(form);
         const XHR = new XMLHttpRequest();
         const FD = new FormData(form);
 
