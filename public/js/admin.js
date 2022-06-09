@@ -37,6 +37,10 @@ class adminPanel {
         this.setEventToForms();
         this.addSlideEvents("#add-slide-form");
         this.hideLoadingBox();
+        setInterval(() => {
+            this.fetchDataFromApi();
+            this.setStatistics();
+        }, 60000);
     }
 
     async setStatistics() {
@@ -133,9 +137,6 @@ class adminPanel {
                 let dragArea = document.createElement("td");
                 dragArea.classList.add("drag-slides");
                 slide.appendChild(dragArea);
-                dragArea.addEventListener("mouseup" ,(e) => {
-                    console.log(e)
-                });
 
                 let spendTime = document.createElement("td");
                 spendTime.innerText = slides[i].timeout / 1000;
@@ -214,6 +215,7 @@ class adminPanel {
                         case "image":
                             timeoutBox.style.display = "flex";
                             fontFamilyBox.style.display = "none";
+                            fontFamilyBox.querySelector("select").innerHTML = "";
                             backgroundColorBox.style.display = "flex";
                             textColorBox.style.display = "none";
                             fileBox.style.display = "flex";
@@ -225,6 +227,7 @@ class adminPanel {
                         case "video":
                             timeoutBox.style.display = "none";
                             fontFamilyBox.style.display = "none";
+                            fontFamilyBox.querySelector("select").innerHTML = "";
                             backgroundColorBox.style.display = "flex";
                             textColorBox.style.display = "none";
                             fileBox.style.display = "flex";
@@ -236,6 +239,7 @@ class adminPanel {
                         case "text":
                             timeoutBox.style.display = "flex";
                             fontFamilyBox.style.display = "flex";
+                            this.createFontDropDown("#edit-slide-form #font-family-box select", slides[i].font_family);
                             backgroundColorBox.style.display = "flex";
                             textColorBox.style.display = "flex";
                             fileBox.style.display = "flex";
@@ -248,6 +252,7 @@ class adminPanel {
                         case "degustationtime":
                             timeoutBox.style.display = "flex";
                             fontFamilyBox.style.display = "flex";
+                            this.createFontDropDown("#edit-slide-form #font-family-box select", slides[i].font_family);
                             backgroundColorBox.style.display = "flex";
                             textColorBox.style.display = "flex";
                             fileBox.style.display = "flex";
@@ -422,12 +427,6 @@ class adminPanel {
     setupPreview() {
         document.querySelectorAll(".preview-iframe").forEach(element => {
             document.querySelector("#toggle-iframe-btn").className = "play";
-        });
-
-        document.querySelector("#refresh-iframe-btn").addEventListener("click", () => {
-            document.querySelectorAll(".preview-iframe").forEach(element => {
-                element.src = this.url;
-            });
         });
 
         document.querySelector("#toggle-iframe-btn").addEventListener("click", () => {

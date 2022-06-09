@@ -417,12 +417,6 @@ nav {
                     cursor: pointer;
                 }
 
-                .preview {
-                    &::after {
-                        content: url("/images/eye.svg");
-                    }
-                }
-
                 .edit {
                     &::after {
                         content: url("/images/edit.svg");
@@ -463,21 +457,6 @@ nav {
         background-color: transparent;
         border: none;
         cursor: pointer;
-        
-        &#refresh-iframe-btn {
-            right: 20px;
-            &::after {
-                display: inline-block;
-                content: url("/images/arrow-spin.svg");
-                transition: transform 0.2s;
-            }
-    
-            &:hover {
-                &::after {
-                    transform: rotate(25deg);
-                }
-            }
-        }
 
         &#toggle-iframe-btn {
             right: 45px;

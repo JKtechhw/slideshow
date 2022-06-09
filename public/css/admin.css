@@ -452,10 +452,6 @@ nav #logout:hover {
   cursor: pointer;
 }
 
-#slides-table table tr td .preview::after {
-  content: url("/images/eye.svg");
-}
-
 #slides-table table tr td .edit::after {
   content: url("/images/edit.svg");
 }
@@ -489,24 +485,6 @@ nav #logout:hover {
   background-color: transparent;
   border: none;
   cursor: pointer;
-}
-
-#prewiew-box button#refresh-iframe-btn {
-  right: 20px;
-}
-
-#prewiew-box button#refresh-iframe-btn::after {
-  display: inline-block;
-  content: url("/images/arrow-spin.svg");
-  -webkit-transition: -webkit-transform 0.2s;
-  transition: -webkit-transform 0.2s;
-  transition: transform 0.2s;
-  transition: transform 0.2s, -webkit-transform 0.2s;
-}
-
-#prewiew-box button#refresh-iframe-btn:hover::after {
-  -webkit-transform: rotate(25deg);
-          transform: rotate(25deg);
 }
 
 #prewiew-box button#toggle-iframe-btn {

@@ -77,7 +77,6 @@ class slideshow {
     }
 
     async buildSlideshowBox() {
-        console.log("Api changed or building new state");
         //Create all sites from json
         this.target.innerHTML = "";
         this.sites.forEach(element => {
@@ -117,7 +116,6 @@ class slideshow {
     }
 
     async recoverSites() {
-        console.log("Recovering old state, api doesn't changed");
         let sites = this.target.querySelectorAll(".side");
         //reset status for sites
         sites.forEach(element => {
