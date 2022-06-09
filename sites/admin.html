@@ -63,27 +63,23 @@
             <button id="add-slide" class="blue-btn">Přidat slide</button>
         </div>
 
-        <form id="slides-table">
+        <div id="slides-table">
             <table>
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Typ</th>
                         <th>Timeout (s)</th>
-                        <th>Barva pozadí</th>
-                        <th>Barva textu</th>
-                        <th>Font family</th>
-                        <th>Soubor</th>
+                        <th>Název</th>
                         <th>Text</th>
-                        <th>Titulky</th>
                         <th>Náhled</th>
                         <th>Skryté</th>
+                        <th>Upravit</th>
                         <th>Smazat</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
-        </form>
+        </div>
         <button class="blue-btn right" form="slides-table">Upravit</button>
     </div>
 
@@ -179,7 +175,7 @@
             <div class="row">
                 <div class="column" id="file-box" style="display: none;">
                     <label for="add_slide_file">Soubor:</label>
-                    <input type="file" name="add_slide_file" accept=".jpg, .JPG, .png, .jpeg, .mp4, .m4v, .webm"/>
+                    <input type="file" name="add_slide_file" />
                 </div>
 
                 <div class="column" id="subtitles-box" style="display: none;">
@@ -190,7 +186,7 @@
 
             <div id="text-box" class="input" style="display: none;">
                 <label for="add_slide_text">Text: </label>
-                <textarea name="add_slide_text"></textarea>
+                <textarea name="add_slide_text" placeholder="Text..."></textarea>
             </div>
 
             <div id="hidden-box" style="display: none;">
@@ -199,6 +195,62 @@
             </div>
 
             <button class="blue-btn" type="submit" form="add-slide-form" disabled>Přidat</button>
+        </form>
+    </div>
+
+    <div id="edit-slide-box">
+        <button class="close-btn"></button>
+        <form action="/admin/edit-slide" class="default" method="post" id="edit-slide-form" enctype="multipart/form-data">
+            <div id="edit-slide-name" class="input">
+                <label for="edit_slide_name">Název:</label>
+                <input type="text" name="edit_slide_name" placeholder="Povinné..." required />
+            </div>
+
+            <label for="edit_slide_type">Typ: </label>
+            <input type="text" id="edit_slide_type" readonly>
+
+            <div id="edit-slide-timeout" class="input">
+                <label for="edit_slide_timeout">Timeout: (s)</label>
+                <input type="number" name="edit_slide_timeout" />
+            </div>
+
+            <div id="font-family-box" class="input">
+                <label for="edit_slide_font_family">Font family: </label>
+                <select name="edit_slide_box_font_family" id="edit-slide-box-font-family"></select>
+            </div>
+
+            <div class="row">
+                <div class="column" id="edit-background-color-box">
+                    <label for="edit_slide_background_color">Barva pozadí: </label>
+                    <input type="color" name="edit_slide_background_color" />
+                </div>
+
+                <div class="column" id="edit-color-box">
+                    <label for="edit_slide_color">Barva textu: </label>
+                    <input type="color" name="edit_slide_color" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column" id="file-box">
+                    <label for="edit_slide_file">Soubor:</label>
+                    <input type="file" name="edit_slide_file" accept=".jpg, .JPG, .png, .jpeg, .mp4, .m4v, .webm"/>
+                </div>
+
+                <div class="column" id="subtitles-box">
+                    <label for="edit_slide_subtitles">Titulky: </label>
+                    <input type="file" accept=".vtt" name="edit_slide_subtitles" />
+                </div>
+            </div>
+
+            <div id="text-box" class="input">
+                <label for="edit_slide_text">Text: </label>
+                <textarea name="edit_slide_text"></textarea>
+            </div>
+
+            <input type="hidden" name="edit_slide_id" id="edit-slide-id" readonly />
+
+            <button class="blue-btn" type="submit" form="edit-slide-form">Upravit</button>
         </form>
     </div>
 

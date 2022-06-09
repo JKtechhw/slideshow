@@ -336,83 +336,41 @@ app.post("/admin/add-slide/", (req, res) => {
     if(req.session.user) {
        let form = new formidable.IncomingForm();
         form.parse(req, (err, fields, files) => {
-            let uploadFilename = null;
-            let uploadSubtitles = null;
             let hidden = fields.add_slide_hidden ? true : false;
-
-            if(files.add_slide_file.size != 0) {
-                let oldPath = files.add_slide_file.filepath;
-                let newPath = __dirname + "/public/content/" + files.add_slide_file.originalFilename;
-                uploadFilename = files.add_slide_file.originalFilename;
-        
-                if(fs.existsSync(newPath)) {
-                    let i = 1;
-                    while(fs.existsSync(newPath)) {
-                        let filename = files.add_slide_file.originalFilename;
-                        newPath = __dirname + "/public/content/" + path.parse(filename).name + "-" + i + path.parse(filename).ext;
-                    }
+            uploadFiles(files.add_slide_file, files.add_slide_subtitles)
+            .then(files => {
+                let newValues = {  
+                    name: fields.add_slide_name,  
+                    type: fields.add_slide_type,
+                    color: fields.add_slide_color,
+                    font_family: fields.add_slide_font_family,
+                    background_color: fields.add_slide_background_color,
+                    filename: files[0],
+                    subtitles: files[1],
+                    timeout: Number(fields.add_slide_timeout * 1000),
+                    text: fields.add_slide_text,
+                    position: 8,
+                    hidden: hidden
                 }
-        
-                fs.rename(oldPath, newPath, (err) => {
-                    if (err) {
-                        console.error(err);
-                    };
-                });
-            }
-
-            if(files.add_slide_subtitles.size != 0) {
-                let oldPath = files.add_slide_subtitles.filepath;
-                let newPath = __dirname + "/public/content/" + files.add_slide_subtitles.originalFilename;
-                uploadSubtitles = files.add_slide_subtitles.originalFilename;
-        
-                if(fs.existsSync(newPath)) {
-                    let i = 1;
-                    while(fs.existsSync(newPath)) {
-                        let filename = files.add_slide_file.originalFilename;
-                        newPath = __dirname + "/public/content/" + path.parse(filename).name + "-" + i + path.parse(filename).ext;
-                    }
-                }
-
-                fs.rename(oldPath, newPath, (err) => {
-                    if (err) {
-                        console.error(err);
-                    };
-                });
-            }
-
-
-            let newValues = {  
-                "name": fields.add_slide_name,  
-                "type": fields.add_slide_type,
-                "color": fields.add_slide_color,
-                "font_family": fields.add_slide_font_family,
-                "background_color": fields.add_slide_background_color,
-                "filename": uploadFilename,
-                "subtitles": uploadSubtitles,
-                "timeout": Number(fields.add_slide_timeout * 1000),
-                "text": fields.add_slide_text,
-                "position": 8,
-                "hidden": hidden
-            }
-
-            MongoClient.connect(process.env.CONNECTION_STRING, (err, db) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-
-                let dbo = db.db("slideshow");
-                dbo.collection("slides").insertOne(newValues, (err, dbRes) => {
+    
+                MongoClient.connect(process.env.CONNECTION_STRING, (err, db) => {
                     if (err) {
                         console.error(err);
                         return;
                     }
-                    db.close();
-                });
+    
+                    let dbo = db.db("slideshow");
+                    dbo.collection("slides").insertOne(newValues, (err, dbRes) => {
+                        if (err) {
+                            console.error(err);
+                            return;
+                        }
+                        db.close();
+                    });
+            });
+            res.redirect("/admin");
             });
         });
-
-        res.redirect("/admin");
     }
 
     else {
@@ -433,24 +391,6 @@ app.post("/admin/remove-slide", (req, res) => {
                     }
                     let dbo = database.db("slideshow");
 
-                    // dbo.collection("slides").findOne({_id: ObjectId(fields.id)}, (err, resRemove) => {
-                    //     if(resRemove) {
-                    //         if(resRemove.filename) {
-                    //             fs.unlink(__dirname + "/public/content/" + resRemove.filename, (err) => {
-                    //                 console.error(err);
-                    //                 return;
-                    //             });
-                    //         }
-
-                    //         if(resRemove.subtitles) {
-                    //             fs.unlink(__dirname + "/public/content/" + resRemove.subtitles, (err) => {
-                    //                 console.error(err);
-                    //                 return;
-                    //             });
-                    //         }
-                    //     }
-                    // });
-
                     dbo.collection("slides").deleteOne({_id: ObjectId(fields.id)}, (err, dbRmRes) => {
                         if(err) {
                             res.send("Slide se nepodařilo odebrat");
@@ -469,9 +409,157 @@ app.post("/admin/remove-slide", (req, res) => {
     }
 });
 
+app.post("/admin/hide-slide", (req, res) => {
+    if(req.session.user) {
+        const form = new formidable.IncomingForm();
+        form.parse(req, (err, fields, files) => {
+            if(fields.id) {
+                MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
+                    if(err) {
+                        console.error(err);
+                        return;
+                    }
+                    let newValues = { $set: {hidden: fields.status == "true" ? true : false}}
+                    let dbo = database.db("slideshow");
+                    dbo.collection("slides").updateOne({_id: ObjectId(fields.id)}, newValues, (err, dbRmRes) => {
+                        if(err) {
+                            console.error(err);
+                            res.send("Záznam nebyl aktualizován");
+                            return;
+                        }
+                        res.send("Záznam byl aktualizován");
+                    });
+                });
+            }
+        });
+    }
+
+    else {
+        res.status(401).send("401 Unauthorized");
+    }
+});
+
+app.post("/admin/edit-slide", (req, res) => {
+    if(req.session.user) {
+        const form = new formidable.IncomingForm();
+        form.parse(req, (err, fields, files) => {
+            if(fields.edit_slide_id) {
+                uploadFiles(files.edit_slide_file, files.edit_slide_subtitles)
+                .then (files => {
+                    let newValues = { 
+                        $set: {
+                            name: fields.edit_slide_name,
+                            timeout: fields.edit_slide_timeout ? Number(fields.edit_slide_timeout * 1000) : null,
+                            font_family: fields.edit_slide_box_font_family,
+                            background_color: fields.edit_slide_background_color,
+                            color: fields.edit_slide_color,
+                            text: fields.edit_slide_text
+                        }
+                    }
+
+                    if(files[0]) {
+                        newValues.$set.filename = files[0];
+                    }
+
+                    if(files[1]) {
+                        newValues.$set.subtitles = files[1];
+                    }
+    
+                    MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
+                        if(err) {
+                            console.error(err);
+                            return;
+                        }
+    
+                        let dbo = database.db("slideshow");
+                        dbo.collection("slides").updateOne({_id: ObjectId(fields.edit_slide_id)}, newValues, (err, dbRmRes) => {
+                            if(err) {
+                                console.error(err);
+                                res.send("Záznam nebyl upraven");
+                                return;
+                            }
+                            res.redirect("/admin/");
+                        });
+                    });
+                });
+            }
+        });
+    }
+
+    else {
+        res.status(401).send("401 Unauthorized");
+    }
+});
 
 app.get("*", (req, res) => {
     res.status(404).send("Error 404");
 });
 
 app.listen(config.get("port"), () => { console.log(`Server is running on port ${config.get("port")}...`) });
+
+async function uploadFiles(file, subtitles) {
+    return new Promise((resolve, reject) => {
+        let uploadFilename = null;
+        let uploadSubtitles = null;
+
+        if(file.size != 0) {
+            let oldPath = file.filepath;
+            let newPath = __dirname + "/public/content/" + file.originalFilename;
+    
+            if(fs.existsSync(newPath)) {
+                let i = 1;
+
+                while(fs.existsSync(newPath)) {
+                    let filename = file.originalFilename;
+                    newPath = __dirname + "/public/content/" + path.parse(filename).name + "-" + i + path.parse(filename).ext;
+                    i++;
+                }
+            }
+    
+            fs.rename(oldPath, newPath, (err) => {
+
+                if (err) {
+                    console.error(err);
+                    return;
+                };
+
+                uploadFilename = path.parse(newPath).base;
+                console.log("New uploaded file " + uploadFilename);
+
+                if(subtitles.size != 0) {
+                    let oldPath = subtitles.filepath;
+                    let newPath = __dirname + "/public/content/" + subtitles.originalFilename;
+                    uploadSubtitles = subtitles.originalFilename;
+            
+                    if(fs.existsSync(newPath)) {
+                        let i = 1;
+                        while(fs.existsSync(newPath)) {
+                            let filename = subtitles.originalFilename;
+                            newPath = __dirname + "/public/content/" + path.parse(filename).name + "-" + i + path.parse(filename).ext;
+                            i++;
+                        }
+                    }
+
+                    fs.rename(oldPath, newPath, (err) => {
+                        if (err) {
+                            console.error(err);
+                            return;
+                        };
+
+                        uploadSubtitles = path.parse(newPath).base;
+                        console.log("New uploaded file " + uploadSubtitles);
+                        resolve([uploadFilename, uploadSubtitles]);
+                    });
+                }
+
+                else {
+                    resolve([uploadFilename, uploadSubtitles]);
+                }
+            });
+        }
+
+        else {
+            resolve([null, null]);
+        }
+    });
+}

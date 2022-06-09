@@ -69,12 +69,17 @@ body {
   background-color: transparent;
   border: 2px solid #999999;
   outline: none;
-  -webkit-transition: border-bottom 0.2s;
-  transition: border-bottom 0.2s;
+  -webkit-transition: border 0.2s;
+  transition: border 0.2s;
   padding: 7px 12px;
   font-size: 16px;
   font-family: 'Montserrat', sans-serif;
   margin: 0;
+  border-left: none;
+}
+
+#login-box #background-input input:focus {
+  border: 2px solid #2468d7;
   border-left: none;
 }
 

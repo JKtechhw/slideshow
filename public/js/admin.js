@@ -59,6 +59,7 @@ class adminPanel {
         let backgroundColorBox = target.querySelector("#background-color-box");
         let textColorBox = target.querySelector("#color-box");
         let fileBox = target.querySelector("#file-box");
+        let fileBoxInput = target.querySelector("#file-box input");
         let subtitlesBox = target.querySelector("#subtitles-box");
         let textBox = target.querySelector("#text-box");
 
@@ -71,7 +72,8 @@ class adminPanel {
                     backgroundColorBox.style.display = "flex";
                     textColorBox.style.display = "none";
                     fileBox.style.display = "flex";
-                    fileBox.accept = this.acceptedImage;
+                    fileBoxInput.setAttribute("accept", this.acceptedImage);
+                    fileBoxInput.required = true;
                     subtitlesBox.style.display = "none";
                     textBox.style.display = "none";
                     break;
@@ -82,7 +84,8 @@ class adminPanel {
                     backgroundColorBox.style.display = "flex";
                     textColorBox.style.display = "none";
                     fileBox.style.display = "flex";
-                    fileBox.accept = this.acceptedVideo;
+                    fileBoxInput.setAttribute("accept", this.acceptedVideo);
+                    fileBoxInput.required = true;
                     subtitlesBox.style.display = "flex";
                     textBox.style.display = "none";
                     break;
@@ -93,7 +96,7 @@ class adminPanel {
                     backgroundColorBox.style.display = "flex";
                     textColorBox.style.display = "flex";
                     fileBox.style.display = "flex";
-                    fileBox.accept = this.acceptedImage;
+                    fileBoxInput.setAttribute("accept", this.acceptedImage);
                     subtitlesBox.style.display = "none";
                     textBox.style.display = "flex";
                     break;
@@ -105,12 +108,9 @@ class adminPanel {
                     backgroundColorBox.style.display = "flex";
                     textColorBox.style.display = "flex";
                     fileBox.style.display = "flex";
-                    fileBox.accept = this.acceptedImage;
+                    fileBoxInput.setAttribute("accept", this.acceptedImage);
                     subtitlesBox.style.display = "none";
                     textBox.style.display = "none";
-                    break;
-            
-                default:
                     break;
             }
         });
@@ -134,74 +134,30 @@ class adminPanel {
                 dragArea.classList.add("drag-slides");
                 slide.appendChild(dragArea);
 
+                let spendTime = document.createElement("td");
+                spendTime.innerText = slides[i].timeout / 1000;
+                slide.appendChild(spendTime);
+
                 let typeTd = document.createElement("td");
                 typeTd.innerText = slides[i].name;
                 slide.appendChild(typeTd);
+                typeTd.classList.add("title");
                 typeTd.title = slides[i].name;
-
-                let spendTime = document.createElement("td");
-                spendTime.innerText = slides[i].timeout / 1000;
-                spendTime.addEventListener("dblclick", () => {
-                    let value = slides[i].timeout / 1000;
-                    let newInput = document.createElement("input");
-                    newInput.value = value;
-                    newInput.type = "number";
-                    spendTime.appendChild(newInput);
-                });
-                slide.appendChild(spendTime);
-
-                let bgColor = document.createElement("td");
-                if(slides[i].background_color) {
-                    let bgColorInput = document.createElement("input");
-                    bgColorInput.type = "color";
-                    bgColorInput.value = slides[i].background_color;
-                    bgColor.appendChild(bgColorInput);
-                }
-
-                else {
-                    bgColor.innerText =  "-";
-                }
-
-                slide.appendChild(bgColor);
-
-                let textColor = document.createElement("td");
-                if(slides[i].color) {
-                    let textColorInput = document.createElement("input");
-                    textColorInput.type = "color";
-                    textColorInput.value = slides[i].color;
-                    textColor.appendChild(textColorInput);
-                }
-
-                else {
-                    textColor.innerText = "-";
-                }
-
-                slide.appendChild(textColor);
-
-                let fontFamily = document.createElement("td");
-                fontFamily.innerText = slides[i].font_family || "-";
-                fontFamily.title = slides[i].font_family;
-                slide.appendChild(fontFamily);
-
-
-                let file = document.createElement("td");
-                file.innerText = slides[i].filename || "-";
-                file.title = slides[i].filename || "-";
-                slide.appendChild(file);
 
                 let text = document.createElement("td");
                 text.innerText = slides[i].text || "-";
                 text.title = slides[i].text;
+                text.classList.add("text");
                 slide.appendChild(text);
-
-                let subtitles = document.createElement("td");
-                subtitles.innerText = slides[i].subtitles || "-";
-                slide.appendChild(subtitles);
 
                 let previewTd = document.createElement("td");
                 previewTd.classList.add("preview-btn");
                 let previewBtn = document.createElement("button");
                 previewBtn.classList.add("preview");
+                previewBtn.type = "button";
+                previewBtn.addEventListener("click", () => {
+                    window.open("", "", "width=640,height=360");
+                });
                 previewTd.appendChild(previewBtn);
                 slide.appendChild(previewTd);
 
@@ -214,11 +170,99 @@ class adminPanel {
                 }
 
                 hideCheckbox.addEventListener("change", (e) => {
-                    e.currentTarget.parentNode.parentNode.classList.toggle("hidden");
+                    const XHR = new XMLHttpRequest();
+                    let hidden = false;
+                    if(e.currentTarget.checked) {
+                        hidden = true;
+                    }
+                    let hiddenElement = e.currentTarget.parentNode.parentNode;
+                    let id = "id=" + hiddenElement.dataset.id + "&status=" + hidden;
+
+                    XHR.onload = () => {
+                        this.alertUser(XHR.responseText);
+                        hiddenElement.classList.toggle("hidden");
+                    }
+
+                    XHR.open("POST", "/admin/hide-slide");
+                    XHR.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                    XHR.send(id);
                 });
 
                 hideTd.appendChild(hideCheckbox);
                 slide.appendChild(hideTd);
+
+                let editTd = document.createElement("td");
+                editTd.classList.add("edit-btn");
+                let editBtn = document.createElement("button");
+                editBtn.type = "button";
+                editBtn.classList.add("edit");
+                editTd.appendChild(editBtn);
+                editBtn.addEventListener("click", () => {
+                    document.querySelector("#edit-slide-box").classList.add("active");
+                    document.querySelector("#edit-slide-name input").value = slides[i].name;
+                    document.querySelector("#edit-slide-id").value = slides[i]._id;
+                    document.querySelector("#edit_slide_type").value = slides[i].type;
+                    document.querySelector("#edit-slide-timeout input").value = slides[i].timeout;
+
+                    let target = document.querySelector("#edit-slide-box");
+            
+                    let timeoutBox = target.querySelector("#edit-slide-timeout");
+                    let fontFamilyBox = target.querySelector("#font-family-box");
+                    let backgroundColorBox = target.querySelector("#edit-background-color-box");
+                    let textColorBox = target.querySelector("#edit-color-box");
+                    let fileBox = target.querySelector("#file-box");
+                    let fileBoxInput = target.querySelector("#file-box input");
+                    let subtitlesBox = target.querySelector("#subtitles-box");
+                    let textBox = target.querySelector("#text-box");
+            
+                    switch (slides[i].type) {
+                        case "image":
+                            timeoutBox.style.display = "flex";
+                            fontFamilyBox.style.display = "none";
+                            backgroundColorBox.style.display = "flex";
+                            textColorBox.style.display = "none";
+                            fileBox.style.display = "flex";
+                            fileBoxInput.setAttribute("accept", this.acceptedImage);
+                            subtitlesBox.style.display = "none";
+                            textBox.style.display = "none";
+                            break;
+        
+                        case "video":
+                            timeoutBox.style.display = "none";
+                            fontFamilyBox.style.display = "none";
+                            backgroundColorBox.style.display = "flex";
+                            textColorBox.style.display = "none";
+                            fileBox.style.display = "flex";
+                            fileBoxInput.setAttribute("accept", this.acceptedVideo);
+                            subtitlesBox.style.display = "flex";
+                            textBox.style.display = "none";
+                            break;
+        
+                        case "text":
+                            timeoutBox.style.display = "flex";
+                            fontFamilyBox.style.display = "flex";
+                            backgroundColorBox.style.display = "flex";
+                            textColorBox.style.display = "flex";
+                            fileBox.style.display = "flex";
+                            fileBoxInput.setAttribute("accept", this.acceptedImage);
+                            subtitlesBox.style.display = "none";
+                            textBox.style.display = "flex";
+                            break;
+        
+                        case "visitationtime":
+                        case "degustationtime":
+                            timeoutBox.style.display = "flex";
+                            fontFamilyBox.style.display = "flex";
+                            backgroundColorBox.style.display = "flex";
+                            textColorBox.style.display = "flex";
+                            fileBox.style.display = "flex";
+                            fileBoxInput.setAttribute("accept", this.acceptedImage);
+                            subtitlesBox.style.display = "none";
+                            textBox.style.display = "none";
+                            break;
+                    }
+                });
+                slide.appendChild(editTd);
 
                 let removeTd = document.createElement("td");
                 removeTd.classList.add("remove-btn");
@@ -294,6 +338,7 @@ class adminPanel {
 
     createFontDropDown(target, active) {
         let targetElement = document.querySelector(target); 
+        targetElement.innerHTML = "";
         this.dataFromApi.fonts.forEach(element => {
             let option = document.createElement("option");
             option.value = element.value;
@@ -424,6 +469,10 @@ class adminPanel {
         //Add slide
         document.querySelector("#add-slide").addEventListener("click", this.toggleAddSlide.bind(this));
         document.querySelector("#add-slide-box .close-btn").addEventListener("click", this.toggleAddSlide.bind(this));
+        //Edit slide
+        document.querySelector("#edit-slide-box .close-btn").addEventListener("click", () => {
+            document.querySelector("#edit-slide-box").classList.remove("active");
+        });
 
         this.createFontDropDown("#add_slide_box_font_family", this.dataFromApi.font_family);
 
@@ -453,7 +502,6 @@ class adminPanel {
 
         else {
             addSlideBox.classList.add("active");
-            console.log(this.dataFromApi)
             addSlideBox.querySelector("input[name=\"add_slide_background_color\"]").value = this.dataFromApi.background_color;
             addSlideBox.querySelector("input[name=\"add_slide_color\"]").value = this.dataFromApi.text_color;
         }
@@ -549,6 +597,6 @@ class adminPanel {
 
         setTimeout(() => {
             alertBox.remove();
-        }, 7100);
+        }, 5100);
     }
 }

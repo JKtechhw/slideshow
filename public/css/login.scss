@@ -57,12 +57,17 @@ body {
             background-color: transparent;
             border: 2px solid $greyColor;
             outline: none;
-            transition: border-bottom 0.2s;
+            transition: border 0.2s;
             padding: 7px 12px;
             font-size: 16px;
             font-family: 'Montserrat', sans-serif;
             margin: 0;
             border-left: none;
+
+            &:focus {
+                border: 2px solid $themeColor;
+                border-left: none;
+            }
         }
     }
 

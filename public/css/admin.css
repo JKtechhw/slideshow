@@ -191,43 +191,41 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
   list-style-type: none;
 }
 
-.part-white-box .part-box form ul li label:hover input[type="checkbox"]::before {
-  border: 1px solid #2468d7;
-}
-
-.part-white-box .part-box form ul label {
+.part-white-box .part-box form ul li label {
+  position: relative;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
 }
 
-.part-white-box .part-box form ul input[type="checkbox"] {
+.part-white-box .part-box form ul li label:hover input[type="checkbox"]::before {
+  border: 1px solid #2468d7;
+}
+
+.part-white-box .part-box form ul li label input[type="checkbox"] {
   width: 0px;
   position: relative;
 }
 
-.part-white-box .part-box form ul input[type="checkbox"]::before {
+.part-white-box .part-box form ul li label input[type="checkbox"]::before {
   position: absolute;
+  top: 0;
   left: -25px;
   width: 15px;
   height: 100%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   content: "";
   border: 1px solid #999999;
   border-radius: 2px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
 }
 
-.part-white-box .part-box form ul input[type="checkbox"]:not(:checked)::before {
-  content: url("/images/check.svg");
+.part-white-box .part-box form ul li label input[type="checkbox"]:not(:checked)::before {
+  background-image: url("/images/check.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .part-white-box .part-box h1 {
@@ -422,6 +420,10 @@ nav #logout:hover {
   border: none;
 }
 
+#slides-table table tr td.title, #slides-table table tr td.text {
+  width: 25%;
+}
+
 #slides-table table tr td:not(.empty):first-child {
   cursor: move;
   position: relative;
@@ -448,6 +450,10 @@ nav #logout:hover {
 
 #slides-table table tr td .preview::after {
   content: url("/images/eye.svg");
+}
+
+#slides-table table tr td .edit::after {
+  content: url("/images/edit.svg");
 }
 
 #slides-table table tr td .remove::after {
@@ -612,7 +618,7 @@ footer #footer-content p {
   margin: 10px 0;
 }
 
-#add-slide-box {
+#add-slide-box, #edit-slide-box {
   position: fixed;
   left: 0;
   top: 0;
@@ -629,13 +635,13 @@ footer #footer-content p {
           align-items: center;
 }
 
-#add-slide-box.active {
+#add-slide-box.active, #edit-slide-box.active {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
 
-#add-slide-box form {
+#add-slide-box form, #edit-slide-box form {
   background-color: #fff;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -649,7 +655,7 @@ footer #footer-content p {
   width: 800px;
 }
 
-#add-slide-box form .input {
+#add-slide-box form .input, #edit-slide-box form .input {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -659,7 +665,7 @@ footer #footer-content p {
           flex-direction: column;
 }
 
-#add-slide-box form label {
+#add-slide-box form label, #edit-slide-box form label {
   margin: 5px 10px;
   text-transform: uppercase;
   font-size: 12px;
@@ -668,12 +674,12 @@ footer #footer-content p {
   font-weight: 600;
 }
 
-#add-slide-box form button[type="submit"] {
+#add-slide-box form button[type="submit"], #edit-slide-box form button[type="submit"] {
   padding: 10px 0;
   margin-top: 20px;
 }
 
-#add-slide-box form input[type="text"], #add-slide-box form input[type="number"], #add-slide-box form select, #add-slide-box form input[type="file"], #add-slide-box form textarea {
+#add-slide-box form input[type="text"], #add-slide-box form input[type="number"], #add-slide-box form select, #add-slide-box form input[type="file"], #add-slide-box form textarea, #edit-slide-box form input[type="text"], #edit-slide-box form input[type="number"], #edit-slide-box form select, #edit-slide-box form input[type="file"], #edit-slide-box form textarea {
   border: transparent;
   border-radius: 5px;
   background-color: #ececec;
@@ -687,15 +693,15 @@ footer #footer-content p {
   overflow: hidden;
 }
 
-#add-slide-box form input[type="text"]::file-selector-button, #add-slide-box form input[type="number"]::file-selector-button, #add-slide-box form select::file-selector-button, #add-slide-box form input[type="file"]::file-selector-button, #add-slide-box form textarea::file-selector-button {
+#add-slide-box form input[type="text"]::file-selector-button, #add-slide-box form input[type="number"]::file-selector-button, #add-slide-box form select::file-selector-button, #add-slide-box form input[type="file"]::file-selector-button, #add-slide-box form textarea::file-selector-button, #edit-slide-box form input[type="text"]::file-selector-button, #edit-slide-box form input[type="number"]::file-selector-button, #edit-slide-box form select::file-selector-button, #edit-slide-box form input[type="file"]::file-selector-button, #edit-slide-box form textarea::file-selector-button {
   display: none;
 }
 
-#add-slide-box form input[type="text"]:focus, #add-slide-box form input[type="number"]:focus, #add-slide-box form select:focus, #add-slide-box form input[type="file"]:focus, #add-slide-box form textarea:focus {
+#add-slide-box form input[type="text"]:focus, #add-slide-box form input[type="number"]:focus, #add-slide-box form select:focus, #add-slide-box form input[type="file"]:focus, #add-slide-box form textarea:focus, #edit-slide-box form input[type="text"]:focus, #edit-slide-box form input[type="number"]:focus, #edit-slide-box form select:focus, #edit-slide-box form input[type="file"]:focus, #edit-slide-box form textarea:focus {
   border: 1px solid #999999;
 }
 
-#add-slide-box form input[type="color"] {
+#add-slide-box form input[type="color"], #edit-slide-box form input[type="color"] {
   background-color: transparent;
   border: none;
   border-radius: 5px;
@@ -704,12 +710,12 @@ footer #footer-content p {
   height: 40px;
 }
 
-#add-slide-box form input[type="checkbox"] {
+#add-slide-box form input[type="checkbox"], #edit-slide-box form input[type="checkbox"] {
   margin-left: 10px;
   margin-bottom: 15px;
 }
 
-#add-slide-box form .row {
+#add-slide-box form .row, #edit-slide-box form .row {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -719,7 +725,7 @@ footer #footer-content p {
           justify-content: center;
 }
 
-#add-slide-box form .row .column {
+#add-slide-box form .row .column, #edit-slide-box form .row .column {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -733,15 +739,15 @@ footer #footer-content p {
   margin: 10px;
 }
 
-#add-slide-box form .row .column:first-child {
+#add-slide-box form .row .column:first-child, #edit-slide-box form .row .column:first-child {
   margin-left: 0;
 }
 
-#add-slide-box form .row .column:last-child {
+#add-slide-box form .row .column:last-child, #edit-slide-box form .row .column:last-child {
   margin-right: 0;
 }
 
-#add-slide-box form textarea {
+#add-slide-box form textarea, #edit-slide-box form textarea {
   resize: vertical;
   height: 100px;
 }
@@ -808,8 +814,8 @@ footer #footer-content p {
   background-color: #000;
   width: 0%;
   content: "";
-  -webkit-animation: loading linear forwards 7s;
-          animation: loading linear forwards 7s;
+  -webkit-animation: loading linear forwards 5s;
+          animation: loading linear forwards 5s;
 }
 
 @media screen and (max-width: 1200px) {
@@ -829,10 +835,10 @@ footer #footer-content p {
   #global-settings {
     display: block;
   }
-  #add-slide-box form .row {
+  #add-slide-box form .row, #edit-slide-box form .row {
     display: block;
   }
-  #add-slide-box form .column {
+  #add-slide-box form .column, #edit-slide-box form .column {
     width: 100%;
     margin: 0 !important;
   }
