@@ -491,6 +491,40 @@ app.post("/admin/edit-slide", (req, res) => {
     }
 });
 
+app.post("/admin/change-sequence", (req, res) => {
+    if(req.session.user) {
+        const form = new formidable.IncomingForm();
+        form.parse(req, (err, fields, files) => {
+            for (let key in fields) {
+                MongoClient.connect(process.env.CONNECTION_STRING, (err, database) => {
+                    if(err) {
+                        console.error(err);
+                        return;
+                    }
+
+                    let newValues = { 
+                        $set: {
+                            position: fields[key].position
+                        }
+                    }
+
+                    let dbo = database.db("slideshow");
+                    dbo.collection("slides").updateOne({_id: ObjectId(fields[key].id)}, newValues, (err, dbRmRes) => {
+                        if(err) {
+                            console.error(err);
+                            return;
+                        }
+                    });
+                });
+            }
+            res.send("Pořadí bylo aktualizováno");
+        });
+    }
+    else {
+        res.status(401).send("401 Unauthorized");
+    }
+});
+
 app.get("*", (req, res) => {
     res.status(404).send("Error 404");
 });

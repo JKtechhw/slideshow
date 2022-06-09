@@ -133,6 +133,9 @@ class adminPanel {
                 let dragArea = document.createElement("td");
                 dragArea.classList.add("drag-slides");
                 slide.appendChild(dragArea);
+                dragArea.addEventListener("mouseup" ,(e) => {
+                    console.log(e)
+                });
 
                 let spendTime = document.createElement("td");
                 spendTime.innerText = slides[i].timeout / 1000;
@@ -472,6 +475,25 @@ class adminPanel {
         //Edit slide
         document.querySelector("#edit-slide-box .close-btn").addEventListener("click", () => {
             document.querySelector("#edit-slide-box").classList.remove("active");
+        });
+
+        document.querySelector("#change-slides-sq-btn").addEventListener("click", () => {
+            const XHR = new XMLHttpRequest();
+            let slides = document.querySelectorAll("#slides-table tbody tr");
+            let i = 1;
+            let sendObject = [];
+            slides.forEach(element => {
+                sendObject.push({"id": element.dataset.id, "position": i});
+                i++;
+            });
+
+            XHR.onload = () => {
+                this.alertUser(XHR.responseText, false)
+            }
+
+            XHR.open("POST", "/admin/change-sequence");
+            XHR.setRequestHeader("Content-Type", "application/json");
+            XHR.send(JSON.stringify(sendObject));
         });
 
         this.createFontDropDown("#add_slide_box_font_family", this.dataFromApi.font_family);
