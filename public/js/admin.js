@@ -205,7 +205,10 @@ class adminPanel {
                     document.querySelector("#edit-slide-name input").value = slides[i].name;
                     document.querySelector("#edit-slide-id").value = slides[i]._id;
                     document.querySelector("#edit_slide_type").value = slides[i].type;
-                    document.querySelector("#edit-slide-timeout input").value = slides[i].timeout;
+                    document.querySelector("#edit-slide-timeout input").value = Number(slides[i].timeout / 1000);
+                    document.querySelector("#edit-background-color-box input").value = slides[i].background_color;
+                    document.querySelector("#edit-color-box input").value = slides[i].color;
+                    document.querySelector("#edit-slide-box #text-box textarea").innerText = slides[i].text;
 
                     let target = document.querySelector("#edit-slide-box");
             
@@ -382,9 +385,6 @@ class adminPanel {
         }
 
         else {
-            if(document.querySelector("#remove-visitations")) {
-                document.querySelector("#remove-visitations").remove();
-            }
             targetBox.innerHTML = '<p class="center description">Nejsou nastavené žádné prohlídky</p>';
         }
     }
