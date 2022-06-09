@@ -153,17 +153,6 @@ class adminPanel {
                 text.classList.add("text");
                 slide.appendChild(text);
 
-                let previewTd = document.createElement("td");
-                previewTd.classList.add("preview-btn");
-                let previewBtn = document.createElement("button");
-                previewBtn.classList.add("preview");
-                previewBtn.type = "button";
-                previewBtn.addEventListener("click", () => {
-                    window.open("", "", "width=640,height=360");
-                });
-                previewTd.appendChild(previewBtn);
-                slide.appendChild(previewTd);
-
                 let hideTd = document.createElement("td");
                 hideTd.classList.add("hidden-checkbox");
                 let hideCheckbox= document.createElement("input");
@@ -465,17 +454,39 @@ class adminPanel {
         document.querySelector("#add-visitation-btn").addEventListener("click", this.toggleAddVisitation.bind(this));
         document.querySelector("#add-visitation-box .close-btn").addEventListener("click", this.toggleAddVisitation.bind(this));
         document.querySelector("#visitation-list").addEventListener("change", this.getVisitationListChange.bind(this));
+        document.querySelector("#add-visitation-box").addEventListener("click", (e) => {
+            if(e.currentTarget == e.target) {
+                document.querySelector("#add-visitation-box").classList.remove("active");
+            }
+        });
         //Degustation
         document.querySelector("#add-degustation-btn").addEventListener("click", this.toggleAddDegustation.bind(this));
         document.querySelector("#add-degustation-box .close-btn").addEventListener("click", this.toggleAddDegustation.bind(this));
         document.querySelector("#degustation-list").addEventListener("change", this.getDegustationListChange.bind(this));
+        document.querySelector("#add-degustation-box").addEventListener("click", (e) => {
+            if(e.currentTarget == e.target) {
+                document.querySelector("#add-degustation-box").classList.remove("active");
+            }
+        });
         //Add slide
         document.querySelector("#add-slide").addEventListener("click", this.toggleAddSlide.bind(this));
         document.querySelector("#add-slide-box .close-btn").addEventListener("click", this.toggleAddSlide.bind(this));
+        document.querySelector("#add-slide-box").addEventListener("click", (e) => {
+            if(e.currentTarget == e.target) {
+                document.querySelector("#add-slide-box").classList.remove("active");
+            }
+        });
         //Edit slide
         document.querySelector("#edit-slide-box .close-btn").addEventListener("click", () => {
             document.querySelector("#edit-slide-box").classList.remove("active");
         });
+        //Background close
+        document.querySelector("#edit-slide-box").addEventListener("click", (e) => {
+            if(e.currentTarget == e.target) {
+                document.querySelector("#edit-slide-box").classList.remove("active");
+            }
+        });
+
 
         document.querySelector("#change-slides-sq-btn").addEventListener("click", () => {
             const XHR = new XMLHttpRequest();
