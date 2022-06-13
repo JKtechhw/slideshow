@@ -179,8 +179,14 @@ input[type="number"] {
             flex-wrap: wrap;
         }
 
+        .host-url {
+            color: $themeColor;
+        }
+
         form {
             width: 100%;
+            margin-bottom: 15px;
+            
             ul {
                 box-sizing: border-box;
                 width: 100%;
@@ -498,7 +504,7 @@ nav {
 footer {
     width: 100%;
     background-color: #fff;
-    padding: 20px 10px 5px 10px;
+    padding: 20px 20px 5px 20px;
     box-sizing: border-box;
     margin-top: 25px;
     box-shadow: $whiteBoxShadowTop;

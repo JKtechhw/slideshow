@@ -50,14 +50,6 @@ class slideshow {
 
                     this.visitationTimes ? this.visitationTimes = this.visitationTimes : this.visitationTimes = [];
                     this.degustationTimes ? this.degustationTimes = this.degustationTimes : this.degustationTimes = [];
-                    //Sort by time
-                    this.visitationTimes.sort(function (a, b) {
-                        return a.localeCompare(b);
-                    });
-
-                    this.degustationTimes.sort(function (a, b) {
-                        return a.localeCompare(b);
-                    });
                     this.buildSlideshowBox();
                 }
     
@@ -77,6 +69,14 @@ class slideshow {
     }
 
     async buildSlideshowBox() {
+        //Sort by time
+        this.visitationTimes.sort(function (a, b) {
+            return a.localeCompare(b);
+        });
+
+        this.degustationTimes.sort(function (a, b) {
+            return a.localeCompare(b);
+        });
         //Create all sites from json
         this.target.innerHTML = "";
         this.sites.forEach(element => {

@@ -556,7 +556,6 @@ class adminPanel {
             });
 
             XHR.onload = () => {
-                console.log(XHR);
                 this.alertUser(XHR.responseText, false)
             }
 
