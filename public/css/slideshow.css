@@ -24,6 +24,14 @@ body {
   padding: 5px;
 }
 
+#slideshow-box iframe {
+  margin: 0;
+  padding: 0;
+  border: none;
+  width: 10vw;
+  height: 100vh;
+}
+
 #slideshow-box img {
   -o-object-fit: contain;
      object-fit: contain;

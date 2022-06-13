@@ -3,6 +3,7 @@ const express = require("express");
 const session = require('express-session');
 const formidable = require('formidable');
 const fs = require('fs');
+const os = require("os");
 const path = require('path');
 const { MongoClient, ObjectId } = require("mongodb");
 const sha1 = require("sha1");
@@ -81,7 +82,15 @@ app.get("/api/admin", (req, res) => {
                             console.error(err);
                             return;
                         }
-                        res.send(`{"request_count": ${requestCount}, "request_clients": ${requestClients}, ${JSON.stringify(resultConfig).slice(1, -1)}, ${JSON.stringify(resultFonts).slice(1, -1)},"sites": ${JSON.stringify(resultSites)}}`);
+
+                        let osStatus = {
+                            "uptime": os.uptime(),
+                            "hostname": os.hostname(),
+                            "mem_load": Number((os.totalmem() / (os.totalmem() - os.freemem()))).toFixed(2),
+                            "cpu_load": os.loadavg()[0]
+                        }
+
+                        res.send(`{"request_count": ${requestCount}, "request_clients": ${requestClients}, "server_status": ${JSON.stringify(osStatus)}, ${JSON.stringify(resultConfig).slice(1, -1)}, ${JSON.stringify(resultFonts).slice(1, -1)},"sites": ${JSON.stringify(resultSites)}}`);
                     });
                 });
             });
@@ -349,7 +358,7 @@ app.post("/admin/add-slide/", (req, res) => {
                     subtitles: files[1],
                     timeout: Number(fields.add_slide_timeout * 1000),
                     text: fields.add_slide_text,
-                    position: 8,
+                    url: fields.add_slide_url,
                     hidden: hidden
                 }
     
@@ -360,15 +369,23 @@ app.post("/admin/add-slide/", (req, res) => {
                     }
     
                     let dbo = db.db("slideshow");
-                    dbo.collection("slides").insertOne(newValues, (err, dbRes) => {
+                    dbo.collection("slides").find({}).toArray((err, res) => {
                         if (err) {
                             console.error(err);
                             return;
                         }
-                        db.close();
+
+                        newValues.position = Number(res.length + 1);
+                        dbo.collection("slides").insertOne(newValues, (err, dbRes) => {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+                            db.close();
+                        });
                     });
-            });
-            res.redirect("/admin");
+                });
+                res.redirect("/admin");
             });
         });
     }
@@ -453,7 +470,8 @@ app.post("/admin/edit-slide", (req, res) => {
                             font_family: fields.edit_slide_box_font_family,
                             background_color: fields.edit_slide_background_color,
                             color: fields.edit_slide_color,
-                            text: fields.edit_slide_text
+                            text: fields.edit_slide_text,
+                            url: fields.edit_slide_url
                         }
                     }
 

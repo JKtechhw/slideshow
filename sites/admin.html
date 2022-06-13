@@ -105,11 +105,37 @@
 
         <div class="part-box" id="prewiew-box">
             <h3>Náhled <span class="description">&nbsp;&nbsp;16:9</span></h3>
-            <button id="refresh-iframe-btn" title="Obnovit"></button>
-            <button id="toggle-iframe-btn" class="play" title="Pozastavit"></button>
+            <button id="toggle-iframe-btn" class="pause" title="Pozastavit"></button>
             <div class="iframe-box">
+                <h2 class="description">Náhled je pozastaven</h2>
                 <iframe class="preview-iframe"></iframe>
             </div>
+        </div>
+    </div>
+
+    <div class="part-white-box">
+        <div class="part-box">
+            <h3>Server: </h3>
+            <div class="row">
+                <div class="pie-chart" id="cpu-usage-chart">
+                    <span class="before"></span>
+                    <span class="after"></span>
+                    <span class="percentage"></span>
+                    <span class="dsc description">CPU</span>
+                </div>
+    
+                <div class="pie-chart" id="ram-usage-chart">
+                    <span class="before"></span>
+                    <span class="after"></span>
+                    <span class="percentage"></span>
+                    <span class="dsc description">RAM</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="part-box">
+            <h3>Klienti: </h3>
+            <button class="blue-btn">Obnovit</button>
         </div>
     </div>
 
@@ -137,7 +163,7 @@
         <button class="close-btn"></button>
         <form action="/admin/add-slide" class="default" method="post" id="add-slide-form" enctype="multipart/form-data">
             <label for="add_slide_name">Název:</label>
-            <input type="text" name="add_slide_name" placeholder="Povinné..." required />
+            <input type="text" name="add_slide_name" placeholder="Povinné&mldr;" required />
 
             <label for="add_slide_type">Typ: </label>
             <select name="add_slide_type" id="add-slide-type" required>
@@ -145,50 +171,56 @@
                 <option value="image">Fotka</option>
                 <option value="video">Video</option>
                 <option value="text">Text</option>
+                <option value="iframe">Iframe</option>
                 <option value="visitationtime">Odpočet prohlídka</option>
                 <option value="degustationtime">Odpočet degustace</option>
             </select>
 
-            <div id="add-slide-timeout" class="input" style="display: none;">
+            <div id="add-slide-timeout" class="input">
                 <label for="add_slide_timeout">Timeout: (s)</label>
                 <input type="number" value="10" name="add_slide_timeout" />
             </div>
 
-            <div id="font-family-box" class="input" style="display: none;">
+            <div id="font-family-box" class="input">
                 <label for="add_slide_font_family">Font family: </label>
                 <select name="add_slide_font_family" id="add_slide_box_font_family"></select>
             </div>
 
             <div class="row">
-                <div class="column" id="background-color-box" style="display: none;">
+                <div class="column" id="background-color-box">
                     <label for="add_slide_background_color">Barva pozadí: </label>
                     <input type="color" name="add_slide_background_color" />
                 </div>
 
-                <div class="column" id="color-box" style="display: none;">
+                <div class="column" id="color-box">
                     <label for="add_slide_color">Barva textu: </label>
                     <input type="color" name="add_slide_color" />
                 </div>
             </div>
 
             <div class="row">
-                <div class="column" id="file-box" style="display: none;">
+                <div class="column" id="file-box">
                     <label for="add_slide_file">Soubor:</label>
                     <input type="file" name="add_slide_file" />
                 </div>
 
-                <div class="column" id="subtitles-box" style="display: none;">
+                <div class="column" id="subtitles-box">
                     <label for="add_slide_subtitles">Titulky: </label>
                     <input type="file" accept=".vtt" name="add_slide_subtitles" />
                 </div>
             </div>
 
-            <div id="text-box" class="input" style="display: none;">
-                <label for="add_slide_text">Text: </label>
-                <textarea name="add_slide_text" placeholder="Text..."></textarea>
+            <div id="url-box" class="input">
+                <label for="add_slide_url">Odkaz: </label>
+                <input name="add_slide_url" type="url" placeholder="Odkaz pro iframe" />
             </div>
 
-            <div id="hidden-box" style="display: none;">
+            <div id="text-box" class="input">
+                <label for="add_slide_text">Text: </label>
+                <textarea name="add_slide_text" placeholder="Text&mldr;"></textarea>
+            </div>
+
+            <div id="hidden-box">
                 <label for="add_slide_hidden">Skryté: </label>
                 <input type="checkbox" name="add_slide_hidden" />
             </div>
@@ -202,11 +234,8 @@
         <form action="/admin/edit-slide" class="default" method="post" id="edit-slide-form" enctype="multipart/form-data">
             <div id="edit-slide-name" class="input">
                 <label for="edit_slide_name">Název:</label>
-                <input type="text" name="edit_slide_name" placeholder="Povinné..." required />
+                <input type="text" name="edit_slide_name" placeholder="Povinné&mldr;" required />
             </div>
-
-            <label for="edit_slide_type">Typ: </label>
-            <input type="text" id="edit_slide_type" readonly>
 
             <div id="edit-slide-timeout" class="input">
                 <label for="edit_slide_timeout">Timeout: (s)</label>
@@ -242,6 +271,11 @@
                 </div>
             </div>
 
+            <div id="url-box" class="input">
+                <label for="edit_slide_url">Odkaz: </label>
+                <input name="edit_slide_url" type="url" placeholder="Odkaz pro iframe" />
+            </div>
+
             <div id="text-box" class="input">
                 <label for="edit_slide_text">Text: </label>
                 <textarea name="edit_slide_text"></textarea>
@@ -256,7 +290,7 @@
     <div id="loading-box">
         <span class="spinner"></span>
         <p>
-            Načítání administrace ...
+            Načítání administrace &mldr;
         </p>
     </div>
 

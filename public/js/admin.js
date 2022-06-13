@@ -15,7 +15,7 @@ class adminPanel {
         await fetch(this.api)
         .then(response => response.json()) //Convert to JSON
         .then(data => { 
-            this.dataFromApi = data; 
+            this.dataFromApi = data;
         })
         .catch( (err) => { 
             console.error("Can't fatch data from api or api return wrong format"); 
@@ -28,6 +28,7 @@ class adminPanel {
         await this.fetchDataFromApi();
         this.buildSlidesTable("#slides-table tbody");
         this.setStatistics();
+        this.setServerStats();
         this.setupGlobalForm();
         this.addUrlToHosts();
         this.setupPreview();
@@ -39,6 +40,7 @@ class adminPanel {
         this.hideLoadingBox();
         setInterval(() => {
             this.fetchDataFromApi();
+            this.setServerStats();
             this.setStatistics();
         }, 60000);
     }
@@ -54,21 +56,51 @@ class adminPanel {
         slidesCloutBox.innerText = this.dataFromApi.sites.length || 0;  
     }
 
+    setServerStats() {
+        let cpuUsageChart = document.querySelector("#cpu-usage-chart");
+        let cpuUsageChartBefore = cpuUsageChart.querySelector(".before");
+        cpuUsageChartBefore.style.background = `radial-gradient(farthest-side,#2468d7 98%,#0000) top/12px 12px no-repeat, conic-gradient(#2468d7 calc(${this.dataFromApi.server_status.cpu_load}*1%),#0000 0)`;
+        let cpuUsageChartAfter = cpuUsageChart.querySelector(".after");
+        cpuUsageChartAfter.style.transform = `rotate(calc(${this.dataFromApi.server_status.cpu_load}*3.6deg)) translateY(calc(50% - 110px/2))`;
+        let cpuUsageChartPercentage = cpuUsageChart.querySelector(".percentage");
+        cpuUsageChartPercentage.innerText = this.dataFromApi.server_status.cpu_load + "%";
+
+        let ramUsageChart = document.querySelector("#ram-usage-chart");
+        let ramUsageChartBefore = ramUsageChart.querySelector(".before");
+        ramUsageChartBefore.style.background = `radial-gradient(farthest-side,#2468d7 98%,#0000) top/12px 12px no-repeat, conic-gradient(#2468d7 calc(${this.dataFromApi.server_status.mem_load}*1%),#0000 0)`;
+        let ramUsageChartAfter = ramUsageChart.querySelector(".after");
+        ramUsageChartAfter.style.transform = `rotate(calc(${this.dataFromApi.server_status.mem_load}*3.6deg)) translateY(calc(50% - 110px/2))`;
+        let ramUsageChartPercentage = ramUsageChart.querySelector(".percentage");
+        ramUsageChartPercentage.innerText = this.dataFromApi.server_status.mem_load + "%";
+    }
+
     addSlideEvents(form) {
         let target = document.querySelector(form);
         let typeSelect = target.querySelector("#add-slide-type");
 
         let timeoutBox = target.querySelector("#add-slide-timeout");
+        timeoutBox.style.display = "none";
         let fontFamilyBox = target.querySelector("#font-family-box");
+        fontFamilyBox.style.display = "none";
         let backgroundColorBox = target.querySelector("#background-color-box");
+        backgroundColorBox.style.display = "none";
         let textColorBox = target.querySelector("#color-box");
+        textColorBox.style.display = "none";
         let fileBox = target.querySelector("#file-box");
+        fileBox.style.display = "none";
         let fileBoxInput = target.querySelector("#file-box input");
+        let urlBox = target.querySelector("#url-box");
+        urlBox.style.display = "none";
         let subtitlesBox = target.querySelector("#subtitles-box");
+        subtitlesBox.style.display = "none";
         let textBox = target.querySelector("#text-box");
+        textBox.style.display = "none";
+        let hiddenBox = target.querySelector("#hidden-box");
+        hiddenBox.style.display = "none";
 
         typeSelect.addEventListener("change", (e) => {
             document.querySelector("#add-slide-form button[type=\"submit\"]").disabled = false;
+            hiddenBox.style.display = "flex";
             switch (e.currentTarget.value) {
                 case "image":
                     timeoutBox.style.display = "flex";
@@ -78,6 +110,7 @@ class adminPanel {
                     fileBox.style.display = "flex";
                     fileBoxInput.setAttribute("accept", this.acceptedImage);
                     fileBoxInput.required = true;
+                    urlBox.style.display = "none";
                     subtitlesBox.style.display = "none";
                     textBox.style.display = "none";
                     break;
@@ -90,7 +123,20 @@ class adminPanel {
                     fileBox.style.display = "flex";
                     fileBoxInput.setAttribute("accept", this.acceptedVideo);
                     fileBoxInput.required = true;
+                    urlBox.style.display = "none";
                     subtitlesBox.style.display = "flex";
+                    textBox.style.display = "none";
+                    break;
+
+                case "iframe":
+                    timeoutBox.style.display = "flex";
+                    fontFamilyBox.style.display = "none";
+                    backgroundColorBox.style.display = "none";
+                    textColorBox.style.display = "none";
+                    fileBox.style.display = "none";
+                    fileBoxInput.setAttribute("accept", this.acceptedImage);
+                    subtitlesBox.style.display = "none";
+                    urlBox.style.display = "flex";
                     textBox.style.display = "none";
                     break;
 
@@ -102,6 +148,7 @@ class adminPanel {
                     fileBox.style.display = "flex";
                     fileBoxInput.setAttribute("accept", this.acceptedImage);
                     subtitlesBox.style.display = "none";
+                    urlBox.style.display = "none";
                     textBox.style.display = "flex";
                     break;
 
@@ -114,6 +161,7 @@ class adminPanel {
                     fileBox.style.display = "flex";
                     fileBoxInput.setAttribute("accept", this.acceptedImage);
                     subtitlesBox.style.display = "none";
+                    urlBox.style.display = "none";
                     textBox.style.display = "none";
                     break;
             }
@@ -194,11 +242,11 @@ class adminPanel {
                     document.querySelector("#edit-slide-box").classList.add("active");
                     document.querySelector("#edit-slide-name input").value = slides[i].name;
                     document.querySelector("#edit-slide-id").value = slides[i]._id;
-                    document.querySelector("#edit_slide_type").value = slides[i].type;
                     document.querySelector("#edit-slide-timeout input").value = Number(slides[i].timeout / 1000);
                     document.querySelector("#edit-background-color-box input").value = slides[i].background_color;
                     document.querySelector("#edit-color-box input").value = slides[i].color;
                     document.querySelector("#edit-slide-box #text-box textarea").innerText = slides[i].text;
+                    document.querySelector("#edit-slide-box #url-box input").value = slides[i].url;
 
                     let target = document.querySelector("#edit-slide-box");
             
@@ -210,6 +258,7 @@ class adminPanel {
                     let fileBoxInput = target.querySelector("#file-box input");
                     let subtitlesBox = target.querySelector("#subtitles-box");
                     let textBox = target.querySelector("#text-box");
+                    let urlBox = target.querySelector("#url-box");
             
                     switch (slides[i].type) {
                         case "image":
@@ -222,6 +271,7 @@ class adminPanel {
                             fileBoxInput.setAttribute("accept", this.acceptedImage);
                             subtitlesBox.style.display = "none";
                             textBox.style.display = "none";
+                            urlBox.style.display = "none";
                             break;
         
                         case "video":
@@ -234,6 +284,7 @@ class adminPanel {
                             fileBoxInput.setAttribute("accept", this.acceptedVideo);
                             subtitlesBox.style.display = "flex";
                             textBox.style.display = "none";
+                            urlBox.style.display = "none";urlBox.style.display = "none";
                             break;
         
                         case "text":
@@ -246,6 +297,19 @@ class adminPanel {
                             fileBoxInput.setAttribute("accept", this.acceptedImage);
                             subtitlesBox.style.display = "none";
                             textBox.style.display = "flex";
+                            urlBox.style.display = "none";
+                            break;
+
+                        case "iframe":
+                            timeoutBox.style.display = "flex";
+                            fontFamilyBox.style.display = "none";
+                            fontFamilyBox.querySelector("select").innerHTML = "";
+                            backgroundColorBox.style.display = "none";
+                            textColorBox.style.display = "none";
+                            fileBox.style.display = "none";
+                            subtitlesBox.style.display = "none";
+                            textBox.style.display = "none";
+                            urlBox.style.display = "flex";
                             break;
         
                         case "visitationtime":
@@ -259,6 +323,7 @@ class adminPanel {
                             fileBoxInput.setAttribute("accept", this.acceptedImage);
                             subtitlesBox.style.display = "none";
                             textBox.style.display = "none";
+                            urlBox.style.display = "none";
                             break;
                     }
                 });
@@ -425,25 +490,18 @@ class adminPanel {
     }
 
     setupPreview() {
-        document.querySelectorAll(".preview-iframe").forEach(element => {
-            document.querySelector("#toggle-iframe-btn").className = "play";
-        });
-
+        document.querySelector(".preview-iframe").src = this.url;
         document.querySelector("#toggle-iframe-btn").addEventListener("click", () => {
             if(document.querySelector(".preview-iframe").src) {
-                document.querySelectorAll(".preview-iframe").forEach(element => {
-                    element.removeAttribute("src");
-                    document.querySelector("#toggle-iframe-btn").title = "Pokračovat";
-                    document.querySelector("#toggle-iframe-btn").className = "play";
-                });
+                document.querySelector("#toggle-iframe-btn").title = "Pokračovat";
+                document.querySelector("#toggle-iframe-btn").className = "play";
+                document.querySelector(".preview-iframe").removeAttribute("src");
             }
 
             else {
-                document.querySelectorAll(".preview-iframe").forEach(element => {
-                    element.src = this.url;
-                    document.querySelector("#toggle-iframe-btn").className = "pause";
-                    document.querySelector("#toggle-iframe-btn").title = "Pozastavit";
-                });
+                document.querySelector(".preview-iframe").src = this.url;
+                document.querySelector("#toggle-iframe-btn").className = "pause";
+                document.querySelector("#toggle-iframe-btn").title = "Pozastavit";
             }
         });
     }
@@ -453,7 +511,7 @@ class adminPanel {
         document.querySelector("#add-visitation-btn").addEventListener("click", this.toggleAddVisitation.bind(this));
         document.querySelector("#add-visitation-box .close-btn").addEventListener("click", this.toggleAddVisitation.bind(this));
         document.querySelector("#visitation-list").addEventListener("change", this.getVisitationListChange.bind(this));
-        document.querySelector("#add-visitation-box").addEventListener("click", (e) => {
+        document.querySelector("#add-visitation-box").addEventListener("mousedown", (e) => {
             if(e.currentTarget == e.target) {
                 document.querySelector("#add-visitation-box").classList.remove("active");
             }
@@ -462,7 +520,7 @@ class adminPanel {
         document.querySelector("#add-degustation-btn").addEventListener("click", this.toggleAddDegustation.bind(this));
         document.querySelector("#add-degustation-box .close-btn").addEventListener("click", this.toggleAddDegustation.bind(this));
         document.querySelector("#degustation-list").addEventListener("change", this.getDegustationListChange.bind(this));
-        document.querySelector("#add-degustation-box").addEventListener("click", (e) => {
+        document.querySelector("#add-degustation-box").addEventListener("mousedown", (e) => {
             if(e.currentTarget == e.target) {
                 document.querySelector("#add-degustation-box").classList.remove("active");
             }
@@ -470,7 +528,7 @@ class adminPanel {
         //Add slide
         document.querySelector("#add-slide").addEventListener("click", this.toggleAddSlide.bind(this));
         document.querySelector("#add-slide-box .close-btn").addEventListener("click", this.toggleAddSlide.bind(this));
-        document.querySelector("#add-slide-box").addEventListener("click", (e) => {
+        document.querySelector("#add-slide-box").addEventListener("mousedown", (e) => {
             if(e.currentTarget == e.target) {
                 document.querySelector("#add-slide-box").classList.remove("active");
             }
@@ -480,7 +538,7 @@ class adminPanel {
             document.querySelector("#edit-slide-box").classList.remove("active");
         });
         //Background close
-        document.querySelector("#edit-slide-box").addEventListener("click", (e) => {
+        document.querySelector("#edit-slide-box").addEventListener("mousedown", (e) => {
             if(e.currentTarget == e.target) {
                 document.querySelector("#edit-slide-box").classList.remove("active");
             }
@@ -498,6 +556,7 @@ class adminPanel {
             });
 
             XHR.onload = () => {
+                console.log(XHR);
                 this.alertUser(XHR.responseText, false)
             }
 

@@ -184,6 +184,20 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
   margin-right: 0;
 }
 
+.part-white-box .part-box .row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
 .part-white-box .part-box form {
   width: 100%;
 }
@@ -193,6 +207,8 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
           box-sizing: border-box;
   width: 100%;
   list-style-type: none;
+  padding-right: 40px;
+  padding-left: 40px;
 }
 
 .part-white-box .part-box form ul li label {
@@ -466,6 +482,16 @@ nav #logout:hover {
   position: relative;
 }
 
+.iframe-box h2 {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+
 .iframe-box iframe {
   position: absolute;
   left: 0;
@@ -488,7 +514,7 @@ nav #logout:hover {
 }
 
 #prewiew-box button#toggle-iframe-btn {
-  right: 45px;
+  right: 20px;
 }
 
 #prewiew-box button#toggle-iframe-btn.pause::after {
@@ -606,6 +632,8 @@ footer #footer-content p {
   top: 0;
   width: 100%;
   height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
   background-color: #0000007e;
   z-index: 3;
   display: none;
@@ -661,7 +689,7 @@ footer #footer-content p {
   margin-top: 20px;
 }
 
-#add-slide-box form input[type="text"], #add-slide-box form input[type="number"], #add-slide-box form select, #add-slide-box form input[type="file"], #add-slide-box form textarea, #edit-slide-box form input[type="text"], #edit-slide-box form input[type="number"], #edit-slide-box form select, #edit-slide-box form input[type="file"], #edit-slide-box form textarea {
+#add-slide-box form input[type="text"], #add-slide-box form input[type="number"], #add-slide-box form select, #add-slide-box form input[type="file"], #add-slide-box form textarea, #add-slide-box form input[type="url"], #edit-slide-box form input[type="text"], #edit-slide-box form input[type="number"], #edit-slide-box form select, #edit-slide-box form input[type="file"], #edit-slide-box form textarea, #edit-slide-box form input[type="url"] {
   border: transparent;
   border-radius: 5px;
   background-color: #ececec;
@@ -675,12 +703,33 @@ footer #footer-content p {
   overflow: hidden;
 }
 
-#add-slide-box form input[type="text"]::file-selector-button, #add-slide-box form input[type="number"]::file-selector-button, #add-slide-box form select::file-selector-button, #add-slide-box form input[type="file"]::file-selector-button, #add-slide-box form textarea::file-selector-button, #edit-slide-box form input[type="text"]::file-selector-button, #edit-slide-box form input[type="number"]::file-selector-button, #edit-slide-box form select::file-selector-button, #edit-slide-box form input[type="file"]::file-selector-button, #edit-slide-box form textarea::file-selector-button {
+#add-slide-box form input[type="text"]::file-selector-button, #add-slide-box form input[type="number"]::file-selector-button, #add-slide-box form select::file-selector-button, #add-slide-box form input[type="file"]::file-selector-button, #add-slide-box form textarea::file-selector-button, #add-slide-box form input[type="url"]::file-selector-button, #edit-slide-box form input[type="text"]::file-selector-button, #edit-slide-box form input[type="number"]::file-selector-button, #edit-slide-box form select::file-selector-button, #edit-slide-box form input[type="file"]::file-selector-button, #edit-slide-box form textarea::file-selector-button, #edit-slide-box form input[type="url"]::file-selector-button {
   display: none;
 }
 
-#add-slide-box form input[type="text"]:focus, #add-slide-box form input[type="number"]:focus, #add-slide-box form select:focus, #add-slide-box form input[type="file"]:focus, #add-slide-box form textarea:focus, #edit-slide-box form input[type="text"]:focus, #edit-slide-box form input[type="number"]:focus, #edit-slide-box form select:focus, #edit-slide-box form input[type="file"]:focus, #edit-slide-box form textarea:focus {
+#add-slide-box form input[type="text"]:focus, #add-slide-box form input[type="number"]:focus, #add-slide-box form select:focus, #add-slide-box form input[type="file"]:focus, #add-slide-box form textarea:focus, #add-slide-box form input[type="url"]:focus, #edit-slide-box form input[type="text"]:focus, #edit-slide-box form input[type="number"]:focus, #edit-slide-box form select:focus, #edit-slide-box form input[type="file"]:focus, #edit-slide-box form textarea:focus, #edit-slide-box form input[type="url"]:focus {
   border: 1px solid #999999;
+}
+
+#add-slide-box form input[type="checkbox"], #edit-slide-box form input[type="checkbox"] {
+  width: 0;
+  height: 0;
+  position: relative;
+}
+
+#add-slide-box form input[type="checkbox"]::before, #edit-slide-box form input[type="checkbox"]::before {
+  height: 15px;
+  width: 15px;
+  border-radius: 3px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #ececec;
+  content: "";
+}
+
+#add-slide-box form input[type="checkbox"]:checked::before, #edit-slide-box form input[type="checkbox"]:checked::before {
+  content: url("/images/check.svg");
 }
 
 #add-slide-box form input[type="color"], #edit-slide-box form input[type="color"] {
@@ -692,9 +741,8 @@ footer #footer-content p {
   height: 40px;
 }
 
-#add-slide-box form input[type="checkbox"], #edit-slide-box form input[type="checkbox"] {
-  margin-left: 10px;
-  margin-bottom: 15px;
+#add-slide-box form #hidden-box, #edit-slide-box form #hidden-box {
+  margin-top: 10px;
 }
 
 #add-slide-box form .row, #edit-slide-box form .row {
@@ -732,6 +780,43 @@ footer #footer-content p {
 #add-slide-box form textarea, #edit-slide-box form textarea {
   resize: vertical;
   height: 100px;
+}
+
+.pie-chart {
+  width: 110px;
+  aspect-ratio: 1;
+  position: relative;
+  display: -ms-inline-grid;
+  display: inline-grid;
+  margin: 5px;
+  place-content: center;
+}
+
+.pie-chart span.before, .pie-chart span.after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+
+.pie-chart span.before {
+  inset: 0;
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(99% - 12px), #000 calc(100% - 12px));
+          mask: radial-gradient(farthest-side, #0000 calc(99% - 12px), #000 calc(100% - 12px));
+}
+
+.pie-chart span.after {
+  inset: calc(50% - 12px/2);
+  background: #2468d7;
+}
+
+.pie-chart span.percentage {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.pie-chart span.dsc {
+  font-size: 12px;
+  text-align: center;
 }
 
 #loading-box {
@@ -782,6 +867,7 @@ footer #footer-content p {
   border-radius: 5px;
   padding: 15px 10px;
   overflow: hidden;
+  z-index: 3;
 }
 
 #alert-box.error {

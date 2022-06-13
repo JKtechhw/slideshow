@@ -25,6 +25,14 @@ body {
         }
     }
 
+    iframe {
+        margin: 0;
+        padding: 0;
+        border: none;
+        width: 10vw;
+        height: 100vh;
+    }
+
     img {
         object-fit: contain;
     }

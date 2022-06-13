@@ -98,11 +98,11 @@ class slideshow {
         else {
             let interval;
             if(this.sites[0].type == "visitationtime") {
-                interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes, "visitationtime");
+                interval = this.cooldown(document.querySelector(".side:last-child .cooldown-clock"), this.visitationTimes, "visitationtime");
             }
     
             else if(this.sites[0].type == "degustationtime") {
-                interval = this.cooldown(document.querySelector(".cooldown-clock"), this.degustationTimes, "degustationtime");
+                interval = this.cooldown(document.querySelector(".side:last-child .cooldown-clock"), this.degustationTimes, "degustationtime");
             }
     
     
@@ -139,11 +139,11 @@ class slideshow {
         else {
             let interval;
             if(this.sites[0].type == "visitationtime") {
-                interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes, "visitationtime");
+                interval = this.cooldown(document.querySelector(".side:last-child .cooldown-clock"), this.visitationTimes, "visitationtime");
             }
 
             else if(this.sites[0].type == "degustationtime") {
-                interval = this.cooldown(document.querySelector(".cooldown-clock"), this.degustationTimes, "degustationtime");
+                interval = this.cooldown(document.querySelector(".side:last-child .cooldown-clock"), this.degustationTimes, "degustationtime");
             }
 
             setTimeout(() => {
@@ -183,6 +183,12 @@ class slideshow {
             }
 
             side.appendChild(videoSrc);
+        }
+
+        else if (element.type == "iframe") {
+            side = document.createElement("iframe");
+            side.dataset.timeout = element.timeout;
+            side.src = element.url;
         }
 
         else if (element.type == "text") {
