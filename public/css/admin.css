@@ -324,7 +324,24 @@ nav h3::after {
   background-color: #2468d7;
 }
 
-nav #logout {
+nav #header-buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+nav #header-buttons #messages-btn {
+  border: none;
+  background-color: transparent;
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+nav #header-buttons #messages-btn::after {
+  content: url("/images/message.svg");
+}
+
+nav #header-buttons #logout {
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -336,11 +353,11 @@ nav #logout {
   transition: filter 0.2s, -webkit-filter 0.2s;
 }
 
-nav #logout::after {
+nav #header-buttons #logout::after {
   content: url("/images/logout.svg");
 }
 
-nav #logout:hover {
+nav #header-buttons #logout:hover {
   -webkit-filter: brightness(1);
           filter: brightness(1);
 }

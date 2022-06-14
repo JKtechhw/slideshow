@@ -301,18 +301,32 @@ nav {
         }
     }
 
-    #logout {
-        background-color: transparent;
-        border: none;
-        cursor: pointer;
-        filter: brightness(0);
-        transition: filter 0.2s;
-        &::after {
-            content: url("/images/logout.svg");
+    #header-buttons {
+        display: flex;
+
+        #messages-btn {
+            border: none;
+            background-color: transparent;
+            margin: 0 10px;
+            cursor: pointer;
+            &::after {
+                content: url("/images/message.svg");
+            }
         }
 
-        &:hover {
-            filter: brightness(1);
+        #logout {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            filter: brightness(0);
+            transition: filter 0.2s;
+            &::after {
+                content: url("/images/logout.svg");
+            }
+    
+            &:hover {
+                filter: brightness(1);
+            }
         }
     }
 }

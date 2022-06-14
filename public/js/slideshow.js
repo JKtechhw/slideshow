@@ -12,8 +12,12 @@ class slideshow {
         //Set event for refresh
         var evtSource = new EventSource("/events/refresh");
 
-        evtSource.addEventListener("message", () => {
-            location.reload(true);
+        evtSource.addEventListener("message", (e) => {
+            switch(e.data) {
+                case "refresh": 
+                    location.reload(true);
+                    break;
+            }
         });
 
         //If target element exist fetch data from api

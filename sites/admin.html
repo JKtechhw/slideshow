@@ -11,7 +11,10 @@
 <body style="overflow: hidden;">
     <nav>
         <h3>Slideshow <span class="description">Dashboard</span></h3>
-        <form method="post" action="/admin/logout" id="logout-form" class="default"><button type="submit" id="logout" title="Odhlásit"></button></form>
+        <div id="header-buttons">
+            <button id="messages-btn"></button>
+            <form method="post" action="/admin/logout" id="logout-form" class="default"><button type="submit" id="logout" title="Odhlásit"></button></form>
+        </div>
     </nav>
 
     <div class="white-box">
@@ -135,8 +138,10 @@
 
         <div class="part-box">
             <h3>Klienti: </h3>
+            <div class="controls-buttons">
+                <button class="blue-btn" id="refresh-client-btn">Refreshnout</button>
+            </div>
             <p>URL pro klienty: <a href="#" class="host-url"></a></p>
-            <button class="blue-btn" id="refresh-client-btn">Obnovit</button>
         </div>
     </div>
 
@@ -303,7 +308,7 @@
         <h3>Slideshow</h3>
         <div id="footer-content">
             <p>Autor: <a href="https://jktech.dev" target="_blank">JKtech</a></p>
-            <p>Slideshow 0.2.2</p>
+            <p>Slideshow 0.2.3</p>
             <p>Vytvořeno pro noc kostelů 2022</p>
             <p class="center"><a href="https://github.com/JKtechhw/slideshow" class="github" target="_blank"></a></p>
         </div>

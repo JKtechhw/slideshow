@@ -1,11 +1,20 @@
 # Slideshow
 
+## Overview
+This app was created for Noc kostelů Polná 2022
+
+## Features
+- 5 types of slide (image, video, iframe, text, cooldown)
+- Administration
+- Resource monitor
+- Statistics
+
 ## Dependences
 - NPM
 - NODE.js
 - MONGODB
 
-## Install dependences
+### Install dependences
 Debian based
 ```markdown
 sudo apt install nodejs npm
@@ -15,8 +24,18 @@ Arch based
 yay -S nodejs npm
 ```
 
+Install MongoDB server from official website, or use cloud database like MongoDB atlas.
 
 ## Instalation
+
+### 1) Create directory for uploaded content
+In directory create directory content:
+```markdown
+mkdir public/
+```
+
+### 2) Create directory for uploaded content
+
 In cloned repository directory run:
 ```markdown
 npm install
