@@ -89,7 +89,7 @@
                 <button class="blue-btn" id="add-visitation-btn">Přidat prohlídku</button>
                 <button class="gray-btn" id="remove-visitations" form="remove-visitations-form" disabled>Smazat prohlídky</button>
             </div>
-            <form id="remove-visitations-form" action="/admin/remove-visitations" method="post">
+            <form id="remove-visitations-form" action="/admin/remove-visitations" method="DELETE">
                 <ul id="visitation-list"></ul>
             </form>
 
@@ -98,7 +98,7 @@
                 <button class="blue-btn" id="add-degustation-btn">Přidat degistaci</button>
                 <button class="gray-btn" id="remove-degustation" form="remove-degustations-form" disabled>Smazat degustace</button>
             </div>
-            <form id="remove-degustations-form" action="/admin/remove-degustation" method="post">
+            <form id="remove-degustations-form" action="/admin/remove-degustation" method="DELETE">
                 <ul id="degustation-list"></ul>
             </form>
         </div>
@@ -289,7 +289,11 @@
     </div>
 
     <div id="loading-box">
-        <span class="spinner"></span>
+        <div id="loader">
+            <svg viewBox="0 0 80 80">
+                <rect x="8" y="8" width="64" height="64"></rect>
+            </svg>
+        </div>
         <p>
             Načítání administrace &mldr;
         </p>

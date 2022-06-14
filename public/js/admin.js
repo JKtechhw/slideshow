@@ -353,7 +353,7 @@ class adminPanel {
                             target.appendChild(emptyLineRow);
                         }
                     };
-                    XHR.open("POST", "/admin/remove-slide", true);
+                    XHR.open("DELETE", "/admin/remove-slide", true);
                     XHR.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                     XHR.send(id);
                     
@@ -660,6 +660,9 @@ class adminPanel {
 
     async sendForm(formId, url) {
         let form = document.getElementById(formId);
+        console.log(form)
+        let method = form.getAttribute("method") || "POST";
+        console.log(method)
         const XHR = new XMLHttpRequest();
         const FD = new FormData(form);
 
@@ -671,7 +674,7 @@ class adminPanel {
             this.alertUser(e.currentTarget.responseText, true);
         });
 
-        XHR.open("POST", url);
+        XHR.open(method, url);
         XHR.send(FD);
     }
 

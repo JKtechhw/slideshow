@@ -153,11 +153,7 @@ app.post("/admin/refresh", (req, res) => {
         if(clients) {
             let oldClients = clients;
             clients = [];
-            console.log(clients.length, oldClients.length)
-
-            for(let i = 0; i < oldClients.length; i++) {
-                oldClients[i].write('data: refresh\n\n');
-            }
+            oldClients.forEach(client => client.write('data: refresh\n\n'));
             res.send("Klienti byli obnoveni");
         }
 
@@ -208,7 +204,7 @@ app.post("/admin/global", (req, res) => {
     }
 });
 
-app.post("/admin/remove-visitations", (req, res) => {
+app.delete("/admin/remove-visitations", (req, res) => {
     if(req.session.user) {
         let form = new formidable.IncomingForm({multiples: true});
         form.parse(req, (err, fields, files) => {
@@ -246,7 +242,7 @@ app.post("/admin/remove-visitations", (req, res) => {
     }
 });
 
-app.post("/admin/remove-degustation", (req, res) => {
+app.delete("/admin/remove-degustation", (req, res) => {
     if(req.session.user) {
         let form = new formidable.IncomingForm({multiples: true});
         form.parse(req, (err, fields, files) => {
@@ -430,7 +426,7 @@ app.post("/admin/add-slide/", (req, res) => {
     }
 });
 
-app.post("/admin/remove-slide", (req, res) => {
+app.delete("/admin/remove-slide", (req, res) => {
     if(req.session.user) {
         const form = new formidable.IncomingForm();
 
