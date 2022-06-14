@@ -9,6 +9,13 @@ class slideshow {
         this.videoEndedEvent = this.changeSite.bind(this);
         this.hash;
 
+        //Set event for refresh
+        var evtSource = new EventSource("/events/refresh");
+
+        evtSource.addEventListener("message", () => {
+            location.reload(true);
+        });
+
         //If target element exist fetch data from api
         if(this.target) {
             this.fetchFromApi();

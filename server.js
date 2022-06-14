@@ -8,6 +8,7 @@ const path = require('path');
 const { MongoClient, ObjectId } = require("mongodb");
 const sha1 = require("sha1");
 const config = require("config");
+let clients = [];
 let requestCount = 0;
 let requestClients = 0;
 
@@ -134,6 +135,40 @@ app.post("/login", (req, res) => {
             });
         });
     });
+});
+
+app.get("/events/refresh", (req, res) => {
+    const headers = {
+        'Content-Type': 'text/event-stream',
+        'Connection': 'keep-alive',
+        'Cache-Control': 'no-cache'
+    };
+    res.writeHead(200, headers);
+    clients.push(res);
+    req.on('close', () => { client = null; })
+});
+
+app.post("/admin/refresh", (req, res) => {
+    if(req.session.user) {
+        if(clients) {
+            let oldClients = clients;
+            clients = [];
+            console.log(clients.length, oldClients.length)
+
+            for(let i = 0; i < oldClients.length; i++) {
+                oldClients[i].write('data: refresh\n\n');
+            }
+            res.send("Klienti byli obnoveni");
+        }
+
+        else {
+            res.send("Nebyl nalezen žádný klient")
+        }
+    }
+
+    else {
+        res.status(401).send("401 Unauthorized");
+    }
 });
 
 app.post("/admin/logout", (req, res) => {

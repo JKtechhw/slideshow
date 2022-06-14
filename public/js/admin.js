@@ -37,6 +37,7 @@ class adminPanel {
         this.updateDegustations("#degustation-list", this.dataFromApi.degustation_times);
         this.setEventToForms();
         this.addSlideEvents("#add-slide-form");
+        this.clientBoxEvents();
         this.hideLoadingBox();
         setInterval(() => {
             this.fetchDataFromApi();
@@ -688,5 +689,18 @@ class adminPanel {
         setTimeout(() => {
             alertBox.remove();
         }, 5100);
+    }
+
+    clientBoxEvents() {
+        let refreshBox = document.querySelector("#refresh-client-btn");
+        refreshBox.addEventListener("click", () => {
+            const XHR = new XMLHttpRequest();
+            XHR.onload = () => {
+                this.alertUser(XHR.responseText);
+            }
+
+            XHR.open("POST", "/admin/refresh");
+            XHR.send();
+        });
     }
 }
