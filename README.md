@@ -29,9 +29,8 @@ Install MongoDB server from official website, or use cloud database like MongoDB
 ## Instalation
 
 ### 1) Create directory for uploaded content
-In directory create directory content:
 ```markdown
-mkdir public/
+mkdir public/content
 ```
 
 ### 2) Create directory for uploaded content
