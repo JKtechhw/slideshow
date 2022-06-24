@@ -13,6 +13,25 @@ class slideshow {
             this.api += "?nostats";
         }
 
+        //Set event source
+        var evtSource = new EventSource("/events/client");
+
+        evtSource.addEventListener("message", (e) => {
+            switch(e.data) {
+                case "refresh":
+                    let activeSlide = this.target.querySelector(".side.active");
+                    if(activeSlide) {
+                        activeSlide.classList.remove("active");
+                        activeSlide.classList.add("remove");
+                        setTimeout(() => {
+                            location.reload(true);
+                        }, 1000)
+                    } 
+                    
+                    break;
+            }
+        });
+
         //If target element exist fetch data from api
         if(this.target) {
             this.fetchFromApi();
@@ -74,25 +93,6 @@ class slideshow {
     }
 
     async buildSlideshowBox() {
-        //Set event source
-        var evtSource = new EventSource("/events/client");
-
-        evtSource.addEventListener("message", (e) => {
-            switch(e.data) {
-                case "refresh":
-                    let activeSlide = this.target.querySelector(".side.active");
-                    if(activeSlide) {
-                        activeSlide.classList.remove("active");
-                        activeSlide.classList.add("remove");
-                        setTimeout(() => {
-                            location.reload(true);
-                        }, this.transitionTime);
-                    } 
-                    
-                    break;
-            }
-        });
-
         //Order times in timelists
         if(this.timeLists.length > 0) {
             this.timeLists.forEach(timelist => {

@@ -587,6 +587,9 @@ nav #header-buttons #logout::after {
 #clients-table th:first-child {
   width: 20%;
 }
+#clients-table tr:nth-child(even) {
+  background-color: var(--light_background);
+}
 #clients-table td {
   padding: 5px 0;
   height: 30px;
@@ -708,7 +711,6 @@ footer #footer-content p {
   margin-top: 20px;
 }
 #add-slide-box form input[type=text], #add-slide-box form input[type=number], #add-slide-box form select, #add-slide-box form input[type=file], #add-slide-box form textarea, #add-slide-box form input[type=url], #add-slide-box form input[type=time], #edit-slide-box form input[type=text], #edit-slide-box form input[type=number], #edit-slide-box form select, #edit-slide-box form input[type=file], #edit-slide-box form textarea, #edit-slide-box form input[type=url], #edit-slide-box form input[type=time], #add-timelists-form form input[type=text], #add-timelists-form form input[type=number], #add-timelists-form form select, #add-timelists-form form input[type=file], #add-timelists-form form textarea, #add-timelists-form form input[type=url], #add-timelists-form form input[type=time], #add-time-box form input[type=text], #add-time-box form input[type=number], #add-time-box form select, #add-time-box form input[type=file], #add-time-box form textarea, #add-time-box form input[type=url], #add-time-box form input[type=time] {
-  border: transparent;
   border-radius: 5px;
   background-color: var(--input_background);
   outline: none;

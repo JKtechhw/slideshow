@@ -1,6 +1,6 @@
 {
   "name": "slideshow",
-  "version": "1.0.0",
+  "version": "0.4.9",
   "description": "Slideshow",
   "main": "slideshow.js",
   "scripts": {

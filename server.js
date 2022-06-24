@@ -55,7 +55,7 @@ app.get("/", (req, res) => {
     }
 
     else {
-        res.sendFile(__dirname + "/sites/index.html");
+        res.sendFile(__dirname + "/sites/slideshow.html");
     }
 });
 
@@ -457,7 +457,6 @@ app.post("/admin/add-slide/", (req, res) => {
             let hidden = fields.add_slide_hidden ? true : false;
             let uploadedFile = await uploadFile(files.add_slide_file);
             let uploadedSubtitles = await uploadFile(files.add_slide_subtitles);
-            console.log(uploadedFile, uploadedSubtitles);
 
             let newValues = {  
                 name: fields.add_slide_name,  
@@ -573,7 +572,8 @@ app.post("/admin/edit-slide", (req, res) => {
         const form = new formidable.IncomingForm();
         form.parse(req, async (err, fields, files) => {
             if(fields.edit_slide_id) {
-                let uploadedFiles = await uploadFiles(files.edit_slide_file, files.edit_slide_subtitles);
+                let uploadedFiles = await uploadFile(files.edit_slide_file);
+                let uploadedSubtitles = await uploadFile(files.edit_slide_subtitles);
                 let newValues = { 
                     $set: {
                         name: fields.edit_slide_name,
@@ -587,12 +587,12 @@ app.post("/admin/edit-slide", (req, res) => {
                     }
                 }
 
-                if(uploadedFiles[0]) {
-                    newValues.$set.filename = uploadedFiles[0];
+                if(uploadedFiles) {
+                    newValues.$set.filename = uploadedFiles;
                 }
 
-                if(uploadedFiles[1]) {
-                    newValues.$set.subtitles = uploadedFiles[1];
+                if(uploadedSubtitles) {
+                    newValues.$set.subtitles = uploadedSubtitles;
                 }
 
 

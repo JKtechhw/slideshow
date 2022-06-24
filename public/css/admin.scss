@@ -709,6 +709,12 @@ nav {
         }
     }
 
+    tr {
+        &:nth-child(even) {
+            background-color: var(--light_background);
+        }
+    }
+
     td {
         padding: 5px 0;
         height: 30px;
@@ -848,7 +854,6 @@ footer {
         }
 
         input[type="text"], input[type="number"], select, input[type="file"], textarea, input[type="url"], input[type="time"] {
-            border: transparent;
             border-radius: 5px;
             background-color: var(--input_background);
             outline: none;

@@ -778,8 +778,6 @@ class adminPanel {
             }
         });
 
-        this.createTimelistDropDown("#add-slide-timelist");
-
         document.querySelector("#switch-theme").addEventListener("click", () => {
             document.body.classList.toggle("light-theme");
         });
@@ -804,6 +802,7 @@ class adminPanel {
             addSlideBox.classList.add("active");
             addSlideBox.querySelector("input[name=\"add_slide_background_color\"]").value = this.dataFromApi.background_color;
             addSlideBox.querySelector("input[name=\"add_slide_color\"]").value = this.dataFromApi.text_color;
+            this.createTimelistDropDown("#add-slide-timelist");
         }
     }
 
