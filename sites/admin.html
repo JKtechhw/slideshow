@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>admin - Slideshow</title>
+    <title>Dashboard · Slideshow</title>
     <link rel="stylesheet" type="text/css" href="/css/admin.css">
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 </head>
@@ -12,12 +12,20 @@
     <nav>
         <h3>Slideshow <span class="description">Dashboard</span></h3>
         <div id="header-buttons">
-            <button id="messages-btn"></button>
-            <form method="post" action="/admin/logout" id="logout-form" class="default"><button type="submit" id="logout" title="Odhlásit"></button></form>
+            <button id="switch-theme" title="Změnit motiv" class="icon"></button>
+            <div id="messages-box">
+                <button id="messages-btn" class="icon" title="Oznámení">
+                    <span></span>
+                </button>
+                <div id="messages-list"></div>
+            </div>
+            <form method="post" action="/admin/logout" id="logout-form" class="default"><button type="submit" id="logout" class="icon" title="Odhlásit"></button></form>
         </div>
     </nav>
 
-    <div class="white-box">
+    <div id="alerts"></div>
+
+    <div class="box">
         <h3>Globální nastavení stylu</h3>
         <form id="global-settings" method="post" action="/admin/global">
             <div id="global-background-color" class="option">
@@ -43,24 +51,24 @@
         <button type="submit" class="blue-btn right" form="global-settings">Upravit</button>
     </div>
 
-    <div class="part-white-box">
+    <div class="part-box-div">
         <div class="part-box">
-            <h1 id="query-devices">0</h1>
-            <p class="uppercase">Zařízení</p>
+            <h1 id="query-devices"></h1>
+            <p class="uppercase">Unikátní klienti</p>
         </div>
 
         <div class="part-box">
-            <h1 id="query-count">0</h1>
+            <h1 id="query-count"></h1>
             <p class="uppercase">Dotazů</p>
         </div>
 
         <div class="part-box">
-            <h1 id="slides-count">0</h1>
+            <h1 id="slides-count"></h1>
             <p class="uppercase">Slidů</p>
         </div>
     </div>
 
-    <div class="white-box">
+    <div class="box">
         <h3>Slidy</h3>
         <div id="controls-buttons">
             <button id="add-slide" class="blue-btn">Přidat slide</button>
@@ -70,10 +78,9 @@
             <table>
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Timeout (s)</th>
+                        <th class="icon"></th>
+                        <th>Typ</th>
                         <th>Název</th>
-                        <th>Text</th>
                         <th>Skryté</th>
                         <th>Upravit</th>
                         <th>Smazat</th>
@@ -85,30 +92,21 @@
         <button class="blue-btn right" id="change-slides-sq-btn">Upravit</button>
     </div>
 
-    <div class="part-white-box">
+    <div class="part-box-div">
         <div class="part-box">
-            <h3>Prohlídky</h3>
+            <h3>Odpočty</h3>
             <div class="controls-buttons">
-                <button class="blue-btn" id="add-visitation-btn">Přidat prohlídku</button>
-                <button class="gray-btn" id="remove-visitations" form="remove-visitations-form" disabled>Smazat prohlídky</button>
+                <button class="blue-btn" id="add-timelist-btn">Přidat seznam</button>
+                <button class="gray-btn" id="remove-timelist-btn">Odebrat seznam</button>
             </div>
-            <form id="remove-visitations-form" action="/admin/remove-visitations" method="DELETE">
-                <ul id="visitation-list"></ul>
-            </form>
-
-            <h3>Degustace</h3>
-            <div class="controls-buttons">
-                <button class="blue-btn" id="add-degustation-btn">Přidat degistaci</button>
-                <button class="gray-btn" id="remove-degustation" form="remove-degustations-form" disabled>Smazat degustace</button>
-            </div>
-            <form id="remove-degustations-form" action="/admin/remove-degustation" method="DELETE">
-                <ul id="degustation-list"></ul>
-            </form>
+            <div id="timelist-box"></div>
         </div>
 
         <div class="part-box" id="prewiew-box">
             <h3>Náhled <span class="description">&nbsp;&nbsp;16:9</span></h3>
-            <button id="toggle-iframe-btn" class="pause" title="Pozastavit"></button>
+            <button id="toggle-iframe-btn" class="pause icon" title="Pozastavit"></button>
+            <button id="fullscreen-iframe-btn" class="icon" title="Zobrazení na celou obrazovku"></button>
+            <button id="fullscreen-reload-btn" class="icon" title="Obnovit"></button>
             <div class="iframe-box">
                 <h2 class="description">Náhled je pozastaven</h2>
                 <iframe class="preview-iframe"></iframe>
@@ -116,9 +114,9 @@
         </div>
     </div>
 
-    <div class="part-white-box">
+    <div class="part-box-div">
         <div class="part-box">
-            <h3>Server: </h3>
+            <h3>Server</h3>
             <div class="row">
                 <div class="pie-chart" id="cpu-usage-chart">
                     <span class="before"></span>
@@ -134,39 +132,65 @@
                     <span class="dsc description">RAM</span>
                 </div>
             </div>
+            <div class="row">
+                <div class="text-chart" id="uptime-chart">
+                    <span class="value"></span>
+                    <span class="name description">UPTIME</span>
+                </div>
+
+                <div class="text-chart" id="hostname-chart">
+                    <span class="value"></span>
+                    <span class="name description">HOSTNAME</span>
+                </div>
+
+                <div class="text-chart" id="ip-chart">
+                    <span class="value"></span>
+                    <span class="name description">IP</span>
+                </div>
+            </div>
         </div>
 
         <div class="part-box">
-            <h3>Klienti: </h3>
+            <h3>Klienti</h3>
             <div class="controls-buttons">
                 <button class="blue-btn" id="refresh-client-btn">Refreshnout</button>
             </div>
-            <p>URL pro klienty: <a href="#" class="host-url"></a></p>
+            <table id="clients-table">
+                <thead>
+                    <tr>
+                        <th>IP</th>
+                        <th>OS</th>
+                        <th>Prohlížeč</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <p>URL pro klienty: <a href="#" class="host-url" target="_blank"></a></p>
         </div>
     </div>
 
-    <div id="add-visitation-box">
-        <button class="close-btn"></button>
-        <form action="/admin/add-visitations" method="post" id="add-visitations-form">
-            <div id="add-visitation-input-box">
-                <input type="number" name="hours" min="0" max="23" required> : <input type="number" name="minutes" min="0" max="59" required>
-            </div>
-            <button class="blue-btn" type="submit" form="add-visitations-form">Přidat</button>
+    <div id="add-time-box">
+        <form method="POST" action="/admin/add-time/" id="add-time-form" data-onclose="#add-time-box">
+            <label>Čas:</label>
+            <input type="time" name="add_time_time" id="add-time-time" required />
+            <input type="hidden" name="add_time_list" id="add-time-list" required readonly />
+            <button class="blue-btn" id="add-timelist-submit-btn" type="submit">Přidat</button>
         </form>
     </div>
 
-    <div id="add-degustation-box">
-        <button class="close-btn"></button>
-        <form action="/admin/add-degustation" method="post" id="add-degustation-form">
-            <div id="add-degustation-input-box">
-                <input type="number" name="hours" min="0" max="23" required> : <input type="number" name="minutes" min="0" max="59" required>
-            </div>
-            <button class="blue-btn" type="submit" form="add-degustation-form">Přidat</button>
+    <div id="add-timelists-form">
+        <form action="/admin/add-timelist" method="POST" id="add-timelist-form" data-onclose="#add-timelists-form">
+            <label>Název: (Pro správu)</label>
+            <input type="text" name="add_timelist_name" placeholder="Povinné&mldr;" required>
+            <label>Nadpis: (Název události)</label>
+            <input type="text" name="add_timelist_heading" placeholder="Povinné&mldr;" required>
+            <label>Popis: (Popis události)</label>
+            <textarea name="add_timelist_description"></textarea>
+            <button class="blue-btn" id="add-timelist-submit-btn" type="submit">Přidat</button>
         </form>
     </div>
 
     <div id="add-slide-box">
-        <button class="close-btn"></button>
         <form action="/admin/add-slide" class="default" method="post" id="add-slide-form" enctype="multipart/form-data">
             <label for="add_slide_name">Název:</label>
             <input type="text" name="add_slide_name" placeholder="Povinné&mldr;" required />
@@ -178,9 +202,15 @@
                 <option value="video">Video</option>
                 <option value="text">Text</option>
                 <option value="iframe">Iframe</option>
-                <option value="visitationtime">Odpočet prohlídka</option>
-                <option value="degustationtime">Odpočet degustace</option>
+                <option value="cooldown">Odpočet</option>
             </select>
+
+            <div id="cooldown-list-box">
+                <label for="add_slide_timelist">Odpočet: </label>
+                <select name="add_slide_timelist" id="add-slide-timelist">
+                    <option value="" selected>Vyberte</option>
+                </select>
+            </div>
 
             <div id="add-slide-timeout" class="input">
                 <label for="add_slide_timeout">Timeout: (s)</label>
@@ -189,7 +219,7 @@
 
             <div id="font-family-box" class="input">
                 <label for="add_slide_font_family">Font family: </label>
-                <select name="add_slide_font_family" id="add_slide_box_font_family"></select>
+                <select name="add_slide_font_family" id="add-slide-box-font-family"></select>
             </div>
 
             <div class="row">
@@ -228,7 +258,7 @@
 
             <div id="hidden-box">
                 <label for="add_slide_hidden">Skryté: </label>
-                <input type="checkbox" name="add_slide_hidden" />
+                <input type="checkbox" class="icon" name="add_slide_hidden" />
             </div>
 
             <button class="blue-btn" type="submit" form="add-slide-form" disabled>Přidat</button>
@@ -236,7 +266,6 @@
     </div>
 
     <div id="edit-slide-box">
-        <button class="close-btn"></button>
         <form action="/admin/edit-slide" class="default" method="post" id="edit-slide-form" enctype="multipart/form-data">
             <div id="edit-slide-name" class="input">
                 <label for="edit_slide_name">Název:</label>
@@ -251,6 +280,11 @@
             <div id="font-family-box" class="input">
                 <label for="edit_slide_font_family">Font family: </label>
                 <select name="edit_slide_box_font_family" id="edit-slide-box-font-family"></select>
+            </div>
+
+            <div id="timelist-box" class="input">
+                <label for="edit_slide_timelist">Odpočet: </label>
+                <select name="edit_slide_timelist" id="edit-slide-box-timelist"></select>
             </div>
 
             <div class="row">
@@ -308,14 +342,15 @@
         <h3>Slideshow</h3>
         <div id="footer-content">
             <p>Autor: <a href="https://jktech.dev" target="_blank">JKtech</a></p>
-            <p>Slideshow 0.2.3</p>
+            <p>Slideshow 1.0.0</p>
             <p>Vytvořeno pro noc kostelů 2022</p>
-            <p class="center"><a href="https://github.com/JKtechhw/slideshow" class="github" target="_blank"></a></p>
+            <p class="center"><a href="https://github.com/JKtechhw/slideshow" class="github icon" target="_blank"></a></p>
         </div>
     </footer>
     <script type="text/javascript" src="/js/admin.js"></script>
     <script type="text/javascript" src="/js/Sortable.js"></script>
     <script>
+        const admin = new adminPanel();
         let player = document.querySelector("#slides-table table tbody");
         new Sortable(player,{
             handle:".drag-slides",
@@ -323,7 +358,6 @@
             animation:200,
             ghostClass: 'slides-table-ghost'
         });
-        const admin = new adminPanel();
     </script>
 </body>
 </html>

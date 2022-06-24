@@ -9,16 +9,9 @@ class slideshow {
         this.videoEndedEvent = this.changeSite.bind(this);
         this.hash;
 
-        //Set event for refresh
-        var evtSource = new EventSource("/events/refresh");
-
-        evtSource.addEventListener("message", (e) => {
-            switch(e.data) {
-                case "refresh": 
-                    location.reload(true);
-                    break;
-            }
-        });
+        if(window.location.search.substring(1) == "nostats") {
+            this.api += "?nostats";
+        }
 
         //If target element exist fetch data from api
         if(this.target) {
@@ -32,62 +25,85 @@ class slideshow {
 
     async fetchFromApi() {
         //Fetch data from api and save to json
-        await fetch(this.api)
-        .then(response => response.json()) //Convert to JSON
-        .then(data => {
-            if(data.sites && data.sites.length != 0) {
-                this.sites = data.sites;
+        try {
+            let response = await fetch(this.api);
+            response = await response.json();
+            if(response.sites && response.sites.length != 0) {
 
-                if(this.hash == data.hash) {
+                if(this.hash == response.hash) {
                     this.recoverSites();
                 }
-    
+
                 else {
-                    //Apply default style
+                    //Save response to variables
+                    this.sites = response.sites;
+                    this.transitionTime = response.transition_time;
+                    this.timeLists = response.timelist;
+
+                    //Remove prev style
                     if(document.head.querySelector("style.global-style")) {
                         document.head.querySelector("style.global-style").remove();
                     }
+
                     //Set default style
-                    let css = `body { font-family: ${data.font_family}; background-color: ${data.background_color};} .side { transition: opacity ${data.transition_time}ms; color: ${data.text_color}; background-color: ${data.background_color};}`;
+                    let css = `body { font-family: ${response.font_family}; background-color: ${response.background_color};} .side { transition: opacity ${response.transition_time}ms; color: ${response.text_color}; background-color: ${response.background_color};}`;
                     let style = document.createElement("style");
                     style.classList.add("global-style");
-                    style.type = "text/css";
+                    style.setAttribute("type", "text/css");
                     document.head.appendChild(style);
                     style.appendChild(document.createTextNode(css));
-
-                    this.transitionTime = data.transition_time;
-                    this.visitationTimes = data.visitation_times;
-                    this.degustationTimes = data.degustation_times;
-
-                    this.visitationTimes ? this.visitationTimes = this.visitationTimes : this.visitationTimes = [];
-                    this.degustationTimes ? this.degustationTimes = this.degustationTimes : this.degustationTimes = [];
                     this.buildSlideshowBox();
                 }
-    
-                this.hash = data.hash;
+
+                //Save new hash
+                this.hash = response.hash;
             }
 
             else {
+                //if response is empty, try in 10 seconds
                 console.error("Response is empty, waiting 10 seconds");
                 setTimeout(this.fetchFromApi.bind(this), 10000);
             }
-        })
-        .catch( (err) => { 
-            console.error("Can't fatch data from api or api return wrong format, waiting 10 seconds"); 
+        }
+        
+        catch(err) {  
+            //if error, try in 10 seconds
             console.error(err);
             setTimeout(this.fetchFromApi.bind(this), 10000);
-        });
+        }
     }
 
     async buildSlideshowBox() {
-        //Sort by time
-        this.visitationTimes.sort(function (a, b) {
-            return a.localeCompare(b);
+        //Set event source
+        var evtSource = new EventSource("/events/client");
+
+        evtSource.addEventListener("message", (e) => {
+            switch(e.data) {
+                case "refresh":
+                    let activeSlide = this.target.querySelector(".side.active");
+                    if(activeSlide) {
+                        activeSlide.classList.remove("active");
+                        activeSlide.classList.add("remove");
+                        setTimeout(() => {
+                            location.reload(true);
+                        }, this.transitionTime);
+                    } 
+                    
+                    break;
+            }
         });
 
-        this.degustationTimes.sort(function (a, b) {
-            return a.localeCompare(b);
-        });
+        //Order times in timelists
+        if(this.timeLists.length > 0) {
+            this.timeLists.forEach(timelist => {
+                if(timelist.values.length > 0) {
+                    timelist.values.sort((a, b) => {
+                        return a.localeCompare(b);
+                    });
+                }
+            });
+        }
+
         //Create all sites from json
         this.target.innerHTML = "";
         this.sites.forEach(element => {
@@ -98,7 +114,7 @@ class slideshow {
         this.target.querySelector(".side:last-child").style.animation = `fadeIn ${this.transitionTime}ms linear`;
         this.target.querySelector(".side:last-child").classList.add("active");
         //Set timeout on first screen
-        if(this.sites[0].type == "video") {
+        if(this.sites[0].type === "video") {
             setTimeout(() => {
                 this.target.querySelector("video:last-child").play();
             }, 100);
@@ -106,23 +122,22 @@ class slideshow {
             this.target.querySelector("video:last-child").addEventListener("ended", this.videoEndedEvent);
         }
 
-        else {
-            let interval;
-            if(this.sites[0].type == "visitationtime") {
-                interval = this.cooldown(document.querySelector(".side:last-child .cooldown-clock"), this.visitationTimes, "visitationtime");
-            }
-    
-            else if(this.sites[0].type == "degustationtime") {
-                interval = this.cooldown(document.querySelector(".side:last-child .cooldown-clock"), this.degustationTimes, "degustationtime");
-            }
-    
-    
+        else if (this.sites[0].type == "cooldown") {
+            let timelist = this.timeLists.find(o => o.basename === this.sites[0].timelist);
+            let interval = this.cooldown(this.target.querySelector(".side:last-child .cooldown-clock"), timelist.values);
             setTimeout(() => {
-                if(interval) {
+                //Stop when not active
+                if (interval) {
                     clearInterval(interval);
                 }
                 this.changeSite();
-            },this.sites[0].timeout);
+            }, this.sites[0].timeout);
+        }
+
+        else {
+            setTimeout(() => {
+                this.changeSite();
+            }, this.sites[0].timeout);
         }
     }
 
@@ -147,20 +162,20 @@ class slideshow {
             this.target.querySelector("video:last-child").addEventListener("ended", this.videoEndedEvent);
         }
 
-        else {
-            let interval;
-            if(this.sites[0].type == "visitationtime") {
-                interval = this.cooldown(document.querySelector(".side:last-child .cooldown-clock"), this.visitationTimes, "visitationtime");
-            }
-
-            else if(this.sites[0].type == "degustationtime") {
-                interval = this.cooldown(document.querySelector(".side:last-child .cooldown-clock"), this.degustationTimes, "degustationtime");
-            }
-
+        else if (this.sites[0].type == "cooldown") {
+            let timelist = this.timeLists.find(o => o.basename === this.sites[0].timelist);
+            let interval = this.cooldown(this.target.querySelector(".side:last-child .cooldown-clock"), timelist.values);
             setTimeout(() => {
-                if(interval) {
+                //Stop when not active
+                if (interval) {
                     clearInterval(interval);
                 }
+                this.changeSite();
+            }, this.sites[0].timeout);
+        }
+
+        else {
+            setTimeout(() => {
                 this.changeSite();
             }, this.sites[0].timeout);
         }
@@ -179,6 +194,7 @@ class slideshow {
 
         else if (element.type == "video") {
             side = document.createElement("video");
+
             side.style.backgroundColor = element.background_color;
             side.muted = true;
             //Source for video 
@@ -216,106 +232,51 @@ class slideshow {
             }
             //create background image
             if(element.filename) {
-                side.style.backgroundImage = `url(/content/${element.filename})`; 
+                side.style.backgroundImage = `url(${this.dir}/${element.filename})`; 
             }
             side.style.backgroundColor = element.background_color;
             side.appendChild(sideH);
         }
 
-        else if (element.type == "visitationtime") {    
+        else if (element.type == "cooldown") {
+            let timelist = this.timeLists.find(o => o.basename === element.timelist);
             //div
             side = document.createElement("div");
-            side.className = "visitation-cooldown";
+            side.className = "cooldown";
             side.style.backgroundColor = element.background_color;
             side.style.color = element.color;
             side.dataset.timeout = element.timeout;
+            side.dataset.cooldown_list = element.timelist;
 
             if(element.font_family) {
                 side.style.fontFamily = element.font_family;
             }
-    
+
             //title
             let title = document.createElement("h1");
             title.className = "cooldown-title";
-            title.innerHTML = "KOMENTOVANÉ PROHLÍDKY KOSTELA";
-    
+            title.innerHTML = timelist.heading;
+
             //description
             let description = document.createElement("p");
             description.className = "cooldown-desc";
-            description.innerHTML = "V rámci každé komentované prohlídky se rozezní varhany, navštívíte unikátní církevní muzeum, seznámíte se s ornáty a významem jejich barev v závislosti na liturgickém období.";
-    
+            description.innerHTML = timelist.description;
+
             //label1
             let label1 = document.createElement("p");
             label1.className = "cooldown-label1";
-            label1.innerHTML = "Časy prohlídek:"
-    
+            label1.innerHTML = "Časový harmonogram:"
+
             //times
             let times = document.createElement("p");
             times.className = "cooldown-times";
-            times.innerHTML = this.visitationTimes.join(" ");
-    
+            times.innerHTML = timelist.values.join(" ");
+
             //label2
             let label2 = document.createElement("p");
             label2.className = "cooldown-label2";
-            label2.innerHTML = "Nejbližší prohlídka začíná za:"
-    
-            //clock
-            let clock = document.createElement("p");
-            clock.className = "cooldown-clock";
-            clock.innerHTML = ""
-    
-            if(element.filename) {
-                let backgroundImage = document.createElement("img");
-                backgroundImage.src = this.dir + element.filename;
-                side.appendChild(backgroundImage);
-            }
-            side.appendChild(title);
-            side.appendChild(description);
-            side.appendChild(label1);
-            side.appendChild(times);
-            side.appendChild(label2);
-            side.appendChild(clock);
-    
-            document.getElementById("slideshow-box").appendChild(side);
-        }
+            label2.innerHTML = "Další program začíná za:"
 
-        else if (element.type == "degustationtime") {    
-            //div
-            side = document.createElement("div");
-            side.className = "visitation-cooldown";
-            side.style.backgroundColor = element.background_color;
-            side.style.color = element.color;
-            side.dataset.timeout = element.timeout;
-
-            if(element.font_family) {
-                side.style.fontFamily = element.font_family;
-            }
-    
-            //title
-            let title = document.createElement("h1");
-            title.className = "cooldown-title";
-            title.innerHTML = "Řízené ochutnávky mešního vína";
-    
-            //description
-            let description = document.createElement("p");
-            description.className = "cooldown-desc";
-            description.innerHTML = "Přibližná délka ochutnávky je 50 minut";
-    
-            //label1
-            let label1 = document.createElement("p");
-            label1.className = "cooldown-label1";
-            label1.innerHTML = "Časy ochutnávek:"
-    
-            //times
-            let times = document.createElement("p");
-            times.className = "cooldown-times";
-            times.innerHTML = this.degustationTimes.join(" ");
-    
-            //label2
-            let label2 = document.createElement("p");
-            label2.className = "cooldown-label2";
-            label2.innerHTML = "Nejbližší ochutnávka začíná za:"
-    
             //clock
             let clock = document.createElement("p");
             clock.className = "cooldown-clock";
@@ -326,14 +287,14 @@ class slideshow {
                 backgroundImage.src = this.dir + element.filename;
                 side.appendChild(backgroundImage);
             }
-    
+
             side.appendChild(title);
             side.appendChild(description);
             side.appendChild(label1);
             side.appendChild(times);
             side.appendChild(label2);
             side.appendChild(clock);
-    
+
             document.getElementById("slideshow-box").appendChild(side);
         }
 
@@ -353,8 +314,8 @@ class slideshow {
         let childToRemove = childs[childs.length - 1];
         //New active site
         let newSite = childs[childs.length - 2];
-        //FadeOut 
-        if(childToRemove) {
+        //FadeOut
+        if(childToRemove && newSite) {
             childToRemove.classList.remove("active");
             childToRemove.classList.add("remove");
         }
@@ -365,30 +326,20 @@ class slideshow {
                 newSite.classList.add("active");
             }
         }, this.transitionTime);
-        
+
         if(newSite) {
             //If next site is video, set event when ends
             if(newSite.dataset.type == "video") {
                 setTimeout(() => {
                     newSite.play();
-                }, 100);
+                }, 300);
 
                 newSite.addEventListener("ended", this.videoEndedEvent);
             }
 
-            else if (newSite.dataset.type == "visitationtime") {
-                let interval = this.cooldown(document.querySelector(".cooldown-clock"), this.visitationTimes, "visitationtime");
-                setTimeout(() => {
-                    //Stop when not active
-                    if (interval) {
-                        clearInterval(interval);
-                    }
-                    this.changeSite();
-                }, newSite.dataset.timeout);
-            }
-
-            else if (newSite.dataset.type == "degustationtime") {
-                let interval = this.cooldown(document.querySelector(".cooldown-clock"), this.degustationTimes, "degustationtime");
+            else if (newSite.dataset.type == "cooldown") {
+                let timelist = this.timeLists.find(o => o.basename === newSite.dataset.cooldown_list);
+                let interval = this.cooldown(newSite.querySelector(".cooldown-clock"), timelist.values);
                 setTimeout(() => {
                     //Stop when not active
                     if (interval) {
@@ -411,7 +362,7 @@ class slideshow {
         }
     }
 
-    cooldown(target, times, type) {
+    cooldown(target, times) {
         let nextVisitation;
         //Get next visitation time
         const date = new Date();
@@ -432,7 +383,7 @@ class slideshow {
                 //Get time diff and convert ti hh:mm:ss
                 let diff = (visitation - currentDate) / 1000;
                 const sec = parseInt(diff, 10);
-                let hours   = Math.floor(sec / 3600);
+                let hours = Math.floor(sec / 3600);
                 let minutes = Math.floor((sec - (hours * 3600)) / 60);
                 let seconds = sec - (hours * 3600) - (minutes * 60);
         
@@ -452,15 +403,7 @@ class slideshow {
         }
 
         else {
-            let word;
-            if(type == "degustationtime") {
-                word = "degustace";
-            }
-
-            else if (type == "visitationtime") {
-                word = "prohlídka";
-            }
-            target.innerHTML = 'Dnes již není naplánovaná žádná ' + word;
+            target.innerHTML = 'Dnes již není naplánovaná žádná ';
         }
     }
 }

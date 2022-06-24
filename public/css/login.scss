@@ -1,4 +1,25 @@
 @import url('/fonts/monserrat/monserrat.css');
+
+:root {
+    --form_color: #363636;
+    --body_color: #202020;
+    --color: #ffffff;
+
+    img {
+        filter: brightness(0) invert(1);
+    }
+}
+
+.light-theme {
+    --form_color: #ffffff;
+    --body_color: #999999;
+    --color: #000000;
+
+    img {
+        filter: brightness(0);
+    }
+}
+
 $greyColor: #999999;
 $whiteBoxShadow: 5px 5px 12px 5px rgba(0,0,0,0.1);
 $themeColor: #2468d7;
@@ -11,11 +32,11 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: $greyColor;
+    background-color: var(--body_color);
 }
 
 #login-box {
-    background-color: #fff;
+    background-color: var(--form_color);
     box-sizing: border-box;
     width: 300px;
     padding-top: 20px;
@@ -25,8 +46,8 @@ body {
         margin: auto;
         display: block;
         width: 120px;
-        filter: brightness(0);
         opacity: 0.9;
+        pointer-events: none;
     }
 
     #login-status {
@@ -34,6 +55,7 @@ body {
         font-family: 'Montserrat', sans-serif;
         text-align: center;
         width: 100%;
+        color: var(--color);
     }
 
     #background-input {
@@ -51,6 +73,7 @@ body {
         }
 
         input {
+            color: var(--color);
             box-sizing: border-box;
             width: 100%;
             border: none;

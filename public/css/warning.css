@@ -1,0 +1,16 @@
+body {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #202020;
+  flex-direction: column;
+}
+
+h1 {
+  color: #fff;
+  font-family: Arial, sans-serif;
+}/*# sourceMappingURL=warning.css.map */

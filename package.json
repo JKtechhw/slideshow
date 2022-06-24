@@ -1,13 +1,13 @@
 {
   "name": "slideshow",
-  "version": "0.2.3",
-  "description": "",
+  "version": "1.0.0",
+  "description": "Slideshow",
   "main": "slideshow.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
-  "author": "",
+  "author": "JKtechhw",
   "license": "ISC",
   "dependencies": {
     "config": "^3.3.7",
@@ -15,7 +15,9 @@
     "express": "^4.18.1",
     "express-session": "^1.17.3",
     "formidable": "^2.0.1",
+    "ip": "^1.1.8",
     "mongodb": "^4.6.0",
-    "sha1": "^1.1.1"
+    "sha1": "^1.1.1",
+    "sniffr": "^1.2.0"
   }
 }

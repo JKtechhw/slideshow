@@ -3,8 +3,7 @@
 body {
   padding: 0;
   margin: 0;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   overflow: hidden;
 }
 
@@ -15,15 +14,13 @@ body {
   margin: 0;
   background-color: #000;
 }
-
 #slideshow-box video::cue {
-  background-color: #000000b0;
+  background-color: rgba(0, 0, 0, 0.6901960784);
   color: #fff;
   border-radius: 10px;
-  font-size: 30px !important;
+  font-size: 3vw !important;
   padding: 5px;
 }
-
 #slideshow-box iframe {
   margin: 0;
   padding: 0;
@@ -31,39 +28,29 @@ body {
   width: 10vw;
   height: 100vh;
 }
-
 #slideshow-box img {
   -o-object-fit: contain;
      object-fit: contain;
 }
-
 #slideshow-box .text {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  justify-content: center;
+  align-items: center;
   padding: 0;
   margin: 0;
 }
-
 #slideshow-box .text h1 {
-  color: #fff;
+  padding: 0 10px;
+  font-size: 3.9vw;
   width: 100%;
   text-align: center;
 }
-
-#slideshow-box .visitation-cooldown {
+#slideshow-box .cooldown {
   margin: 0px;
   padding: 0px;
   text-align: left;
 }
-
-#slideshow-box .visitation-cooldown .cooldown-title {
+#slideshow-box .cooldown .cooldown-title {
   text-align: right;
   position: absolute;
   bottom: 82.5vh;
@@ -73,8 +60,7 @@ body {
   padding: 0;
   margin: 0px;
 }
-
-#slideshow-box .visitation-cooldown .cooldown-desc {
+#slideshow-box .cooldown .cooldown-desc {
   text-align: right;
   position: absolute;
   top: 18.5vh;
@@ -85,8 +71,7 @@ body {
   padding: 0;
   margin: 0px;
 }
-
-#slideshow-box .visitation-cooldown .cooldown-label1 {
+#slideshow-box .cooldown .cooldown-label1 {
   text-align: right;
   position: absolute;
   bottom: 60vh;
@@ -95,8 +80,7 @@ body {
   padding: 0;
   margin: 0px;
 }
-
-#slideshow-box .visitation-cooldown .cooldown-times {
+#slideshow-box .cooldown .cooldown-times {
   text-align: right;
   position: absolute;
   top: 40vh;
@@ -106,8 +90,7 @@ body {
   padding: 0;
   margin: 0px;
 }
-
-#slideshow-box .visitation-cooldown .cooldown-label2 {
+#slideshow-box .cooldown .cooldown-label2 {
   text-align: right;
   position: absolute;
   right: 5vw;
@@ -116,8 +99,7 @@ body {
   padding: 0;
   margin: 0px;
 }
-
-#slideshow-box .visitation-cooldown .cooldown-clock {
+#slideshow-box .cooldown .cooldown-clock {
   text-align: right;
   position: absolute;
   right: 5vw;
@@ -127,33 +109,28 @@ body {
   padding: 0;
   margin: 0px;
 }
-
-#slideshow-box .visitation-cooldown img {
+#slideshow-box .cooldown img {
   position: relative;
   -o-object-fit: cover;
      object-fit: cover;
   height: 100vh;
   width: auto;
 }
-
 #slideshow-box .side {
   width: 100%;
   height: 100vh;
   position: absolute;
   left: 0;
   top: 0;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   opacity: 0;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 }
-
 #slideshow-box .side.remove {
   opacity: 0 !important;
 }
-
 #slideshow-box .side.active {
   opacity: 1;
 }
@@ -174,5 +151,4 @@ body {
   to {
     opacity: 1;
   }
-}
-/*# sourceMappingURL=slideshow.css.map */
+}/*# sourceMappingURL=slideshow.css.map */

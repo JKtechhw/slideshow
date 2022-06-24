@@ -8,6 +8,9 @@ This app was created for Noc kostelů Polná 2022
 - Administration
 - Resource monitor
 - Statistics
+- Notifications
+- Multiple cooldown lists
+- Dark / light theme
 
 ## Dependences
 - NPM
