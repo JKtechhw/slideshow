@@ -37,6 +37,8 @@ $right-tab: 5vw;
         border: none;
         width: 10vw;
         height: 100vh;
+        overflow: hidden;
+        pointer-events: none;
     }
 
     img {

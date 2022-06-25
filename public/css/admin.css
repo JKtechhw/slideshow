@@ -572,6 +572,10 @@ nav #header-buttons #logout::after {
   height: 100%;
   border: none;
   z-index: 1;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 #clients-table {

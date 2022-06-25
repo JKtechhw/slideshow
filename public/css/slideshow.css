@@ -28,6 +28,8 @@ body {
   border: none;
   width: 10vw;
   height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
 }
 #slideshow-box img {
   -o-object-fit: contain;

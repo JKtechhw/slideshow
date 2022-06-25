@@ -452,7 +452,7 @@ app.put("/admin/remove-time", (req, res) => {
 
 app.post("/admin/add-slide/", (req, res) => {
     if(req.session.user) {
-       let form = new formidable.IncomingForm();
+       let form = new formidable.IncomingForm({ maxFileSize: 5 * 1024 * 1024 * 1024});
         form.parse(req, async (err, fields, files) => {
             let hidden = fields.add_slide_hidden ? true : false;
             let uploadedFile = await uploadFile(files.add_slide_file);
@@ -512,12 +512,14 @@ app.delete("/admin/remove-slide", (req, res) => {
                     else if(dbRemRes.value) {
                         if(dbRemRes.value.filename || dbRemRes.value.subtitles) {
                             try {
-                                if(dbRemRes.value.filename) {
-                                    fs.unlinkSync(__dirname + "/public/content/" + dbRemRes.value.filename)
+                                if(dbRemRes.value.filename && fs.existsSync(__dirname + "/public/content/" + dbRemRes.value.filename)) {
+                                    fs.unlinkSync(__dirname + "/public/content/" + dbRemRes.value.filename);
+                                    console.log("Removing file " + dbRemRes.value.filename);
                                 }
     
-                                if(dbRemRes.value.subtitles) {
-                                    fs.unlinkSync(__dirname + "/public/content/" + dbRemRes.value.subtitles)
+                                if(dbRemRes.value.subtitles && fs.existsSync(__dirname + "/public/content/" + dbRemRes.value.subtitles)) {
+                                    fs.unlinkSync(__dirname + "/public/content/" + dbRemRes.value.subtitles);
+                                    console.log("Removing file " + dbRemRes.value.subtitles);
                                 }
                             }
     
@@ -526,7 +528,12 @@ app.delete("/admin/remove-slide", (req, res) => {
                             }
                         }
 
-                        clients.forEach(client => client.res.write('data: refresh\n\n'));
+                        if(clients) {
+                            let oldClients = clients;
+                            clients = [];
+                            oldClients.forEach(client => client.res.write('data: refresh\n\n'));
+                        }
+
                         res.send("Slide byl odebrán");
                     }
 
@@ -717,7 +724,7 @@ async function runServer() {
 function uploadFile(file) {
     return new Promise((resolve, reject) => {
         let newFilename = null;
-        if(file.size != 0) {
+        if(file && file.size != 0) {
             let oldPath = file.filepath;
             let newPath = __dirname + "/public/content/" + file.originalFilename;
     

@@ -17,7 +17,6 @@ class slideshow {
         var evtSource = new EventSource("/events/client");
 
         evtSource.addEventListener("message", (e) => {
-            console.log(e.data)
             switch(e.data) {
                 case "refresh":
                     let coverSide = document.createElement("div");
@@ -73,7 +72,9 @@ class slideshow {
                 }
 
                 //Save new hash
-                this.hash = response.hash;
+                if(this.hash !== "x") {
+                    this.hash = response.hash;
+                }
             }
 
             else {
@@ -107,6 +108,14 @@ class slideshow {
         this.sites.forEach(element => {
             this.addSite(element);
         });
+
+        if(!this.target.querySelector(".side")) {
+            this.hash = "x";
+            setTimeout(() => {
+                this.fetchFromApi();
+            }, 10000);
+            return;
+        }
 
         //Set last child as active with animation effect
         this.target.querySelector(".side:last-child").style.animation = `fadeIn ${this.transitionTime}ms linear`;
@@ -212,6 +221,7 @@ class slideshow {
 
         else if (element.type == "iframe") {
             side = document.createElement("iframe");
+            side.setAttribute("scrolling", "no");
             side.dataset.timeout = element.timeout;
             side.src = element.url;
         }
@@ -239,67 +249,74 @@ class slideshow {
         else if (element.type == "cooldown") {
             let timelist = this.timeLists.find(o => o.basename === element.timelist);
             //div
-            side = document.createElement("div");
-            side.className = "cooldown";
-            side.style.backgroundColor = element.background_color;
-            side.style.color = element.color;
-            side.dataset.timeout = element.timeout;
-            side.dataset.cooldown_list = element.timelist;
+            if(timelist) {
+                side = document.createElement("div");
+                side.className = "cooldown";
+                side.style.backgroundColor = element.background_color;
+                side.style.color = element.color;
+                side.dataset.timeout = element.timeout;
+                side.dataset.cooldown_list = element.timelist;
 
-            if(element.font_family) {
-                side.style.fontFamily = element.font_family;
+                if(element.font_family) {
+                    side.style.fontFamily = element.font_family;
+                }
+
+                //title
+                let title = document.createElement("h1");
+                title.className = "cooldown-title";
+                title.innerHTML = timelist.heading;
+
+                //description
+                let description = document.createElement("p");
+                description.className = "cooldown-desc";
+                description.innerHTML = timelist.description;
+
+                //label1
+                let label1 = document.createElement("p");
+                label1.className = "cooldown-label1";
+                label1.innerHTML = "Časový harmonogram:"
+
+                //times
+                let times = document.createElement("p");
+                times.className = "cooldown-times";
+                times.innerHTML = timelist.values.join(" ");
+
+                //label2
+                let label2 = document.createElement("p");
+                label2.className = "cooldown-label2";
+                label2.innerHTML = "Další program začíná za:"
+
+                //clock
+                let clock = document.createElement("p");
+                clock.className = "cooldown-clock";
+                clock.innerHTML = ""
+                
+                if(element.filename) {
+                    let backgroundImage = document.createElement("img");
+                    backgroundImage.src = this.dir + element.filename;
+                    side.appendChild(backgroundImage);
+                }
+
+                side.appendChild(title);
+                side.appendChild(description);
+                side.appendChild(label1);
+                side.appendChild(times);
+                side.appendChild(label2);
+                side.appendChild(clock);
+
+                document.getElementById("slideshow-box").appendChild(side);   
             }
 
-            //title
-            let title = document.createElement("h1");
-            title.className = "cooldown-title";
-            title.innerHTML = timelist.heading;
-
-            //description
-            let description = document.createElement("p");
-            description.className = "cooldown-desc";
-            description.innerHTML = timelist.description;
-
-            //label1
-            let label1 = document.createElement("p");
-            label1.className = "cooldown-label1";
-            label1.innerHTML = "Časový harmonogram:"
-
-            //times
-            let times = document.createElement("p");
-            times.className = "cooldown-times";
-            times.innerHTML = timelist.values.join(" ");
-
-            //label2
-            let label2 = document.createElement("p");
-            label2.className = "cooldown-label2";
-            label2.innerHTML = "Další program začíná za:"
-
-            //clock
-            let clock = document.createElement("p");
-            clock.className = "cooldown-clock";
-            clock.innerHTML = ""
-            
-            if(element.filename) {
-                let backgroundImage = document.createElement("img");
-                backgroundImage.src = this.dir + element.filename;
-                side.appendChild(backgroundImage);
+            else {
+                console.error("Invalid time list");
+                return;
             }
-
-            side.appendChild(title);
-            side.appendChild(description);
-            side.appendChild(label1);
-            side.appendChild(times);
-            side.appendChild(label2);
-            side.appendChild(clock);
-
-            document.getElementById("slideshow-box").appendChild(side);
         }
 
         else {
             return;
         }
-
+        
         side.dataset.type = element.type;
         side.classList.add("side");
         this.target.insertAdjacentElement("afterbegin", side);
@@ -331,7 +348,6 @@ class slideshow {
                 setTimeout(() => {
                     newSite.play();
                 }, 300);
-
                 newSite.addEventListener("ended", this.videoEndedEvent);
             }
 

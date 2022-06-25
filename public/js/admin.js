@@ -6,7 +6,7 @@ class adminPanel {
         this.api = "/api/admin/";
         this.dataFromApi
         this.buildAdminPanel();
-        this.acceptedVideo = ".mp4,.m4v,.webm,.avi";
+        this.acceptedVideo = ".mp4,.m4v,.webm,.ogv";
         this.acceptedImage = ".jpg, .JPG, .jpeg, .png";
     }
 
@@ -134,6 +134,7 @@ class adminPanel {
         let fontFamilyBox = target.querySelector("#font-family-box");
         fontFamilyBox.style.display = "none";
         let timelistBox = target.querySelector("#cooldown-list-box");
+        let timelistSelect = target.querySelector("#cooldown-list-box select");
         timelistBox.style.display = "none";
         let backgroundColorBox = target.querySelector("#background-color-box");
         backgroundColorBox.style.display = "none";
@@ -159,6 +160,8 @@ class adminPanel {
                     timeoutBox.style.display = "flex";
                     fontFamilyBox.style.display = "none";
                     timelistBox.style.display = "none";
+                    timelistSelect.innerHTML = "";
+                    timelistSelect.required = false;
                     backgroundColorBox.style.display = "flex";
                     textColorBox.style.display = "none";
                     fileBox.style.display = "flex";
@@ -173,6 +176,8 @@ class adminPanel {
                     timeoutBox.style.display = "none";
                     fontFamilyBox.style.display = "none";
                     timelistBox.style.display = "none";
+                    timelistSelect.innerHTML = "";
+                    timelistSelect.required = false;
                     backgroundColorBox.style.display = "flex";
                     textColorBox.style.display = "none";
                     fileBox.style.display = "flex";
@@ -187,6 +192,8 @@ class adminPanel {
                     timeoutBox.style.display = "flex";
                     fontFamilyBox.style.display = "none";
                     timelistBox.style.display = "none";
+                    timelistSelect.innerHTML = "";
+                    timelistSelect.required = false;
                     backgroundColorBox.style.display = "none";
                     textColorBox.style.display = "none";
                     fileBox.style.display = "none";
@@ -200,6 +207,8 @@ class adminPanel {
                 case "text":
                     timeoutBox.style.display = "flex";
                     timelistBox.style.display = "none";
+                    timelistSelect.innerHTML = "";
+                    timelistSelect.required = false;
                     fontFamilyBox.style.display = "flex";
                     backgroundColorBox.style.display = "flex";
                     textColorBox.style.display = "flex";
@@ -215,6 +224,8 @@ class adminPanel {
                     timeoutBox.style.display = "flex";
                     fontFamilyBox.style.display = "flex";
                     timelistBox.style.display = "block";
+                    this.createTimelistDropDown("#add-slide-timelist");
+                    timelistSelect.required = true;
                     backgroundColorBox.style.display = "flex";
                     textColorBox.style.display = "flex";
                     fileBox.style.display = "flex";
@@ -329,6 +340,7 @@ class adminPanel {
                             fontFamilyBox.querySelector("select").innerHTML = "";
                             timelistBox.style.display = "none";
                             timelistBox.querySelector("select").innerHTML = "";
+                            timelistBox.querySelector("select").required = false;
                             backgroundColorBox.style.display = "flex";
                             textColorBox.style.display = "none";
                             fileBox.style.display = "flex";
@@ -344,6 +356,7 @@ class adminPanel {
                             fontFamilyBox.querySelector("select").innerHTML = "";
                             timelistBox.style.display = "none";
                             timelistBox.querySelector("select").innerHTML = "";
+                            timelistBox.querySelector("select").required = false;
                             backgroundColorBox.style.display = "flex";
                             textColorBox.style.display = "none";
                             fileBox.style.display = "flex";
@@ -359,6 +372,7 @@ class adminPanel {
                             this.createFontDropDown("#edit-slide-form #font-family-box select", element.font_family);
                             timelistBox.style.display = "none";
                             timelistBox.querySelector("select").innerHTML = "";
+                            timelistBox.querySelector("select").required = false;
                             backgroundColorBox.style.display = "flex";
                             textColorBox.style.display = "flex";
                             fileBox.style.display = "flex";
@@ -374,6 +388,7 @@ class adminPanel {
                             fontFamilyBox.querySelector("select").innerHTML = "";
                             timelistBox.style.display = "none";
                             timelistBox.querySelector("select").innerHTML = "";
+                            timelistBox.querySelector("select").required = false;
                             backgroundColorBox.style.display = "none";
                             textColorBox.style.display = "none";
                             fileBox.style.display = "none";
@@ -388,6 +403,7 @@ class adminPanel {
                             this.createFontDropDown("#edit-slide-form #font-family-box select", element.font_family);
                             timelistBox.style.display = "block";
                             this.createTimelistDropDown("#edit-slide-box-timelist", element.timelist);
+                            timelistBox.querySelector("select").required = true;
                             backgroundColorBox.style.display = "flex";
                             textColorBox.style.display = "flex";
                             fileBox.style.display = "flex";
@@ -660,15 +676,25 @@ class adminPanel {
     createTimelistDropDown(target, active = null) {
         let targetElement = document.querySelector(target); 
         targetElement.innerHTML = "";
-        this.dataFromApi.timelists.forEach(element => {
+        if(this.dataFromApi.timelists && this.dataFromApi.timelists.length !== 0) {
+            this.dataFromApi.timelists.forEach(element => {
+                let option = document.createElement("option");
+                option.value = element.basename;
+                option.innerText = element.name;
+                if(active === element.basename) {
+                    option.selected = true;
+                }
+                targetElement.appendChild(option);
+            });
+        }
+
+        else {
             let option = document.createElement("option");
-            option.value = element.basename;
-            option.innerText = element.name;
-            if(active === element.basename) {
-                option.selected = true;
-            }
+            option.disabled = true;
+            option.selected = true;
+            option.innerText = "Není přidán žádný seznam"
             targetElement.appendChild(option);
-        });
+        }
     }
 
     addUrlToHosts() {
@@ -733,6 +759,11 @@ class adminPanel {
                 document.querySelector("#add-slide-box").classList.remove("active");
             }
         });
+        document.querySelector('#add-slide-box form').addEventListener("submit", () => {
+            document.querySelector('#add-slide-box form button[type="submit"]').disabled = true;
+            document.querySelector('#add-slide-box form button[type="submit"]').innerText = "Přidávání...";
+        });
+
         document.querySelector("#edit-slide-box").addEventListener("mousedown", (e) => {
             if(e.currentTarget == e.target) {
                 document.body.style.overflow = null;
@@ -802,7 +833,6 @@ class adminPanel {
             addSlideBox.classList.add("active");
             addSlideBox.querySelector("input[name=\"add_slide_background_color\"]").value = this.dataFromApi.background_color;
             addSlideBox.querySelector("input[name=\"add_slide_color\"]").value = this.dataFromApi.text_color;
-            this.createTimelistDropDown("#add-slide-timelist");
         }
     }
 

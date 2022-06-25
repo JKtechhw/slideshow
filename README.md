@@ -11,7 +11,6 @@ This app was created for Noc kostelů Polná 2022
 - Notifications
 - Multiple cooldown lists
 - Dark / light theme
-- Installer
 
 ## Dependences
 - NODE.js
