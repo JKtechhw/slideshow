@@ -1,0 +1,7 @@
+{
+  "name": "config",
+  "transition_time": "1000",
+  "font_family": "'DINpro', sans-serif",
+  "background_color": "#000000",
+  "text_color": "#ffffff"
+}

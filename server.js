@@ -19,7 +19,7 @@ const ip = require("ip");
 const path = require('path');
 //Mongodb
 const { MongoClient, ObjectId } = require("mongodb");
-const mongo = new MongoClient(process.env.CONNECTION_STRING);
+const mongo  = new MongoClient(process.env.CONNECTION_STRING);
 //Hash for api and login
 const sha1 = require("sha1");
 
@@ -664,8 +664,14 @@ app.put("*", (req, res) => {
 
 async function setupServer() {
     try {
-        await connectDB();
-        await runServer();
+        if(fs.existsSync(".env")) {
+            await connectDB();
+            await runServer();
+        }
+
+        else {
+            console.error("Run installer first!")
+        }
     }
 
     catch(err) {

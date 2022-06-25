@@ -17,17 +17,15 @@ class slideshow {
         var evtSource = new EventSource("/events/client");
 
         evtSource.addEventListener("message", (e) => {
+            console.log(e.data)
             switch(e.data) {
                 case "refresh":
-                    let activeSlide = this.target.querySelector(".side.active");
-                    if(activeSlide) {
-                        activeSlide.classList.remove("active");
-                        activeSlide.classList.add("remove");
-                        setTimeout(() => {
-                            location.reload(true);
-                        }, 1000)
-                    } 
-                    
+                    let coverSide = document.createElement("div");
+                    coverSide.classList.add("cover-side");
+                    this.target.insertAdjacentElement("afterbegin", coverSide);
+                    setTimeout(() => {
+                        location.reload(true);
+                    }, 1000);
                     break;
             }
         });

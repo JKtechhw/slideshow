@@ -1,0 +1,60 @@
+{
+    "name": "fonts",
+    "fonts": [
+      {
+        "name": "Arial",
+        "class": "arial",
+        "value": "Arial, sans-serif"
+      },
+      {
+        "name": "Verdana",
+        "class": "verdana",
+        "value": "Verdana, sans-serif"
+      },
+      {
+        "name": "Helvetica",
+        "class": "helvetiva",
+        "value": "Helvetica, sans-serif"
+      },
+      {
+        "name": "Tahoma",
+        "class": "tahoma",
+        "value": "Tahoma, sans-serif"
+      },
+      {
+        "name": "Trebuchet MS",
+        "class": "trebuchet",
+        "value": "'Trebuchet MS', sans-serif"
+      },
+      {
+        "name": "Times New Roman",
+        "class": "times-new-roman",
+        "value": "'Times New Roman', serif"
+      },
+      {
+        "name": "Georgia",
+        "class": "georgia",
+        "value": "Georgia, serif"
+      },
+      {
+        "name": "Garamond",
+        "class": "garamond",
+        "value": "Garamond, serif"
+      },
+      {
+        "name": "Brush Script MT",
+        "class": "brush-script",
+        "value": "'Brush Script MT', cursive"
+      },
+      {
+        "name": "Monserrat",
+        "class": "monserrat",
+        "value": "'Montserrat', sans-serif"
+      },
+      {
+        "name": "DINpro",
+        "class": "dinpro",
+        "value": "'DINpro', sans-serif"
+      }
+    ]
+  }

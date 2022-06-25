@@ -1,0 +1,7 @@
+Database name - slideshow
+
+collections -   timelists
+                slides
+                config
+
+json files import to config collection

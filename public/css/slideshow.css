@@ -5,6 +5,7 @@ body {
   margin: 0;
   box-sizing: border-box;
   overflow: hidden;
+  background-color: #000;
 }
 
 #slideshow-box {
@@ -133,6 +134,17 @@ body {
 }
 #slideshow-box .side.active {
   opacity: 1;
+}
+#slideshow-box .cover-side {
+  background-color: #000;
+  left: 0;
+  top: 0;
+  position: fixed;
+  z-index: 99;
+  width: 100vw;
+  height: 100vh;
+  -webkit-animation: fadeIn forwards 1s linear;
+          animation: fadeIn forwards 1s linear;
 }
 
 @-webkit-keyframes fadeIn {
