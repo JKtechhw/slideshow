@@ -44,7 +44,10 @@ Default port is 3000, you can change port in config/default.json
 ### 3) Create directory for content
 Create directory "content" in public folder
 
-### 4) Setup database
+### 4) Create .env file
+In .env file provide "CONNECTION_STRING" for mongodb (default string for localhost)and "SECRET_KEY" for cookies (default random)
+
+### 5) Setup database
 Setup database and collection. Described in /docs
 
 ## Run

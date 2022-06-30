@@ -434,7 +434,7 @@ class adminPanel {
                             emptyLine.colSpan = columns;
                             emptyLine.classList.add("empty");
                             emptyLine.classList.add("description");
-                            emptyLine.innerText = "Nebyly přidány žádné slidy";
+                            emptyLine.innerText = "Nejsou přidány žádné slidy";
                             emptyLineRow.appendChild(emptyLine);
                             target.appendChild(emptyLineRow);
                         }
@@ -468,10 +468,12 @@ class adminPanel {
     }
 
     setTimelistBox(targetId) {
+        let removeListBtn = document.querySelector("#remove-timelist-btn");
         let target = document.querySelector(targetId);
         target.innerHTML = "";
 
         if(this.dataFromApi.timelists.length > 0) {
+            removeListBtn.style.display = "block";
             this.dataFromApi.timelists.forEach(element => {
                 let heading = document.createElement("h4");
                 heading.innerText = element.name;
@@ -574,6 +576,7 @@ class adminPanel {
                 }
 
                 else {
+                    removeButton.style.display = "none";
                     let p = document.createElement("p");
                     p.classList.add("description");
                     p.classList.add("center");
@@ -584,6 +587,7 @@ class adminPanel {
         }
 
         else {
+            removeListBtn.style.display = "none";
             let p = document.createElement("p");
             p.classList.add("description");
             p.classList.add("center");
@@ -692,7 +696,8 @@ class adminPanel {
             let option = document.createElement("option");
             option.disabled = true;
             option.selected = true;
-            option.innerText = "Není přidán žádný seznam"
+            option.innerText = "Není přidán žádný seznam";
+            option.value = "";
             targetElement.appendChild(option);
         }
     }

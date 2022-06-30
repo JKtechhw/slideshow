@@ -79,7 +79,7 @@ class slideshow {
 
             else {
                 //if response is empty, try in 10 seconds
-                console.error("Response is empty, waiting 10 seconds");
+                console.warn("Response is empty, waiting 10 seconds");
                 setTimeout(this.fetchFromApi.bind(this), 10000);
             }
         }

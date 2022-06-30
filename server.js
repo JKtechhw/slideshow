@@ -19,11 +19,11 @@ const ip = require("ip");
 const path = require('path');
 //Mongodb
 const { MongoClient, ObjectId } = require("mongodb");
-const mongo  = new MongoClient(process.env.CONNECTION_STRING);
+const mongo  = new MongoClient(process.env.CONNECTION_STRING || "mongodb://localhost:27017/");
 //Hash for api and login
 const sha1 = require("sha1");
 
-//Variable for analytics
+//Variables for analytics
 let clients = [];
 let admins = [];
 let messages = [];
@@ -35,7 +35,7 @@ app.set('trust proxy', true);
 app.use(express.static("public"));
 app.use('/favicon.ico', express.static('public/images/favicon.ico'));
 app.use(session({
-    secret: process.env.SECRET_KEY,
+    secret: process.env.SECRET_KEY || (Math.random() + 1).toString(36).substring(2),
     resave: false,
     saveUninitialized: false
 }));
@@ -139,7 +139,6 @@ app.get("/api/admin", (req, res) => {
 });
 
 app.get("/admin", (req, res) => {
-
     const s = new sniffr();
     s.sniff(req.headers['user-agent']);
     if(s.browser.name == "ie") {
@@ -159,19 +158,21 @@ app.get("/admin", (req, res) => {
 
 app.post("/login", (req, res) => {
     let form = new formidable.IncomingForm();
+    let reqIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     form.parse(req, (err, fields, files) => {
         let dbo = mongo.db("slideshow");
         dbo.collection("config").findOne({name: "password"}, {projection: {_id: 0, name: 0}}, (err, password) => {
             if(sha1(fields.password).localeCompare(password.value) == 0) {
                 req.session.user = true;
                 res.redirect("/admin");
-                sendMessage("Nové přihlášení", req.headers['x-forwarded-for'] || req.socket.remoteAddress, "success");
+                console.log("New admin login from " + reqIp);
+                sendMessage("Nové přihlášení", reqIp, "success");
             }
 
             else {
-                console.warn("Wrong password from " + req.headers['x-forwarded-for'] || req.socket.remoteAddress);
+                console.warn("Wrong admin password from " + reqIp);
                 res.redirect("/admin?wrong-password");
-                sendMessage("Neplatné heslo", req.headers['x-forwarded-for'] || req.socket.remoteAddress, "error");
+                sendMessage("Neplatné heslo", reqIp, "error");
             }
         });
     });
@@ -206,7 +207,7 @@ app.get("/events/client", (req, res) => {
 
 app.post("/admin/refresh", (req, res) => {
     if(req.session.user) {
-        if(clients) {
+        if(clients.length > 0) {
             let oldClients = clients;
             clients = [];
             oldClients.forEach(client => client.res.write('data: refresh\n\n'));
@@ -409,7 +410,7 @@ app.post("/admin/add-time", (req, res) => {
                     }
 
                     else {
-                        res.send("Na tento čas již záznam existuje")
+                        res.send("Na tento čas již záznam existuje");
                     }
                 }
 
@@ -671,14 +672,12 @@ app.put("*", (req, res) => {
 
 async function setupServer() {
     try {
-        if(fs.existsSync(".env")) {
-            await connectDB();
-            await runServer();
+        if(!fs.existsSync(".env")) {
+            console.warn(".env file doesn't exists, using default values!");
         }
 
-        else {
-            console.error("Run installer first!")
-        }
+        await connectDB();
+        await runServer();
     }
 
     catch(err) {
@@ -687,9 +686,19 @@ async function setupServer() {
 
     finally {
         process.on('SIGINT', async () => {
-            console.log("\nStopping server");
-            await mongo.close();
-            console.log("Disconnected from database");
+            sendMessage("Vypínání serveru", "Proces byl přerušen", "error");
+            console.log("\nStopping server...");
+            try {
+                await mongo.close();
+            }
+
+            catch(err) {
+                console.error(err);
+            }
+
+            finally {
+                console.log("Disconnected from database");
+            }
             process.exit(0);
         });
     }
@@ -697,6 +706,7 @@ async function setupServer() {
 
 async function connectDB() {
     try {
+        console.log("Attempt to connect to database...");
         await mongo.connect();
         await mongo.db("slideshow").command({ ping: 1 });
     }
@@ -759,7 +769,6 @@ function uploadFile(file) {
 
 function sendMessage(headling, message, type) {
     const time = new Date();
-
     let hour = time.getHours() > 9 ? time.getHours() : "0" + time.getHours();
     let minutes = time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes();
 

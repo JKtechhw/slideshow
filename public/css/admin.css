@@ -263,6 +263,10 @@ input[type=checkbox]:checked::after {
   width: 100%;
   padding: 0 20px;
   box-sizing: border-box;
+  min-height: 250px;
+}
+.part-box-div .part-box #timelist-box p {
+  width: 100%;
 }
 .part-box-div .part-box #timelist-box.removing-list .edit-times-box {
   display: none;
