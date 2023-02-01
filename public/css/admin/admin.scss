@@ -77,76 +77,6 @@ body {
 
 //Style for themes
 
-h1, h2, h3, h4, h5, h6, p, label, span, input, textarea, select, tr, td, li {
-    color: var(--text_color);
-}
-
-input, textarea {
-    font-family: $themeFont;
-}
-
-button[type="submit"].blue-btn {
-    margin-top: 10px;
-}
-
-input[type="number"] {
-    -moz-appearance: textfield;
-    &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-}
-
-input[type="checkbox"] {
-    width: 0;
-    position: relative;
-    border: none;
-    margin: 0;
-
-    &::after {
-        transform: translateX(-50%);
-        position: absolute;
-        width: 15px;
-        height: 15px;
-        box-sizing: border-box;
-        content: "";
-        border: 1px solid $grayColor;
-        border-radius: 2px;
-    }
-
-    &:checked {
-        &::after {
-            background-image: url("/images/check.svg");
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
-    }
-}
-
-.uppercase {
-    text-transform: uppercase;
-}
-
-.right {
-    float: right;
-}
-
-.description {
-    color: $grayColor;
-    font-weight: 300;
-}
-
-.github {
-    &::after {
-        content: url("/images/github.svg");
-    }
-}
-
-.center {
-    text-align: center;
-}
-
 .blue-btn, .gray-btn {
     border-radius: 5px;
     border: none;
@@ -178,86 +108,35 @@ input[type="checkbox"] {
     background-color: var(--input_background);
 }
 
-.box {
+.row {
+    justify-content: center;
     max-width: 1200px;
     margin: 30px auto;
-    background-color: var(--box_color);
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: $whiteBoxShadow;
-    box-sizing: border-box;
-    overflow: hidden;
-
-    h3 {
-        margin-left: 10px;
-        position: relative;
-
-        &::after {
-            left: 0;
-            bottom: -10px;
-            height: 4px;
-            width: 40px;
-            position: absolute;
-            content: "";
-            background-color: var(--theme_color);
-        }
-    }
-}
-
-.part-box-div {
     display: flex;
-    max-width: 1200px;
-    margin: auto;
+    width: 100%;
 
-    .part-box {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        flex-direction: column;
+    .box {
         background-color: var(--box_color);
         box-shadow: $whiteBoxShadow;
-        margin: 10px;
+        box-sizing: border-box;
         border-radius: 10px;
-        padding: 10px 15px;
-
-        &:first-child {
-            margin-left: 0;
+        padding: 10px;
+        width: 100%;
+    
+        #add-gallery-tooltip {
+            background: url("/images/info.svg");
+            background-color: transparent;
+            display: inline-block;
+            margin-left: 10px;
+            cursor: pointer;
+            border: none;
+            height: 15px;
+            width: 15px;
         }
-
-        &:last-child {
-            margin-right: 0;
-        }
-
-        .row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-
-            &:not(&:first-child) {
-                margin-top: 20px;
-            }
-        }
-
-        .host-url {
-            color: var(--theme_color);
-        }
-
-        form {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-
-        h1 {
-            color: var(--theme_color);
-        }
-
+    
         h3 {
             margin-left: 10px;
             position: relative;
-            width: 100%;
-            text-align: left;
-            box-sizing: border-box;
     
             &::after {
                 left: 0;
@@ -270,74 +149,175 @@ input[type="checkbox"] {
             }
         }
 
-        h4 {
-            margin: 10px;
-        }
-
-        .controls-buttons {
+        #gallery-grid {
+            margin: 30px 10px 0 10px;
             display: flex;
-            width: 100%;
-            float: inherit;
-            button {
-                margin: 3px;
-            }
-        }
 
-        ul {
-            list-style: none;
-
-            li {
+            .gallery-icon {
+                justify-content: center;
+                flex-direction: column;
+                align-items: center;
                 user-select: none;
+                margin: 5px 10px;
+                cursor: pointer;
+                display: flex;
 
-                input[type="checkbox"] {
-                    left: -20px;
+                h4 {
+                    font-weight: 500;
+
+                    &::first-letter {
+                        text-transform: uppercase;
+                    }
+                }
+
+                .icon {
+                    background: url("/images/folder.svg");
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    display: inline-block;
+                    height: 25px;
+                    width: 25px;
                 }
             }
         }
+    }
 
-        #timelist-box {
-            width: 100%;
-            padding: 0 20px;
-            box-sizing: border-box;
-            min-height: 250px;
-
-            p {
+    .part-box-div {
+        max-width: 1200px;
+        display: flex;
+        margin: auto;
+        width: 100%;
+    
+        .part-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            background-color: var(--box_color);
+            box-shadow: $whiteBoxShadow;
+            margin: 10px;
+            border-radius: 10px;
+            padding: 10px 15px;
+    
+            &:first-child {
+                margin-left: 0;
+            }
+    
+            &:last-child {
+                margin-right: 0;
+            }
+    
+            .row {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-wrap: wrap;
+    
+                &:not(&:first-child) {
+                    margin-top: 20px;
+                }
+            }
+    
+            .host-url {
+                color: var(--theme_color);
+            }
+    
+            form {
                 width: 100%;
+                margin-bottom: 15px;
             }
-
-            &.removing-list {
-                .edit-times-box {
-                    display: none;
-                }
-
-                .remove-list-button {
-                    margin-left: 10px;
-                    display: inline-block;   
+    
+            h1 {
+                color: var(--theme_color);
+            }
+    
+            h3 {
+                margin-left: 10px;
+                position: relative;
+                width: 100%;
+                text-align: left;
+                box-sizing: border-box;
+        
+                &::after {
+                    left: 0;
+                    bottom: -10px;
+                    height: 4px;
+                    width: 40px;
+                    position: absolute;
+                    content: "";
+                    background-color: var(--theme_color);
                 }
             }
-
-            &:not(&.removing-list) {
-                .edit-times-box {
-                    display: inline-flex;
-                    margin: 3.5px 0;
-                    button {
-                        padding: 2px 6px;
-                        margin: 0 4px;
-                        width: 22px;
-                        height: 22px;
     
-                        &.blue-btn {
-                            margin: 0 4px 0 10px;
-                        }
+            h4 {
+                margin: 10px;
+            }
     
-                        &.gray-btn {
-                            padding: 2px 8px;
-                        }
+            .controls-buttons {
+                display: flex;
+                width: 100%;
+                float: inherit;
+                button {
+                    margin: 3px;
+                }
+            }
+    
+            ul {
+                list-style: none;
+    
+                li {
+                    user-select: none;
+    
+                    input[type="checkbox"] {
+                        left: -20px;
+                    }
+                }
+            }
+    
+            #timelist-box {
+                width: 100%;
+                padding: 0 20px;
+                box-sizing: border-box;
+                min-height: 250px;
+    
+                p {
+                    width: 100%;
+                }
+    
+                &.removing-list {
+                    .edit-times-box {
+                        display: none;
+                    }
+    
+                    .remove-list-button {
+                        margin-left: 10px;
+                        display: inline-block;   
                     }
                 }
     
-                .remove-list-button {
-                    display: none;
+                &:not(&.removing-list) {
+                    .edit-times-box {
+                        display: inline-flex;
+                        margin: 3.5px 0;
+                        button {
+                            padding: 2px 6px;
+                            margin: 0 4px;
+                            width: 22px;
+                            height: 22px;
+        
+                            &.blue-btn {
+                                margin: 0 4px 0 10px;
+                            }
+        
+                            &.gray-btn {
+                                padding: 2px 8px;
+                            }
+                        }
+                    }
+        
+                    .remove-list-button {
+                        display: none;
+                    }
                 }
             }
         }
@@ -625,6 +605,12 @@ nav {
                         }
                     }
 
+                    &.gallery {
+                        &::after {
+                            content: url("/images/gallery.svg");
+                        }
+                    }
+
                     &.cooldown {
                         &::after {
                             content: url("/images/clock.svg");
@@ -810,18 +796,18 @@ footer {
 }
 
 #add-slide-box, #edit-slide-box, #add-timelists-form, #add-time-box {
+    background-color: $toggleBackground;
+    justify-content: center;
+    box-sizing: border-box;
+    align-items: center;
     position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
+    display: none;
     height: 100vh;
     padding: 20px;
-    box-sizing: border-box;
-    background-color: $toggleBackground;
+    width: 100%;
     z-index: 3;
-    display: none;
-    justify-content: center;
-    align-items: center;
+    left: 0;
+    top: 0;
 
     &.active {
         display: flex;
@@ -829,14 +815,15 @@ footer {
 
     form {
         background-color: var(--box_color);
-        display: flex;
         flex-direction: column;
-        padding: 20px;
-        max-width: 100%;
-        width: 800px;
-        overflow-y: auto;
-        overflow-x: clip;
+        border-radius: 10px;
         max-height: 100vh;
+        overflow-x: clip;
+        overflow-y: auto;
+        max-width: 100%;
+        display: flex;
+        padding: 20px;
+        width: 800px;
 
         .input {
             display: flex;
@@ -903,9 +890,10 @@ footer {
         }
 
         .row {
+            justify-content: center;
             display: flex;
             width: 100%;
-            justify-content: center;
+            margin: 0;
 
             .column {
                 display: flex;
@@ -1075,15 +1063,15 @@ footer {
 }
 
 #alert-box {
+    background-color: var(--theme_color);
+    padding: 15px 10px;
+    border-radius: 5px;
+    user-select: none;
+    overflow: hidden;
+    color: #ffffff;
     position: fixed;
     right: 30px;
-    background-color: var(--theme_color);
-    color: #fff;
-    border-radius: 5px;
-    padding: 15px 10px;
-    overflow: hidden;
     z-index: 3;
-    user-select: none;
 
     &.error {
         background-color: red;
@@ -1107,139 +1095,6 @@ footer {
     }
 }
 
-@media screen and (max-width: 1200px) {
-    .box {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
-
-    .part-box-div {
-        .part-box {
-            &:first-child, &:last-child {
-                margin: 10px;
-            }
-        }
-    }
-}
-
-@media screen and (max-width: 700px) {
-    .part-box-div {
-        display: block;
-    }
-
-    #global-settings {
-        display: block;
-    }
-
-    #add-slide-box, #edit-slide-box {
-        form {
-            .row {
-                display: block;
-            }
-
-            .column {
-                width: 100%;
-                margin: 0 !important;
-            }
-        }
-    }
-}
-
-@media screen and (max-width: 350px) {
-    nav {
-        h3 {
-            .description {
-                display: none;
-            }
-        }
-    }
-}
-
-//fonts
-.arial {
-    font-family: Arial, sans-serif;
-}
-
-.verdana {
-    font-family: Verdana, sans-serif;
-}
-
-.helvetica {
-    font-family: Helvetica, sans-serif;
-}
-
-.tahoma {
-    font-family: Tahoma, sans-serif;
-}
-
-.terebuchet {
-    font-family: 'Trebuchet MS', sans-serif;
-}
-
-.times-new-roman {
-    font-family: 'Times New Roman', serif;
-}
-
-.georgia {
-    font-family: Georgia, serif;
-}
-
-.garamond {
-    font-family: Garamond, serif;
-}
-
-.courier-new {
-    font-family: 'Courier New', monospace;
-}
-
-.brush-script {
-    font-family: 'Brush Script MT', cursive;
-}
-
-.monserrat {
-    font-family: 'Montserrat', sans-serif;
-}
-
-.dinpro {
-    font-family: 'DINpro', sans-serif;
-}
-
-@keyframes pathRect {
-    25% {
-        stroke-dashoffset: 64;
-    }
-    50% {
-        stroke-dashoffset: 128;
-    }
-    75% {
-        stroke-dashoffset: 192;
-    }
-    100% {
-        stroke-dashoffset: 256;
-    }
-}
-
-@keyframes dotRect {
-    25% {
-        transform: translate(0, 0);
-    }
-    50% {
-        transform: translate(18px, -18px);
-    }
-    75% {
-        transform: translate(0, -36px);
-    }
-    100% {
-        transform: translate(-18px, -18px);
-    }
-}
-
-@keyframes loading {
-    from {
-        width: 0;
-    } 
-
-    to {
-        width: 100%;
-    }
-}
+@import "assets";
+@import "keyframes";
+@import "responsibility";

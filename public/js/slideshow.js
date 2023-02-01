@@ -7,6 +7,7 @@ class slideshow {
         this.api = api;
         this.dir = contentDir;
         this.videoEndedEvent = this.changeSite.bind(this);
+        this.galleryLastImage = {};
         this.hash;
 
         if(window.location.search.substring(1) == "nostats") {
@@ -55,6 +56,15 @@ class slideshow {
                     this.sites = response.sites;
                     this.transitionTime = response.transition_time;
                     this.timeLists = response.timelist;
+                    this.galleries = response.galleries;
+
+                    for(const gallery of Object.keys(this.galleries)) {
+                        if(typeof this.galleryLastImage[gallery] === "undefined") {
+                            if(this.galleries[gallery].length > 0) {
+                                this.galleryLastImage[gallery] = null;
+                            }
+                        }
+                    }
 
                     //Remove prev style
                     if(document.head.querySelector("style.global-style")) {
@@ -141,6 +151,10 @@ class slideshow {
             }, this.sites[0].timeout);
         }
 
+        else if (this.sites[0].type == "gallery") {
+            this.galleryEvents(this.target.querySelector(".side:last-child"));
+        }
+
         else {
             setTimeout(() => {
                 this.changeSite();
@@ -167,6 +181,10 @@ class slideshow {
             }, 100);
 
             this.target.querySelector("video:last-child").addEventListener("ended", this.videoEndedEvent);
+        }
+
+        else if (this.sites[0].type == "gallery") {
+            this.galleryEvents(this.target.querySelector(".side:last-child"));
         }
 
         else if (this.sites[0].type == "cooldown") {
@@ -244,6 +262,35 @@ class slideshow {
             }
             side.style.backgroundColor = element.background_color;
             side.appendChild(sideH);
+        }
+
+        else if (element.type == "gallery") {
+            //Create box for text
+            side = document.createElement("div");
+            side.classList.add("gallery");
+            side.dataset.timeout = element.timeout;
+            side.dataset.galleryName = element.gallery;
+            side.style.backgroundColor = element.background_color;
+            //side.dataset.galleryName = ;
+            if(typeof this.galleries[element.gallery] === "undefined") {
+                console.error(`Gallery "${element.gallery}" doesn't exists`);
+                return;
+            }
+
+            else {
+                if(this.galleries[element.gallery].length > 0) {
+                    for(const image of this.galleries[element.gallery]) {
+                        const galleryImage = document.createElement("img");
+                        galleryImage.src = `/galleries/${element.gallery}/${image}`;
+                        side.appendChild(galleryImage);
+                    }
+                }
+
+                else {
+                    console.warn(`Gallery ${element.gallery} is empty, skipping`);
+                    return;
+                }
+            }
         }
 
         else if (element.type == "cooldown") {
@@ -351,6 +398,10 @@ class slideshow {
                 newSite.addEventListener("ended", this.videoEndedEvent);
             }
 
+            else if (newSite.dataset.type == "gallery") {
+                this.galleryEvents(newSite);
+            }
+
             else if (newSite.dataset.type == "cooldown") {
                 let timelist = this.timeLists.find(o => o.basename === newSite.dataset.cooldown_list);
                 let interval = this.cooldown(newSite.querySelector(".cooldown-clock"), timelist.values);
@@ -374,6 +425,60 @@ class slideshow {
                 this.fetchFromApi();
             }, this.transitionTime);
         }
+    }
+
+    galleryEvents(newSite) {
+        let lastImageElemet;
+        const endTime = Date.now();
+
+        const nextImage = (lastImageElement) => {
+            const nodes = Array.prototype.slice.call( newSite.childNodes );
+            const index = nodes.indexOf(lastImageElement);
+
+            newSite.querySelector("img.active")?.classList.remove("active");
+
+            if(index < (nodes.length - 1)) {
+                this.galleryLastImage[newSite.dataset.galleryName] = newSite.childNodes[index + 1].getAttribute("src").split('\\').pop().split('/').pop();
+                newSite.childNodes[index + 1].classList.add("active");
+                return newSite.childNodes[index + 1];
+            }
+            
+            else {
+                this.galleryLastImage[newSite.dataset.galleryName] = newSite.childNodes[0].getAttribute("src").split('\\').pop().split('/').pop();
+                newSite.childNodes[0].classList.add("active");
+                return newSite.childNodes[0];
+            }
+        }
+
+        const galleryLoop = () => {
+            if((Date.now() - endTime) > newSite.dataset.timeout) {
+                newSite.querySelector("img.active")?.classList.remove("active");
+                this.changeSite();
+            }
+
+            else {
+                lastImageElemet = nextImage(lastImageElemet);
+                setTimeout(galleryLoop, 10000);
+            }
+        }
+        if(this.galleryLastImage[newSite.dataset.galleryName]) {
+            const galleryImages = newSite.querySelectorAll(`img`);
+
+            for(const imageElement of galleryImages) {
+                if(imageElement.getAttribute("src").endsWith(this.galleryLastImage[newSite.dataset.galleryName])) {
+                    lastImageElemet = imageElement;
+                    break;
+                }
+            }
+
+            lastImageElemet = lastImageElemet ? lastImageElemet : galleryImages[0].getAttribute("src"); 
+        }
+
+        else {
+            newSite.querySelector("image")?.classList.add("active");
+        }
+
+        galleryLoop();
     }
 
     cooldown(target, times) {

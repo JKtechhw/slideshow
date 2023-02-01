@@ -60,6 +60,25 @@ $right-tab: 5vw;
         }
     }
 
+    .gallery {
+        position: relative;
+
+        img {
+            transition: 1s opacity;
+            object-fit: contain;
+            position: absolute;
+            user-select: none;
+            height: 100%;
+            width: 100%;
+            opacity: 0;
+
+            &.active {
+                transition-delay: 1s;
+                opacity: 1;
+            }
+        }
+    }
+
     .cooldown {
         margin: 0px;
         padding: 0px;

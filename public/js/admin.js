@@ -33,12 +33,12 @@ class adminPanel {
         this.setupGlobalForm();
         this.setMessages();
         this.setTimelistBox("#timelist-box");
-        this.addUrlToHosts();
         this.setupPreview();
         this.addEventsToButton();
         this.setEventToForms();
         this.addSlideEvents("#add-slide-form");
         this.clientBoxEvents();
+        this.setGalleries();
         this.hideLoadingBox();
         setInterval(this.updateData.bind(this), 60000);
     }
@@ -47,6 +47,7 @@ class adminPanel {
         await this.fetchDataFromApi();
         this.setTimelistBox("#timelist-box")
         this.setServerStats();
+        this.setGalleries();
         this.setClients("#clients-table tbody");
         this.setStatistics();
     }
@@ -67,6 +68,36 @@ class adminPanel {
 
         let slidesCloutBox = document.querySelector("#slides-count");
         slidesCloutBox.innerText = this.dataFromApi.sites.length || 0;  
+    }
+
+    setGalleries() {
+        const galleryGrid = document.querySelector("#gallery-grid");
+        galleryGrid.innerHTML = "";
+
+        if(Object.values(this.dataFromApi.galleries).length > 0) {
+            for (const galleryName of Object.keys(this.dataFromApi.galleries)) {
+                const galleryDir = document.createElement("div");
+                galleryDir.classList.add("gallery-icon");
+
+                const galleryIcon = document.createElement("div");
+                galleryIcon.classList.add("icon");
+                galleryDir.appendChild(galleryIcon);
+
+                const galleryDirName = document.createElement("h4");
+                galleryDirName.innerText = galleryName;
+                galleryDir.appendChild(galleryDirName);
+
+                galleryGrid.appendChild(galleryDir);
+            }
+        }
+
+        else {
+            const emptyLine = document.createElement("p");
+            emptyLine.classList.add("description");
+            emptyLine.classList.add("center");
+            emptyLine.innerText = "Nebyla vytvořena žádná galerie";
+            galleryGrid.appendChild(emptyLine);
+        }
     }
 
     setClients(targetId) {
@@ -149,6 +180,8 @@ class adminPanel {
         subtitlesBox.style.display = "none";
         let textBox = target.querySelector("#text-box");
         textBox.style.display = "none";
+        let galleryBox = target.querySelector("#gallery-box");
+        galleryBox.style.display = "none";
         let hiddenBox = target.querySelector("#hidden-box");
         hiddenBox.style.display = "none";
 
@@ -170,6 +203,7 @@ class adminPanel {
                     urlBox.style.display = "none";
                     subtitlesBox.style.display = "none";
                     textBox.style.display = "none";
+                    galleryBox.style.display = "none";
                     break;
 
                 case "video":
@@ -186,6 +220,7 @@ class adminPanel {
                     urlBox.style.display = "none";
                     subtitlesBox.style.display = "flex";
                     textBox.style.display = "none";
+                    galleryBox.style.display = "none";
                     break;
 
                 case "iframe":
@@ -202,6 +237,7 @@ class adminPanel {
                     subtitlesBox.style.display = "none";
                     urlBox.style.display = "flex";
                     textBox.style.display = "none";
+                    galleryBox.style.display = "none";
                     break;
 
                 case "text":
@@ -218,6 +254,25 @@ class adminPanel {
                     subtitlesBox.style.display = "none";
                     urlBox.style.display = "none";
                     textBox.style.display = "flex";
+                    galleryBox.style.display = "none";
+                    break;
+
+                case "gallery":
+                    timeoutBox.style.display = "flex";
+                    timelistBox.style.display = "none";
+                    timelistSelect.innerHTML = "";
+                    timelistSelect.required = false;
+                    fontFamilyBox.style.display = "none";
+                    backgroundColorBox.style.display = "flex";
+                    textColorBox.style.display = "none";
+                    fileBox.style.display = "none";
+                    fileBoxInput.setAttribute("accept", this.acceptedImage);
+                    fileBoxInput.required = false;
+                    subtitlesBox.style.display = "none";
+                    urlBox.style.display = "none";
+                    textBox.style.display = "none";
+                    galleryBox.style.display = "flex";
+                    this.createGalleriesDropDown("#add-slide-gallery")
                     break;
 
                 case "cooldown":
@@ -234,6 +289,7 @@ class adminPanel {
                     subtitlesBox.style.display = "none";
                     urlBox.style.display = "none";
                     textBox.style.display = "none";
+                    galleryBox.style.display = "none";
                     break;
             }
         });
@@ -331,6 +387,7 @@ class adminPanel {
                     let fileBoxInput = target.querySelector("#file-box input");
                     let subtitlesBox = target.querySelector("#subtitles-box");
                     let textBox = target.querySelector("#text-box");
+                    let galleryBox = target.querySelector("#gallery-box");
                     let urlBox = target.querySelector("#url-box");
             
                     switch (element.type) {
@@ -347,6 +404,7 @@ class adminPanel {
                             fileBoxInput.setAttribute("accept", this.acceptedImage);
                             subtitlesBox.style.display = "none";
                             textBox.style.display = "none";
+                            galleryBox.style.display = "none";
                             urlBox.style.display = "none";
                             break;
         
@@ -363,7 +421,8 @@ class adminPanel {
                             fileBoxInput.setAttribute("accept", this.acceptedVideo);
                             subtitlesBox.style.display = "flex";
                             textBox.style.display = "none";
-                            urlBox.style.display = "none";urlBox.style.display = "none";
+                            galleryBox.style.display = "none";
+                            urlBox.style.display = "none";
                             break;
         
                         case "text":
@@ -379,6 +438,7 @@ class adminPanel {
                             fileBoxInput.setAttribute("accept", this.acceptedImage);
                             subtitlesBox.style.display = "none";
                             textBox.style.display = "flex";
+                            galleryBox.style.display = "none";
                             urlBox.style.display = "none";
                             break;
 
@@ -394,7 +454,27 @@ class adminPanel {
                             fileBox.style.display = "none";
                             subtitlesBox.style.display = "none";
                             textBox.style.display = "none";
+                            galleryBox.style.display = "none";
                             urlBox.style.display = "flex";
+                            break;
+
+                        case "gallery":
+                            timeoutBox.style.display = "flex";
+                            timelistBox.style.display = "none";
+                            timelistBox.style.display = "none";
+                            timelistBox.querySelector("select").innerHTML = "";
+                            timelistBox.querySelector("select").required = false;
+                            fontFamilyBox.style.display = "none";
+                            backgroundColorBox.style.display = "flex";
+                            textColorBox.style.display = "none";
+                            fileBox.style.display = "none";
+                            fileBoxInput.setAttribute("accept", this.acceptedImage);
+                            fileBoxInput.required = false;
+                            subtitlesBox.style.display = "none";
+                            urlBox.style.display = "none";
+                            textBox.style.display = "none";
+                            galleryBox.style.display = "flex";
+                            this.createGalleriesDropDown("#edit-slide-gallery", element.gallery)
                             break;
         
                         case "cooldown":
@@ -410,6 +490,7 @@ class adminPanel {
                             fileBoxInput.setAttribute("accept", this.acceptedImage);
                             subtitlesBox.style.display = "none";
                             textBox.style.display = "none";
+                            galleryBox.style.display = "none";
                             urlBox.style.display = "none";
                             break;
                     }
@@ -616,6 +697,11 @@ class adminPanel {
 
         const evtSource = new EventSource("/events/messages");
 
+        evtSource.addEventListener("error", (e) => {
+            this.alertUser("Došlo k odpojení od serveru", true);
+            console.error(e);
+        });
+
         evtSource.addEventListener("message", (e) => {
             let data = JSON.parse(e.data);
             this.addMessage("#messages-list", data);
@@ -702,11 +788,32 @@ class adminPanel {
         }
     }
 
-    addUrlToHosts() {
-        document.querySelectorAll(".host-url").forEach(element => {
-            element.href = this.url;
-            element.innerText = this.url;
-        });
+    createGalleriesDropDown(target, active = null) {
+        let targetElement = document.querySelector(target); 
+        targetElement.innerHTML = "";
+        let galleryOptions = Object.keys(this.dataFromApi.galleries);
+
+        if(galleryOptions.length !== 0) {
+            galleryOptions.forEach(element => {
+                let option = document.createElement("option");
+                option.value = element;
+                option.innerText = element;
+                if(active === element) {
+                    option.selected = true;
+                }
+
+                targetElement.appendChild(option);
+            });
+        }
+
+        else {
+            let option = document.createElement("option");
+            option.disabled = true;
+            option.selected = true;
+            option.innerText = "Není přidán žádný seznam";
+            option.value = "";
+            targetElement.appendChild(option);
+        }
     }
 
     setupPreview() {

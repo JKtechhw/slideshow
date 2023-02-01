@@ -1,6 +1,6 @@
 require("dotenv").config();
-//Get config files
-const config = require("config");
+//Import config
+const defaults = require("./config/default").defaults;
 //Router
 const express = require("express");
 //For login session and statistics
@@ -32,6 +32,7 @@ let requestClients = 0;
 
 const app = express();
 app.set('trust proxy', true);
+app.set('view engine', 'ejs');
 app.use(express.static("public"));
 app.use('/favicon.ico', express.static('public/images/favicon.ico'));
 app.use(session({
@@ -41,59 +42,87 @@ app.use(session({
 }));
 
 app.get("/", (req, res) => {
-    if(!req.session.listed && req.query.nostats === undefined) {
-        req.session.listed = true;
-        requestClients++;
-        console.log(`New client from ${req.headers['x-forwarded-for'] || req.socket.remoteAddress}`);
-        sendMessage("Nový klient", req.headers['x-forwarded-for'] || req.socket.remoteAddress, "success");
-    }
+    let reqIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
-    const s = new sniffr();
-    s.sniff(req.headers['user-agent']);
-    if(s.browser.name == "ie") {
-        res.sendFile(__dirname + "/sites/not-supported-browser.html");
+    //Valudate source address
+    if(defaults.trustedClientDomains.includes(req.hostname)) {
+        if(!req.session.listed && req.query.nostats === undefined) {
+            req.session.listed = true;
+            requestClients++;
+            console.log(`New client from ${reqIp}`);
+            sendMessage("Nový klient", req.headers['x-forwarded-for'] || req.socket.remoteAddress, "success");
+        }
+    
+        const s = new sniffr();
+        s.sniff(req.headers['user-agent']);
+        if(s.browser.name == "ie") {
+            res.render(__dirname + "/views/error/not-supported-browser");
+        }
+    
+        else {
+            res.render(__dirname + "/views/client/slideshow");
+        }
     }
 
     else {
-        res.sendFile(__dirname + "/sites/slideshow.html");
+        res.setHeader('content-type', 'application/json');
+        res.status(403).send('{"status": 403, "error": "Forbidden", "message": "Untrusted domain"}');
+        console.warn(`Request from untrusted domain ${req.hostname} from ip ${reqIp}`);
     }
 });
 
 app.get("/api/sites", (req, res) => {
-    let dbo = mongo.db("slideshow");
-    dbo.collection("slides").find({hidden: false}, { projection: {_id: 0, position: 0, hidden: 0} }).sort({ "position": 1 }).toArray((err, resultSites) => {
-        if(err) {
-            console.error(err);
-            return;
-        }
-
-        dbo.collection("config").findOne({name: "config"}, {projection: {_id: 0, name: 0}}, (err, resultConfig) => {
+    if(defaults.trustedClientDomains.includes(req.hostname)) {
+        let dbo = mongo.db(defaults.DB_name);
+        dbo.collection("slides").find({hidden: false}, { projection: {_id: 0, position: 0, hidden: 0} }).sort({ "position": 1 }).toArray((err, resultSites) => {
             if(err) {
                 console.error(err);
                 return;
             }
 
-            dbo.collection("timelists").find({}, {projection: {_id: 0}}).toArray((err, resultTimelists) => {
+            dbo.collection("config").findOne({name: "config"}, {projection: {_id: 0, name: 0}}, (err, resultConfig) => {
                 if(err) {
                     console.error(err);
                     return;
                 }
 
-                if(req.query.nostats === undefined) {
-                    requestCount++;
-                }
+                dbo.collection("timelists").find({}, {projection: {_id: 0}}).toArray(async (err, resultTimelists) => {
+                    if(err) {
+                        console.error(err);
+                        return;
+                    }
 
-                let response = `${JSON.stringify(resultConfig).slice(1, -1)}, "sites": ${JSON.stringify(resultSites)}, "timelist": ${JSON.stringify(resultTimelists)}`;
-                let hash = sha1(response); 
-                res.send(`{"hash": "${hash}", ${response}}`);
+                    if(req.query.nostats === undefined) {
+                        requestCount++;
+                    }
+
+                    //Get used gallery images
+                    const galleryImages = {};
+                    for await (const site of resultSites) {
+                        if(site.type == "gallery") {
+                            galleryImages[site.gallery] = await getImagesFromGallery(site.gallery);
+                        }
+                    }
+                    let response = `${JSON.stringify(resultConfig).slice(1, -1)}, "sites": ${JSON.stringify(resultSites)}, "timelist": ${JSON.stringify(resultTimelists)}, "galleries": ${JSON.stringify(galleryImages)}`;
+                    let hash = sha1(response); 
+                    res.send(`{"hash": "${hash}", ${response}}`);
+                });
             });
         });
-    });
+    }
+
+    else {
+        res.setHeader('content-type', 'application/json');
+        res.status(403).send('{"status": 403, "error": "Forbidden", "message": "Untrusted domain"}');
+        console.warn(`Request from untrusted domain ${req.hostname} from ip ${reqIp}`);
+    }
 });
 
 app.get("/api/admin", (req, res) => {
+    let reqIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    res.setHeader('content-type', 'application/json');
     if(req.session.user) {
-        let dbo = mongo.db("slideshow");
+        let dbo = mongo.db(defaults.DB_name);
         dbo.collection("slides").find({}).sort({ "position": 1 }).toArray((err, resultSites) => {
             if(err) {
                 console.error(err);
@@ -112,13 +141,13 @@ app.get("/api/admin", (req, res) => {
                         return;
                     }
 
-                    dbo.collection("timelists").find({}).toArray((err, resultTimelists) => {
+                    dbo.collection("timelists").find({}).toArray( async (err, resultTimelists) => {
                         if(err) {
                             console.error(err);
                             return;
                         }
 
-                        let osStatus = {
+                        const osStatus = {
                             "ip": ip.address(),
                             "uptime": os.uptime(),
                             "hostname": os.hostname(),
@@ -126,7 +155,24 @@ app.get("/api/admin", (req, res) => {
                             "cpu_load": os.loadavg()[0]
                         }
 
-                        res.send(`{"request_count": ${requestCount}, "request_clients": ${requestClients}, "clients": ${JSON.stringify(clients, ["ip", "os", "browser"])}, "server_status": ${JSON.stringify(osStatus)}, ${JSON.stringify(resultConfig).slice(1, -1)}, ${JSON.stringify(resultFonts).slice(1, -1)},"sites": ${JSON.stringify(resultSites)}, "timelists": ${JSON.stringify(resultTimelists)}, "messages": ${JSON.stringify(messages)}}`);
+                        const galleries = await getGalleries();
+
+                        const response = JSON.parse(`
+                            {
+                                "request_count": ${requestCount}, 
+                                "request_clients": ${requestClients}, 
+                                "clients": ${JSON.stringify(clients, ["ip", "os", "browser"])}, 
+                                "server_status": ${JSON.stringify(osStatus)}, 
+                                ${JSON.stringify(resultConfig).slice(1, -1)}, 
+                                ${JSON.stringify(resultFonts).slice(1, -1)},
+                                "sites": ${JSON.stringify(resultSites)}, 
+                                "timelists": ${JSON.stringify(resultTimelists)}, 
+                                "messages": ${JSON.stringify(messages)},
+                                "galleries": ${JSON.stringify(galleries)}
+                            }
+                        `);
+
+                        res.send(JSON.stringify(response));
                     });
                 });
             });
@@ -134,7 +180,8 @@ app.get("/api/admin", (req, res) => {
     }
 
     else {
-        res.status(401).send("401 Unauthorized");
+        res.status(401).send('{"status": 401, "error": "Unauthorized"}');
+        console.warn(`Unauthorized request to /api/admin from ip ${reqIp}`);
     }
 });
 
@@ -142,16 +189,19 @@ app.get("/admin", (req, res) => {
     const s = new sniffr();
     s.sniff(req.headers['user-agent']);
     if(s.browser.name == "ie") {
-        res.sendFile(__dirname + "/sites/not-supported-browser.html");
+        res.render(__dirname + "/views/error/not-supported-browser");
     }
 
     else {
         if(req.session.user) {
-            res.sendFile(__dirname + "/sites/admin.html");
+            res.render(__dirname + "/views/admin/index", {
+                galleryPath: `${__dirname}/public/galleries`,
+                clientUrl: `http://${ip.address()}:${defaults.port}`
+            });
         }
     
         else {
-            res.sendFile(__dirname + "/sites/login.html");
+            res.render(__dirname + "/views/login/index");
         }
     }
 });
@@ -160,7 +210,7 @@ app.post("/login", (req, res) => {
     let form = new formidable.IncomingForm();
     let reqIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     form.parse(req, (err, fields, files) => {
-        let dbo = mongo.db("slideshow");
+        let dbo = mongo.db(defaults.DB_name);
         dbo.collection("config").findOne({name: "password"}, {projection: {_id: 0, name: 0}}, (err, password) => {
             if(sha1(fields.password).localeCompare(password.value) == 0) {
                 req.session.user = true;
@@ -257,7 +307,7 @@ app.post("/admin/global", (req, res) => {
     if(req.session.user) {
         let form = new formidable.IncomingForm();
         form.parse(req, (err, fields, files) => {
-            let dbo = mongo.db("slideshow");
+            let dbo = mongo.db(defaults.DB_name);
             let newValues = { $set: {transition_time: fields.transition_time, font_family: fields.font_family, background_color: fields.background_color, text_color: fields.text_color}};
     
             dbo.collection("config").updateOne({name: "config"}, newValues, (err, dbres) => {
@@ -290,7 +340,7 @@ app.post("/admin/add-timelist", (req, res) => {
                 "values": []
             }
 
-            let dbo = mongo.db("slideshow");
+            let dbo = mongo.db(defaults.DB_name);
             dbo.collection("timelists").findOne({basename: basename}, (err, existingList) => {
                 if(err) {
                     console.error(err);
@@ -324,7 +374,7 @@ app.delete("/admin/remove-timelist", (req, res) => {
     if(req.session.user) {
         const form = new formidable.IncomingForm();
         form.parse(req, (err, fields, files) => {
-            let dbo = mongo.db("slideshow");
+            let dbo = mongo.db(defaults.DB_name);
             dbo.collection("slides").findOne({timelist: fields.basename}, (err, usedList) => {
                 if (usedList) {
                     res.send(`Tento seznam se používá u slidu "${usedList.name}"`);
@@ -354,7 +404,7 @@ app.post("/admin/add-time", (req, res) => {
     if(req.session.user) {
         let form = new formidable.IncomingForm();
         form.parse(req, (err, fields, files) => {
-            let dbo = mongo.db("slideshow");
+            let dbo = mongo.db(defaults.DB_name);
             dbo.collection("timelists").findOne({basename: fields.add_time_list}, (err, resList) => {
                 if(err) {
                     console.error(err);
@@ -392,7 +442,7 @@ app.post("/admin/add-time", (req, res) => {
     if(req.session.user) {
         let form = new formidable.IncomingForm();
         form.parse(req, (err, fields, files) => {
-            let dbo = mongo.db("slideshow");
+            let dbo = mongo.db(defaults.DB_name);
             dbo.collection("timelists").findOne({basename: fields.add_time_list}, (err, resList) => {
                 if(err) {
                     console.error(err);
@@ -433,7 +483,7 @@ app.put("/admin/remove-time", (req, res) => {
             let newTimes = Array.isArray(fields.values) ? fields.values : [];
             let newValues = {$set: {"values": newTimes}}
 
-            let dbo = mongo.db("slideshow");
+            let dbo = mongo.db(defaults.DB_name);
             dbo.collection("timelists").updateOne({_id: ObjectId(fields.id)}, newValues, (err, updated) => {
                 if(updated.modifiedCount == 1) {
                     res.send("Časy byly upraveny");
@@ -471,10 +521,11 @@ app.post("/admin/add-slide/", (req, res) => {
                 text: fields.add_slide_text,
                 url: fields.add_slide_url,
                 timelist: fields.add_slide_timelist,
+                gallery: fields.add_slide_gallery,
                 hidden: hidden
             }
 
-            let dbo = mongo.db("slideshow");
+            let dbo = mongo.db(defaults.DB_name);
             dbo.collection("slides").find({}).toArray((err, res) => {
                 if (err) {
                     console.error(err);
@@ -503,7 +554,7 @@ app.delete("/admin/remove-slide", (req, res) => {
         const form = new formidable.IncomingForm();
         form.parse(req, (err, fields, files) => {
             if(fields.id) {
-                let dbo = mongo.db("slideshow");
+                let dbo = mongo.db(defaults.DB_name);
                 dbo.collection("slides").findOneAndDelete({}, (err, dbRemRes) => {
                     if (err) {
                         console.error(err);
@@ -556,7 +607,7 @@ app.post("/admin/hide-slide", (req, res) => {
         const form = new formidable.IncomingForm();
         form.parse(req, (err, fields, files) => {
             if(fields.id) {
-                let dbo = mongo.db("slideshow");
+                let dbo = mongo.db(defaults.DB_name);
                 let newValues = { $set: {hidden: fields.status == "true" ? true : false}}
                 dbo.collection("slides").updateOne({_id: ObjectId(fields.id)}, newValues, (err, dbRmRes) => {
                     if(err) {
@@ -591,6 +642,7 @@ app.post("/admin/edit-slide", (req, res) => {
                         color: fields.edit_slide_color,
                         text: fields.edit_slide_text,
                         url: fields.edit_slide_url,
+                        gallery: fields.edit_slide_gallery,
                         timelist: fields.edit_slide_timelist
                     }
                 }
@@ -604,7 +656,7 @@ app.post("/admin/edit-slide", (req, res) => {
                 }
 
 
-                let dbo = mongo.db("slideshow");
+                let dbo = mongo.db(defaults.DB_name);
                 dbo.collection("slides").updateOne({_id: ObjectId(fields.edit_slide_id)}, newValues, (err, dbRmRes) => {
                     if(err) {
                         console.error(err);
@@ -633,7 +685,7 @@ app.post("/admin/change-sequence", (req, res) => {
                     }
                 }
 
-                let dbo = mongo.db("slideshow");
+                let dbo = mongo.db(defaults.DB_name);
                 dbo.collection("slides").updateOne({_id: ObjectId(fields[key].id)}, newValues, (err, dbRmRes) => {
                     if(err) {
                         console.error(err);
@@ -699,16 +751,89 @@ async function setupServer() {
             finally {
                 console.log("Disconnected from database");
             }
+
             process.exit(0);
         });
     }
+}
+
+async function getGalleries() {
+    return new Promise((resolve, reject) => {
+        if(fs.existsSync(path.resolve(__dirname, "public", "galleries")) == false) {
+            fs.mkdirSync(path.resolve(__dirname, "public", "galleries"), {recursive: true});
+            resolve({});
+        }
+
+        const galleries = {};
+        fs.readdir(path.resolve(__dirname, "public", "galleries"), { withFileTypes: true }, async (err, files) => {
+            if(err) {
+                reject(err);
+            }
+
+            for await (const file of files) {
+                if(file.isDirectory()) {
+                    galleries[file.name] = [];
+                    const imagesInGallery = await fs.promises.readdir(path.resolve(__dirname, "public", "galleries", file.name), { withFileTypes: true });
+
+                    for await (const image of imagesInGallery) {
+                        if(image.isFile) {
+                            galleries[file.name].push(image.name);
+                        }
+
+                        else {
+                            console.warn("Don't place directory inside gallery directory");
+                        }
+                    }
+                }
+    
+                else {
+                    console.warn("Don't place files inside gallery directory");
+                }
+            }
+
+            resolve(galleries);
+        });
+    });
+}
+
+async function getImagesFromGallery(galleryName) {
+    return new Promise((resolve, reject) => {
+
+        if(fs.existsSync(path.resolve(__dirname, "public", "galleries", galleryName)) == false) {
+            console.error("Target gallery doesn't exists");
+            reject();
+        }
+
+        const galleryImages = [];
+        fs.readdir(path.resolve(__dirname, "public", "galleries", galleryName), { withFileTypes: true }, async (err, images) => {
+            if(err) {
+                reject(err);
+            }
+
+            for await (const image of images) {
+                if(image.isFile()) {
+                    galleryImages.push(image.name);
+                }
+                
+                else {
+                    console.warn("Don't place directory inside gallery directory");
+                }
+            }
+
+            //Sort files by date
+            galleryImages.sort((a, b) => {
+                return fs.statSync(path.resolve(__dirname, "public", "galleries", galleryName, a)).mtime.getTime() - fs.statSync(path.resolve(__dirname, "public", "galleries", galleryName, b)).mtime.getTime();
+            });
+            resolve(galleryImages);
+        });
+    });
 }
 
 async function connectDB() {
     try {
         console.log("Attempt to connect to database...");
         await mongo.connect();
-        await mongo.db("slideshow").command({ ping: 1 });
+        await mongo.db(defaults.DB_name).command({ ping: 1 });
     }
 
     catch(err) {
@@ -721,13 +846,13 @@ async function connectDB() {
 }
 
 async function runServer() {
-    app.listen(config.get("port"), (err) => { 
+    app.listen(defaults.port, (err) => { 
         if(err) {
             console.error(err);
             return;
         }
     
-        console.log(`Server is running on port ${config.get("port")}...`);
+        console.log(`Server is running on port ${defaults.port}...`);
     });
 }
 
@@ -735,6 +860,11 @@ function uploadFile(file) {
     return new Promise((resolve, reject) => {
         let newFilename = null;
         if(file && file.size != 0) {
+            if(fs.existsSync(__dirname + "/public/content/") === false) {
+                fs.mkdirSync(__dirname + "/public/content/", { recursive: true });
+                console.log("Creating directory for public content");
+            }
+
             let oldPath = file.filepath;
             let newPath = __dirname + "/public/content/" + file.originalFilename;
     
@@ -747,8 +877,8 @@ function uploadFile(file) {
                     i++;
                 }
             }
-    
-            fs.rename(oldPath, newPath, (err) => {
+
+            fs.copyFile(oldPath, newPath, (err) => {
                 if (err) {
                     console.error(err);
                     reject();
@@ -759,7 +889,6 @@ function uploadFile(file) {
                 resolve(newFilename);
             });
         }
-
 
         else {
             resolve(null);

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard · Slideshow</title>
-    <link rel="stylesheet" type="text/css" href="/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/css/admin/admin.css">
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 </head>
 <body style="overflow: hidden;">
@@ -25,147 +25,176 @@
 
     <div id="alerts"></div>
 
-    <div class="box">
-        <h3>Globální nastavení stylu</h3>
-        <form id="global-settings" method="post" action="/admin/global" autocomplete="off">
-            <div id="global-background-color" class="option">
-                <h4>Barva pozadí</h4>
-                <input type=color name="background_color" required>
-            </div>
-    
-            <div id="global-text-color" class="option">
-                <h4>Barva textu</h4>
-                <input type=color name="text_color" required>
-            </div>
-    
-            <div id="global-font" class="option">
-                <h4>Font family</h4>
-                <select name="font_family" id="global-font-selection" required></select>
-            </div>
-    
-            <div id="global-transition-time" class="option">
-                <h4>Doba přechodu (ms)</h4>
-                <input type="number" name="transition_time" value="1000" min="0" required>
-            </div>
-        </form>
-        <button type="submit" class="blue-btn right" form="global-settings">Upravit</button>
-    </div>
-
-    <div class="part-box-div">
-        <div class="part-box">
-            <h1 id="query-devices"></h1>
-            <p class="uppercase">Unikátní klienti</p>
-        </div>
-
-        <div class="part-box">
-            <h1 id="query-count"></h1>
-            <p class="uppercase">Dotazů</p>
-        </div>
-
-        <div class="part-box">
-            <h1 id="slides-count"></h1>
-            <p class="uppercase">Slidů</p>
+    <div class="row">
+        <div class="box">
+            <h3>Globální nastavení stylu</h3>
+            <form id="global-settings" method="post" action="/admin/global" autocomplete="off">
+                <div id="global-background-color" class="option">
+                    <h4>Barva pozadí</h4>
+                    <input type=color name="background_color" required>
+                </div>
+        
+                <div id="global-text-color" class="option">
+                    <h4>Barva textu</h4>
+                    <input type=color name="text_color" required>
+                </div>
+        
+                <div id="global-font" class="option">
+                    <h4>Font family</h4>
+                    <select name="font_family" id="global-font-selection" required></select>
+                </div>
+        
+                <div id="global-transition-time" class="option">
+                    <h4>Doba přechodu (ms)</h4>
+                    <input type="number" name="transition_time" value="1000" min="0" required>
+                </div>
+            </form>
+            <button type="submit" class="blue-btn right" form="global-settings">Upravit</button>
         </div>
     </div>
 
-    <div class="box">
-        <h3>Slidy</h3>
-        <div id="controls-buttons">
-            <button id="add-slide" class="blue-btn">Přidat slide</button>
-        </div>
 
-        <div id="slides-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="icon"></th>
-                        <th>Typ</th>
-                        <th>Název</th>
-                        <th>Skryté</th>
-                        <th>Upravit</th>
-                        <th>Smazat</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-        <button class="blue-btn right" id="change-slides-sq-btn">Upravit</button>
-    </div>
-
-    <div class="part-box-div">
-        <div class="part-box">
-            <h3>Odpočty</h3>
-            <div class="controls-buttons">
-                <button class="blue-btn" id="add-timelist-btn">Přidat seznam</button>
-                <button class="gray-btn" id="remove-timelist-btn">Odebrat seznam</button>
+    <div class="row">
+        <div class="part-box-div">
+            <div class="part-box">
+                <h1 id="query-devices"></h1>
+                <p class="uppercase">Unikátní klienti</p>
             </div>
-            <div id="timelist-box"></div>
-        </div>
-
-        <div class="part-box" id="prewiew-box">
-            <h3>Náhled <span class="description">&nbsp;&nbsp;16:9</span></h3>
-            <button id="toggle-iframe-btn" class="pause icon" title="Pozastavit"></button>
-            <button id="fullscreen-iframe-btn" class="icon" title="Zobrazení na celou obrazovku"></button>
-            <button id="fullscreen-reload-btn" class="icon" title="Obnovit"></button>
-            <div class="iframe-box">
-                <h2 class="description">Náhled je pozastaven</h2>
-                <iframe class="preview-iframe" scrolling="no"></iframe>
+    
+            <div class="part-box">
+                <h1 id="query-count"></h1>
+                <p class="uppercase">Dotazů</p>
+            </div>
+    
+            <div class="part-box">
+                <h1 id="slides-count"></h1>
+                <p class="uppercase">Slidů</p>
             </div>
         </div>
     </div>
 
-    <div class="part-box-div">
-        <div class="part-box">
-            <h3>Server</h3>
-            <div class="row">
-                <div class="pie-chart" id="cpu-usage-chart">
-                    <span class="before"></span>
-                    <span class="after"></span>
-                    <span class="percentage"></span>
-                    <span class="dsc description">CPU</span>
-                </div>
-    
-                <div class="pie-chart" id="ram-usage-chart">
-                    <span class="before"></span>
-                    <span class="after"></span>
-                    <span class="percentage"></span>
-                    <span class="dsc description">RAM</span>
-                </div>
+    <div class="row">
+        <div class="box">
+            <h3>Slidy</h3>
+            <div id="controls-buttons">
+                <button id="add-slide" class="blue-btn">Přidat slide</button>
             </div>
-            <div class="row">
-                <div class="text-chart" id="uptime-chart">
-                    <span class="value"></span>
-                    <span class="name description">UPTIME</span>
-                </div>
+    
+            <div id="slides-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="icon"></th>
+                            <th>Typ</th>
+                            <th>Název</th>
+                            <th>Skryté</th>
+                            <th>Upravit</th>
+                            <th>Smazat</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <button class="blue-btn right" id="change-slides-sq-btn">Upravit</button>
+        </div>
+    </div>
 
-                <div class="text-chart" id="hostname-chart">
-                    <span class="value"></span>
-                    <span class="name description">HOSTNAME</span>
-                </div>
+    <div class="row">
+        <div class="box">
+            <h3>
+                Galerie 
+                <label data-tooltip="Pro vytvoření galerie vytvořte složku v adrasáři '<%= galleryPath %>' a fotky se automaticky načtou">
+                    <button class="icon" id="add-gallery-tooltip"></button>
+                </label>
+            </h3>
 
-                <div class="text-chart" id="ip-chart">
-                    <span class="value"></span>
-                    <span class="name description">IP</span>
+            <div id="gallery-grid"></div>
+    
+            <!-- <form id="global-settings" method="post" action="/admin/global" autocomplete="off">
+    
+            </form> -->
+            <!-- <button type="submit" class="blue-btn right" form="global-settings">Upravit</button> -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="part-box-div">
+            <div class="part-box">
+                <h3>Odpočty</h3>
+                <div class="controls-buttons">
+                    <button class="blue-btn" id="add-timelist-btn">Přidat seznam</button>
+                    <button class="gray-btn" id="remove-timelist-btn">Odebrat seznam</button>
+                </div>
+                <div id="timelist-box"></div>
+            </div>
+    
+            <div class="part-box" id="prewiew-box">
+                <h3>Náhled <span class="description">&nbsp;&nbsp;16:9</span></h3>
+                <button id="toggle-iframe-btn" class="pause icon" title="Pozastavit"></button>
+                <button id="fullscreen-iframe-btn" class="icon" title="Zobrazení na celou obrazovku"></button>
+                <button id="fullscreen-reload-btn" class="icon" title="Obnovit"></button>
+                <div class="iframe-box">
+                    <h2 class="description">Náhled je pozastaven</h2>
+                    <iframe class="preview-iframe" scrolling="no"></iframe>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="part-box">
-            <h3>Klienti</h3>
-            <div class="controls-buttons">
-                <button class="blue-btn" id="refresh-client-btn">Refreshnout</button>
+    <div class="row">
+        <div class="part-box-div">
+            <div class="part-box">
+                <h3>Server</h3>
+                <div class="row">
+                    <div class="pie-chart" id="cpu-usage-chart">
+                        <span class="before"></span>
+                        <span class="after"></span>
+                        <span class="percentage"></span>
+                        <span class="dsc description">CPU</span>
+                    </div>
+        
+                    <div class="pie-chart" id="ram-usage-chart">
+                        <span class="before"></span>
+                        <span class="after"></span>
+                        <span class="percentage"></span>
+                        <span class="dsc description">RAM</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="text-chart" id="uptime-chart">
+                        <span class="value"></span>
+                        <span class="name description">UPTIME</span>
+                    </div>
+    
+                    <div class="text-chart" id="hostname-chart">
+                        <span class="value"></span>
+                        <span class="name description">HOSTNAME</span>
+                    </div>
+    
+                    <div class="text-chart" id="ip-chart">
+                        <span class="value"></span>
+                        <span class="name description">IP</span>
+                    </div>
+                </div>
             </div>
-            <table id="clients-table">
-                <thead>
-                    <tr>
-                        <th>IP</th>
-                        <th>OS</th>
-                        <th>Prohlížeč</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <p>URL pro klienty: <a href="#" class="host-url" target="_blank"></a></p>
+    
+            <div class="part-box">
+                <h3>Klienti</h3>
+                <div class="controls-buttons">
+                    <button class="blue-btn" id="refresh-client-btn">Refreshnout</button>
+                </div>
+                <table id="clients-table">
+                    <thead>
+                        <tr>
+                            <th>IP</th>
+                            <th>OS</th>
+                            <th>Prohlížeč</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <p>URL pro klienty: <a href="<%= clientUrl %>" class="host-url" target="_blank"><%= clientUrl %></a></p>
+            </div>
         </div>
     </div>
 
@@ -202,6 +231,7 @@
                 <option value="video">Video</option>
                 <option value="text">Text</option>
                 <option value="iframe">Iframe</option>
+                <option value="gallery">Galerie</option>
                 <option value="cooldown">Odpočet</option>
             </select>
 
@@ -254,6 +284,13 @@
             <div id="text-box" class="input">
                 <label for="add_slide_text">Text: </label>
                 <textarea name="add_slide_text" placeholder="Text&mldr;"></textarea>
+            </div>
+
+            <div id="gallery-box" class="input">
+                <label for="add_slide_gallery">Galerie: </label>
+                <select name="add_slide_gallery" id="add-slide-gallery">
+                    <option value="" selected>Vyberte</option>
+                </select>
             </div>
 
             <div id="hidden-box">
@@ -316,6 +353,14 @@
                 <input name="edit_slide_url" type="url" placeholder="Odkaz pro iframe" />
             </div>
 
+
+            <div id="gallery-box" class="input">
+                <label for="edit_slide_gallery">Galerie: </label>
+                <select name="edit_slide_gallery" id="edit-slide-gallery">
+                    <option value="" selected>Vyberte</option>
+                </select>
+            </div>
+
             <div id="text-box" class="input">
                 <label for="edit_slide_text">Text: </label>
                 <textarea name="edit_slide_text"></textarea>
@@ -342,7 +387,7 @@
         <h3>Slideshow</h3>
         <div id="footer-content">
             <p>Autor: <a href="https://jktech.dev" target="_blank">JKtech</a></p>
-            <p>Slideshow 1.0.0</p>
+            <p>Slideshow 1.1.0</p>
             <p>Vytvořeno pro noc kostelů 2022</p>
             <p class="center"><a href="https://github.com/JKtechhw/slideshow" class="github icon" target="_blank"></a></p>
         </div>

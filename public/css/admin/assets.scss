@@ -1,0 +1,159 @@
+h1, h2, h3, h4, h5, h6, p, label, span, input, textarea, select, tr, td, li {
+    color: var(--text_color);
+}
+
+input, textarea {
+    font-family: $themeFont;
+}
+
+button[type="submit"].blue-btn {
+    margin-top: 10px;
+}
+
+[data-tooltip] {
+    position: relative;
+
+    &:hover {
+        &::before, &::after {
+            display: block;
+        }
+    }
+
+    &::before, &::after {
+        display: none;
+    }
+
+    &::before {
+        //border-top: 5px solid var(--body_color);
+        border-top: 5px solid #ffffff;
+        border-right: 5px solid transparent;
+        border-left: 5px solid transparent;
+        bottom: calc(100% + 5px);
+        position: absolute;
+        left: 12.5px;
+        content: "";
+    }
+
+    &::after {
+        //background-color: var(--body_color);
+        background-color: #ffffff;
+        content: attr(data-tooltip);
+        bottom: calc(100% + 10px);
+        border-radius: 10px;
+        white-space: nowrap;
+        position: absolute;
+        padding: 8px 10px;
+        font-size: 0.7em;
+        //
+        color: #000000;
+        left: -5px;
+    }
+}
+
+input[type="number"] {
+    appearance: textfield;
+
+    &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+}
+
+input[type="checkbox"] {
+    width: 0;
+    position: relative;
+    border: none;
+    margin: 0;
+
+    &::after {
+        transform: translateX(-50%);
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        box-sizing: border-box;
+        content: "";
+        border: 1px solid $grayColor;
+        border-radius: 2px;
+    }
+
+    &:checked {
+        &::after {
+            background-image: url("/images/check.svg");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    }
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.right {
+    float: right;
+}
+
+.description {
+    color: $grayColor;
+    font-weight: 300;
+}
+
+.github {
+    &::after {
+        content: url("/images/github.svg");
+    }
+}
+
+.center {
+    text-align: center;
+}
+
+//fonts
+.arial {
+    font-family: Arial, sans-serif;
+}
+
+.verdana {
+    font-family: Verdana, sans-serif;
+}
+
+.helvetica {
+    font-family: Helvetica, sans-serif;
+}
+
+.tahoma {
+    font-family: Tahoma, sans-serif;
+}
+
+.terebuchet {
+    font-family: 'Trebuchet MS', sans-serif;
+}
+
+.times-new-roman {
+    font-family: 'Times New Roman', serif;
+}
+
+.georgia {
+    font-family: Georgia, serif;
+}
+
+.garamond {
+    font-family: Garamond, serif;
+}
+
+.courier-new {
+    font-family: 'Courier New', monospace;
+}
+
+.brush-script {
+    font-family: 'Brush Script MT', cursive;
+}
+
+.monserrat {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.dinpro {
+    font-family: 'DINpro', sans-serif;
+}

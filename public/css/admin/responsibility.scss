@@ -1,0 +1,57 @@
+@media screen and (max-width: 1200px) {
+    .box {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .row {
+        .part-box-div {
+            .part-box {
+                &:first-child, &:last-child {
+                    margin: 10px;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .row {
+        flex-direction: column;
+
+        .box {
+            width: auto;
+        }
+
+        .part-box-div {
+            display: block;
+        }
+    }
+
+    #global-settings {
+        display: block;
+    }
+
+    #add-slide-box, #edit-slide-box {
+        form {
+            .row {
+                display: block;
+            }
+
+            .column {
+                width: 100%;
+                margin: 0 !important;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 350px) {
+    nav {
+        h3 {
+            .description {
+                display: none;
+            }
+        }
+    }
+}
